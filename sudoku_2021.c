@@ -42,9 +42,9 @@ cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
 };
 
-int parar;
-uint32_t estado_GPIO=0;
-double tiempoProcesado=0;
+static volatile int parar;
+static volatile uint32_t estado_GPIO=0;
+static volatile double tiempoProcesado=0;
 
 void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 	uint8_t fila, uint8_t columna)
@@ -300,7 +300,6 @@ int main (void) {
 
 
 
-//Cambios
 
 /*
 Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas
@@ -311,5 +310,9 @@ El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el plan
 Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
 Tambien al desencolar hay seccion critica
 No llamar a nada de hardware que no sea el el modulo que lo gestiona
+
+//Meter lo de desactivar interrupciones solo en la cola
+//Pasarle el struct al gestor de alarmas
+//Quitar los doubles de los timers que se pierde precision
 */
 

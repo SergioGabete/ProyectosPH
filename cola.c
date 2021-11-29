@@ -5,10 +5,10 @@
 #include <LPC210X.H> 
 #include "GPIO.h"
 
-struct evento cola_eventos[32];
-uint8_t ultimo_evento_guardado = 0; //representa indice ultimo evento guardado
-uint8_t ultimo_evento_procesado=0; //posicion ultimo elemento
-int overflow = 0;
+static volatile struct evento cola_eventos[32];
+static volatile uint8_t ultimo_evento_guardado = 0; //representa indice ultimo evento guardado
+static volatile uint8_t ultimo_evento_procesado=0; //posicion ultimo elemento
+static volatile int overflow = 0;
 
 /************************
 Esta funcion guarda los valores de ID_envento y auxData en la cola de evento, además comprueba si se ha llegado 

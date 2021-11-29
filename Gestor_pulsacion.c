@@ -1,8 +1,8 @@
 #include "Gestor_pulsacion.h"
 #include <LPC210x.H>
 
-static unsigned int estado_pulsacion_0 = NO_PULSADO;
-static unsigned int estado_pulsacion_1 = NO_PULSADO;
+static volatile unsigned int estado_pulsacion_0 = NO_PULSADO;
+static volatile unsigned int estado_pulsacion_1 = NO_PULSADO;
 //static unsigned int entrada = NO_PULSADO;
 
 /************************
