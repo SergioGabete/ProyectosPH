@@ -1,52 +1,81 @@
-                  
-#include <LPC210x.H>                       /* LPC210x definitions */
-#include "Timer.h"
-#include "Power_management.h"
-#include "boton_eint0.h"
+#include <stddef.h>
+#include "sudoku_2021.h"
+#include <time.h>
+#include "timer.h"
+#include "evento.h"
+#include "cola.h"
+#include <LPC210x.H> 
+#include "Gestor_Alarmas.h"
+#include "Gestor_Pulsacion.h"
+#include "GPIO.h"
+#include "Gestor_IO.h"
+#include "pw_id_control.h"
+#include "sudoku_2021.h"
+#include "planificador.h"
+static CELDA
+cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
+{
+0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
+};
 
-// Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
-void wait (void)  {                         /* wait function */
-  unsigned int i;
-
-  i = timer0_read_int_count(); // reads the number of previous timer IRQs
-  while ((i + 10) != timer0_read_int_count());              /* waits for 10 interrupts, i.e. 50ms */
-}
+static CELDA
+cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
+{
+0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
+};
 
 int main (void) {
-  unsigned int j;                           /* LED var */
-	 
-	eint0_init(); // activates EINT0 interrupts
-	// Nota la gestión del GPIO vosotros la debeís hacer en GPIO.c no en el main o en el reversi
-	IODIR 		= 0x00FF0000;					//Set LED pins as outputs
-	IOCLR 		= 0x00FF0000;					//Initialices the outputs to 0
-
-	// bucle para comprobar el funcionamiento del botón. El objetivo es comprobar que se lleva bien la cuenta de pulsaciones
-	// con sólo una interrupción EXTINT0 por pulsación
-	// en este proyecto no va a funcionar porque la interrupción se activa por nivel y no se ha añadido la gestión necesaria para ue sólo interrumpa una vez.
-	while (eint0_read_count() < 4){
-		PM_power_down(); // de aquí sólo despertamos si hay pulsación
-		};	
-// bucle que realiza un blink de leds cada 50ms	   
-	timer0_init(); // generates an interrupt every 0,05ms and increments timeval0
-	while (1)  {                                  /* Loop forever */
-    for (j = 0x010000; j < 0x800000; j <<= 1) { /* Blink LED 0,1,2,3,4,5,6 */
-      // Nota la gestión del GPIO vosotros la debeís hacer en GPIO.c no en el main o en el reversi
-			IOSET = j;                               /* Turn on LED */
-      wait ();                                  /* call wait function */
-      IOCLR = j;                               /* Turn off LED */
-    }
-    for (j = 0x800000; j > 0x010000; j >>=1 ) { /* Blink LED 7,6,5,4,3,2,1 */
-      // Nota la gestión del GPIO vosotros la debeís hacer en GPIO.c no en el main o en el reversi
-			IOSET = j;                               /* Turn on LED */
-      wait ();                                  /* call wait function */
-      IOCLR = j;                               /* Turn off LED */
-    }
-  }
+	struct evento evento_sin_tratar;
+	while(1){
+		//Se inicializan todos los perifericos del sistema
+		eint_init();
+		timer1_temporizador_iniciar();
+		timer1_temporizador_empezar();
+		timer0_temporizador_iniciar();
+		timer0_temporizador_empezar();
+		timer0_temporizador_periodico(1);
+		gestor_alarmas_init();
+		gestor_IO_iniciar();
+		//Poner alarma para la visualizacion constante de la GPIO
+		cola_guardar_eventos(Set_Alarm,0x068000C8);
+		int parar=0;
+		candidatos_actualizar_c(cuadricula_C_C);
+		cola_guardar_eventos(Set_Alarm,0x02003A98);
+		while(parar == 0){  //Mientras no se introduzca el reset de la partida se sigue ejecutando
+			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
+				evento_sin_tratar = cola_evento_sin_tratar();
+				planificador_tratar_evento(evento_sin_tratar);
+			}else{
+				//Si no hay eventos a tratar se pasa a modo idle
+				idle_procesador();
+			}
+		}
+		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
+		for(int i=0;i<NUM_FILAS;i++){
+			for(int j=0;j<NUM_COLUMNAS;j++){
+				cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];
+			}
+		}
+		//Se reinician los timers
+		double timer0_finalizacion = timer0_temporizador_parar();
+		double timer1_finalizacion = timer1_temporizador_parar();
+	}
+	
 }
 
-
-//int main (void) {
-//  	
-//  reversi8();
-//	
-//}
