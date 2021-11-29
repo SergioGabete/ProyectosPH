@@ -1,4 +1,16 @@
 #include "planificador.h"
+#include <stddef.h>
+#include "sudoku_2021.h"
+#include <time.h>
+#include "timer.h"
+#include "evento.h"
+#include "cola.h"
+#include <LPC210x.H> 
+#include "Gestor_Alarmas.h"
+#include "Gestor_Pulsacion.h"
+#include "GPIO.h"
+#include "Gestor_IO.h"
+#include "pw_id_control.h"
 
 static CELDA
 cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
@@ -14,20 +26,24 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
 };
 
-static CELDA
-cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
-{
-0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
-};
+/****************************************
+* La funcion devuelve 1 si valorNuevo no se encuentra dentro de los candidatos
+	En casocontrario devuelve 0*/
+int valor_en_candidatos(uint16_t candidatos_celda, uint8_t valorNuevo){
+	if( ((candidatos_celda >> (valorNuevo -1) ) & 0x1) == 0){
+		return 1;
+	}else{
+		return 0;
+	}
+}
 
+int se_puede_modificar(uint8_t pista, uint8_t valor){
+	if(pista != 1 && (valor > 0 && valor <=9)){
+		return 1;
+	}else{
+		return 0;
+	}
+}
 
 /****************************************
 *	La funcion realiza una accion dependiendo del evento que le llegue al planificador*/
@@ -35,8 +51,8 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	int parar;
 	uint32_t estado_GPIO=0;
 	double tiempoProcesado=0;
-	uint32_t configuracionVicEnable;	//Variable que alamacena la configuracion del registro VICIntEnable
-	uint32_t configuracionVicClr;			//Variable que alamacena la configuracion del registro VICIntEnClr
+//	uint32_t configuracionVicEnable;	//Variable que alamacena la configuracion del registro VICIntEnable
+//	uint32_t configuracionVicClr;			//Variable que alamacena la configuracion del registro VICIntEnClr
 	if(evento_sin_tratar.ID_evento == resta_Periodos){	
 		gestor_alarmas_restar_periodo();	//cada milisegundo llega un evento evento_resta_periodos
 																			//Para restar 1 al periodo de las alarmas activas
@@ -49,27 +65,25 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	if(evento_sin_tratar.ID_evento == evento_boton1){
 		//Se usa t0 para calcular el tiempo de procesado de la entrada
 		double t0 = timer1_temporizador_leer();
-		nueva_pulsacion_0();
+		
+		nueva_pulsacion_0();		//Meter estas 2 y el setalarm en el gestor pulsacion
 		actualizar_estado_0();
-		//Se desactivan las interrupciones al entrar en la seccion critica
-		configuracionVicEnable=VICIntEnable;
-		configuracionVicClr=VICIntEnClr;
-		VICIntEnClr = 0xffffffff;
 		cola_guardar_eventos(Set_Alarm,0x04800064);
-		//Se activan las interrupciones al salir de la sección critica
-		VICIntEnable = configuracionVicEnable;
-		VICIntEnClr = configuracionVicClr;
-		uint8_t i = gestor_IO_leer(16,4);	//Variable que contiene la fila seleccionada por el usuario
-		uint8_t j = gestor_IO_leer(20,4);	//Variable que contiene la columna seleccionada por el usuario
-		uint8_t valor = gestor_IO_leer(24,4);	//Variable que contiene el nuevo valor seleccionado por el usuario
+		
+		uint8_t i = gestor_IO_leer_fila();
+		uint8_t j = gestor_IO_leer_columna();
+		uint8_t valor = gestor_IO_leer_valor_introducir();
+		
 		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-		uint8_t pista = (celda >> 4) & 0x01; 
-			uint16_t candidatos_celda = (celda >> 7) & 0x01ff; 
-		if(pista != 1 && (valor > 0 && valor <=9)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
+		uint8_t pista = celda_leer_pista(celda); 
+		uint16_t candidatos_celda = celda_leer_candidatos(celda);
+		//if(pista != 1 && (valor > 0 && valor <=9)){
+		if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
 			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
 			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-				gestor_IO_escribir(13,1,1);		//Se activa el led de la GPIO
+				gestor_IO_escribir_led();	//Se activa el led de la GPIO
 				cola_guardar_eventos(Set_Alarm, 0x070003e8);	//Se programa una alarma para desactivar el led tras un segundo
 			}else{
 				celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
@@ -84,14 +98,14 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			}
 	}
 	if(evento_sin_tratar.ID_evento == evento_boton2){
-		nueva_pulsacion_1();
-		actualizar_estado_1();
-		configuracionVicEnable=VICIntEnable;
-		configuracionVicClr=VICIntEnClr;
-		VICIntEnClr = 0xffffffff;
-		cola_guardar_eventos(Set_Alarm,0x05800064);
-		VICIntEnable = configuracionVicEnable;
-		VICIntEnClr = configuracionVicClr;
+		nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
+		actualizar_estado_1();	//Son del gestor
+//		configuracionVicEnable=VICIntEnable;
+//		configuracionVicClr=VICIntEnClr;
+//		VICIntEnClr = 0xffffffff;
+		cola_guardar_eventos(Set_Alarm,0x05800064);	//Meter con esas 2 en el gestor	
+//		VICIntEnable = configuracionVicEnable;
+//		VICIntEnClr = configuracionVicClr;
 		uint8_t i = gestor_IO_leer(16,4);
 		uint8_t j = gestor_IO_leer(20,4);
 		uint8_t valor = gestor_IO_leer(24,4);
@@ -164,3 +178,5 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	}
 	
 }
+
+

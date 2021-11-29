@@ -47,60 +47,74 @@ void gestor_IO_marcar_salida(int bit_inicial, int num_bits){
 
 /************************
 Funci�n que se va a encargar de leer la fila seleccionada del sudoku */
-int leer_fila(){
+int gestor_IO_leer_fila(){
 			return GPIO_leer(16,4);
 }
 
 /************************
 Funci�n que se va a encargar de leer la columna seleccionada del sudoku */
-int leer_columna(){
+int gestor_IO_leer_columna(){
 			return GPIO_leer(20,4);
 }
 
 /************************
 Funci�n que se va a encargar de escribir valor en la columna seleccionada*/
-void escribir_columna(int valor){
+void gestor_IO_escribir_columna(int valor){
 			GPIO_escribir(20,4,valor);
 }
 
 /************************
 Funci�n que se va a encargar de escribir valor en la fila seleccionada*/
-void escribir_fila(int valor){
+void gestor_IO_escribir_fila(int valor){
 			GPIO_escribir(16,4,valor);
 }
 
 /************************
 Funci�n de leer el valor de la celda seleccionda */
-int leer_Celda(){
+int gestor_IO_leer_celda(){
 			return GPIO_leer(0,4);
+}
+
+/************************
+Funci�n que lee el valor que quiere introducir el usuario  */
+int gestor_IO_leer_valor_introducir(){
+	return GPIO_leer(24,4);
 }
 /************************
 Funci�n de escribir el valor en la celda seleccionda */
-void escribir_Celda(int valor){
+void gestor_IO_escribir_celda(int valor){
 			GPIO_escribir(0,4,valor);
 }
 
 /************************
 Funci�n de lee los candidatos de la celda  */
-int leerCandidatos(){
+int gestor_IO_leer_candidatos(){
 	return GPIO_leer(4,9);
 }
 
 /************************
 Funci�n que escribe los candidatos de la celda */
-void escribirCandidatos(int valor){
+void gestor_IO_escribir_candidatos(int valor){
 	GPIO_escribir(4,9,valor);
 }
 
 /************************
 Funci�n que lee si hay un error en la celda */
-int leerFallo(){
+int gestor_IO_leer_led(){
 	return GPIO_leer(13,1);
 }
 
 /************************
 Funci�n que escribe en la celda de fallo */
-void escribirFallo(int valor){
-	GPIO_escribir(13,1,valor);
+void gestor_IO_escribir_led(){
+	GPIO_escribir(13,1,1);
+}
+
+int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor){
+	if((i==0)&&(j==0)&&(valor==0)){
+		return 1;
+	}else{
+		return 0;
+	}
 }
 

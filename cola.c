@@ -14,7 +14,11 @@ static volatile int overflow = 0;
 Esta funcion guarda los valores de ID_envento y auxData en la cola de evento, además comprueba si se ha llegado 
 al overflow y si esto ocurre active el bit 30 de la GPIO.*/
 void cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData){
-		
+		uint32_t configuracionVicEnable;	//Variable que alamacena la configuracion del registro VICIntEnable
+		uint32_t configuracionVicClr;			//Variable que alamacena la configuracion del registro VICIntEnClr
+		configuracionVicEnable=VICIntEnable;
+		configuracionVicClr=VICIntEnClr;
+		VICIntEnClr = 0xffffffff;
 		//Si ha llegado a overflow, se marca como salida el pin 30 de la GPIO y se escribe sobre el.
 		if(overflow==1){ 
 			GPIO_marcar_salida(30,1);
@@ -34,7 +38,8 @@ void cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData){
 	
 	//cola_eventos[ultimo_evento_guardado] = nuevo;
 	//ultimo_evento_guardado = (ultimo_evento_guardado+1)%32;
-			
+		VICIntEnable = configuracionVicEnable;
+		VICIntEnClr = configuracionVicClr;
 }
 
 /************************

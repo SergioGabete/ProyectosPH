@@ -17,25 +17,29 @@ void gestor_IO_marcar_entrada(int bit_inicial, int num_bits);
 
 void gestor_IO_marcar_salida(int bit_inicial, int num_bits);
 
-int leer_columna(void);
+int gestor_IO_leer_columna(void);
 
-int leer_fila(void);
+int gestor_IO_leer_fila(void);
 
-void escribir_columna(int valor);
+int gestor_IO_leer_valor_introducir(void);
 
-void escribir_fila(int valor);
+void gestor_IO_escribir_columna(int valor);
 
-int leer_Celda(void);
+void gestor_IO_escribir_fila(int valor);
 
-void escribir_Celda(int valor);
+int gestor_IO_leer_celda(void);
 
-int leerCandidatos(void);
+void gestor_IO_escribir_celda(int valor);
 
-void escribirCandidatos(int valor);
+int gestor_IO_leer_candidatos(void);
 
-int leerFallo(void);
+void gestor_IO_escribir_candidatos(int valor);
 
-void escribirFallo(int valor);
+int gestor_IO_leer_led(void);
+
+void gestor_IO_escribir_led(void);
+
+int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor);
 
 #endif 
 

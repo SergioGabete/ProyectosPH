@@ -4,6 +4,7 @@
 
 #include <inttypes.h>
 
+
 /* Cada celda se codifica en 16 bits
  * bits [15,7]: los 9 bits más significativos representan el vector de candidatos,
  * si el bit 7 + valor - 1 está a 0, valor es candidato, 1 en caso contrario
@@ -16,6 +17,23 @@
 enum { BIT_CANDIDATOS = 7 };
 
 typedef uint16_t CELDA;
+/*
+static int NUM_FILAS = 9;
+static int NUM_COLUMNAS = 16;
+
+static CELDA
+cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
+{
+0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
+};*/
 
 /* *****************************************************************************
  * elimina el candidato del valor almacenado en la celda indicada */
@@ -72,6 +90,18 @@ __inline static void celda_actualizar_celda(CELDA *celdaptr, uint16_t valor){
 * sustituye el valor de los 16 bits de celda por 0*/
 __inline static void celda_borrar_celda(CELDA *celdaptr){
 		*celdaptr = 0;
+}
+
+/***********************************************************
+* Lee el bit pista de la celda*/
+__inline static uint8_t celda_leer_pista(CELDA celdaptr){
+		return (celdaptr >> 4) & 0x01; 
+}
+
+/***********************************************************
+* Lee los candidatos de la celda*/
+__inline static uint16_t celda_leer_candidatos(CELDA celdaptr){
+		return (celdaptr >> 7) & 0x01ff;
 }
 
 #endif // CELDA_H

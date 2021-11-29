@@ -12,19 +12,8 @@
 #include "pw_id_control.h"
 #include "sudoku_2021.h"
 #include "planificador.h"
-static CELDA
-cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
-{
-0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
-};
+//#include "cuadricula.h"
+
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
@@ -55,7 +44,7 @@ int main (void) {
 		//Poner alarma para la visualizacion constante de la GPIO
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
 		int parar=0;
-		candidatos_actualizar_c(cuadricula_C_C);
+		//candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
 		while(parar == 0){  //Mientras no se introduzca el reset de la partida se sigue ejecutando
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
@@ -69,7 +58,10 @@ int main (void) {
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
 		for(int i=0;i<NUM_FILAS;i++){
 			for(int j=0;j<NUM_COLUMNAS;j++){
-				cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];
+				//cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];		//Esto habra que ponerlo de alguna forma que se acceda de forma global al tablero
+				//Podria ser buena idea encolar un evento para modificar la celda pero eso no es cosa del planificador
+				//Habra que cambiar lo de donde esta la cuadricula
+				//¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
 			}
 		}
 		//Se reinician los timers

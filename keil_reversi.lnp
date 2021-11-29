@@ -10,5 +10,7 @@
 ".\gpio.o"
 ".\gestor_io.o"
 ".\pw_id_control.o"
+".\main.o"
+".\planificador.o"
 --strict --scatter ".\keil_reversi.sct"
 --summary_stderr --info summarysizes -o .\keil_reversi.axf

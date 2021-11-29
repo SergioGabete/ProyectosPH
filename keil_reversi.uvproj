@@ -546,6 +546,26 @@
               <FileType>5</FileType>
               <FilePath>.\timer.h</FilePath>
             </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>planificador.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\planificador.c</FilePath>
+            </File>
+            <File>
+              <FileName>planificador.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\planificador.h</FilePath>
+            </File>
+            <File>
+              <FileName>cuadricula.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\cuadricula.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
