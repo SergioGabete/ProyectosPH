@@ -302,17 +302,27 @@ int main (void) {
 
 
 /*
-Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas
-Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo
-Lo de que los modulos .h solo deben ser visibles para los que los usan o sea que sean privados
+Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
+Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo										HECHO
+Lo de que los modulos .h solo deben ser visibles para los que los usan o sea que sean privados		HECHO
+
 El planificador solo recibe eventos y lllama a los modulos para tratar esos eventos
 El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el planificador solo llama a los modulos
 Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
+
 Tambien al desencolar hay seccion critica
+//Meter lo de desactivar interrupciones solo en la cola
+
 No llamar a nada de hardware que no sea el el modulo que lo gestiona
 
-//Meter lo de desactivar interrupciones solo en la cola
+
 //Pasarle el struct al gestor de alarmas
 //Quitar los doubles de los timers que se pierde precision
+
+Revisar un poco el tema de los eventos
+
+Tocar la cola con lo del overflow
+
+Añadir mas de 8 tipos de alarmas
 */
 
