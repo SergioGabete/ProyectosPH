@@ -51,7 +51,9 @@ int main (void) {
 				planificador_tratar_evento(evento_sin_tratar);
 			}else{
 				//Si no hay eventos a tratar se pasa a modo idle
+				gestor_IO_activar_iddle();
 				idle_procesador();
+				gestor_IO_desactivar_iddle();
 			}
 		}
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales

@@ -125,6 +125,18 @@ void gestor_IO_confirmar_escritura(){
 	cola_guardar_eventos(Set_Alarm, 0x070003e8);
 }
 
+/************************
+Función que activará el boton de iddle en la GPIO */
+void gestor_IO_activar_iddle(){
+	GPIO_escribir(31,1,1);
+}
+
+/************************
+Función que desactivará el boton de iddle en la GPIO */
+void gestor_IO_desactivar_iddle(){
+	GPIO_escribir(31,1,0);
+}
+
 void gestor_IO_visualizar_GPIO(){
 	
 }

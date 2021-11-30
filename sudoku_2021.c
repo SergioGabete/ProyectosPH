@@ -299,6 +299,6 @@ Tocar la cola con lo del overflow
 
 Añadir mas de 8 tipos de alarmas
 
-Hacer lo del latido idle
+Hacer lo del latido idle				LISTO
 */
 
