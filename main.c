@@ -12,7 +12,7 @@
 #include "pw_id_control.h"
 #include "sudoku_2021.h"
 #include "planificador.h"
-//#include "cuadricula.h"
+#include "cuadricula.h"
 
 
 static CELDA
@@ -44,7 +44,7 @@ int main (void) {
 		//Poner alarma para la visualizacion constante de la GPIO
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
 		int parar=0;
-		//candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
+		candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
 		while(parar == 0){  //Mientras no se introduzca el reset de la partida se sigue ejecutando
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento

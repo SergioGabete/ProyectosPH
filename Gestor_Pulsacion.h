@@ -9,7 +9,7 @@ enum {
 	NO_PULSADO = 1
 };
 
-void eint_init(void); 
+void gestor_pulsacion_eint_init(void); 
 	
 unsigned int gestor_pulsacion_nueva_pulsacion_0(void);
 void gestor_pulsacion_clear_nueva_pulsacion_0(void);
@@ -21,6 +21,6 @@ void gestor_pulsacion_clear_nueva_pulsacion_1(void);
 void gestor_pulsacion_actualizar_estado_1(void);
 unsigned int gestor_pulsacion_leer_estado_1(void);
 
-void gestor_pulsacion_boton1_pretado();
+void gestor_pulsacion_boton1_pretado(void);
 //int gestor_pulsacion(int entrada);
 #endif

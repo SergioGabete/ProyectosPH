@@ -3,7 +3,9 @@
 
 #include "celda.h"
 
-CELDA
+//static int NUM_FILAS =9;
+//static int NUM_COLUMNAS =16;
+static CELDA
 cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 {
 0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,

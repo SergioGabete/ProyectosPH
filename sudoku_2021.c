@@ -11,6 +11,7 @@
 #include "Gestor_IO.h"
 #include "pw_id_control.h"
 //#include "tableros.h"
+#include "cuadricula.h"
 
 
 static volatile int parar;

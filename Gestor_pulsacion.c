@@ -7,7 +7,7 @@ static volatile unsigned int estado_pulsacion_1 = NO_PULSADO;
 
 /************************
 Esta función inicializa EINT1 Y EINT2 .*/
-void gestor_pulsacion_eint_init(void){
+void gestor_pulsacion_eint_init(){
 	eint1_init();
 	eint2_init();
 }

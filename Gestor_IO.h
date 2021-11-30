@@ -41,6 +41,7 @@ void gestor_IO_escribir_led(void);
 
 int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor);
 
+void gestor_IO_confirmar_escritura(void);
 #endif 
 
 

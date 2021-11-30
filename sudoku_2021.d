@@ -15,3 +15,4 @@
 .\sudoku_2021.o: GPIO.h
 .\sudoku_2021.o: Gestor_IO.h
 .\sudoku_2021.o: pw_id_control.h
+.\sudoku_2021.o: cuadricula.h
