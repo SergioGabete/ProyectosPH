@@ -110,6 +110,10 @@ void gestor_IO_escribir_led(){
 	GPIO_escribir(13,1,1);
 }
 
+void gestor_IO_quitar_led(){
+	GPIO_escribir(13,1,0);
+}
+
 int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor){
 	if((i==0)&&(j==0)&&(valor==0)){
 		return 1;
@@ -137,6 +141,7 @@ void gestor_IO_desactivar_iddle(){
 	GPIO_escribir(31,1,0);
 }
 
-void gestor_IO_visualizar_GPIO(){
-	
+uint32_t gestor_IO_leer_estado(){
+	return GPIO_leer(0,32);
 }
+

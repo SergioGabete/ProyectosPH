@@ -37,6 +37,8 @@ void gestor_IO_escribir_candidatos(int valor);
 
 int gestor_IO_leer_led(void);
 
+void gestor_IO_quitar_led(void);
+
 void gestor_IO_escribir_led(void);
 
 int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor);
@@ -48,6 +50,8 @@ void gestor_IO_visualizar_GPIO(void);
 void gestor_IO_activar_iddle(void);
 
 void gestor_IO_desactivar_iddle(void);
+
+uint32_t gestor_IO_leer_estado(void);
 
 #endif 
 

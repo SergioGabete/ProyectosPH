@@ -77,3 +77,7 @@ void gestor_alarmas_quitar_alarma(uint8_t id){
 	activada[id]=0;
 }
 
+void gestor_alarmas_resetear_power_down(){
+	gestor_alarmas_quitar_alarma(2);							//Preguntar si esto de verdad va dentro del gestor de alarmas
+	cola_guardar_eventos(Set_Alarm,0x02003A98);
+}

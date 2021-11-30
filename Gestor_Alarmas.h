@@ -16,5 +16,7 @@ void gestor_alarmas_restar_periodo(void);
 
 void gestor_alarmas_quitar_alarma(uint8_t id);
 
+void gestor_alarmas_resetear_power_down(void);
+
 #endif
 

@@ -153,24 +153,26 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		//uint8_t pista = (celda >> 4) & 0x01;
 		
 		//Se escriben en la GPIO los candidatos y el valor de la celda seleccionada
-		gestor_IO_escribir(0,4,valor_celda);
-		gestor_IO_escribir(4,12,candidatos_celda);
+		//gestor_IO_escribir(0,4,valor_celda);
+		gestor_IO_escribir_celda(valor);
+		//gestor_IO_escribir(4,12,candidatos_celda);
+		gestor_IO_escribir_candidatos(candidatos_celda);
 		
 		//Si la celda es una pista inicial o un valor erroneo se activa el led 
 		if(bitSucio == 1 || pista == 1){
-			gestor_IO_escribir(13,1,1);
+			//gestor_IO_escribir(13,1,1);
+			gestor_IO_escribir_led();
 		}
 		//Se lee el estado de la GPIO para ver si ha cambiado 
-		uint32_t estadoNuevo = gestor_IO_leer(0,32);
+		//uint32_t estadoNuevo = gestor_IO_leer(0,32);
+		uint32_t estadoNuevo = gestor_IO_leer_estado();
 		if(estadoNuevo != estado_GPIO){	//Si el estado es distinto significa que el usuario sigue jugando y se vuelve a poner la alarma
-			gestor_alarmas_quitar_alarma(2);
-			cola_guardar_eventos(Set_Alarm,0x02003A98);
+			gestor_alarmas_resetear_power_down();
 		}
-		estado_GPIO =gestor_IO_leer(0,32); //Se actualiza el estado
+		estado_GPIO =gestor_IO_leer_estado(); //Se actualiza el estado
 	}
 	if(evento_sin_tratar.ID_evento == evento_visualizar_led){
-		//Se elimina el led tras 1 segundo
-		gestor_IO_escribir(13,1,0);
+		gestor_IO_quitar_led();
 	}
 	if(evento_sin_tratar.ID_evento == evento_power_down){
 		powerdown_procesador();
