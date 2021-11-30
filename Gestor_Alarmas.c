@@ -30,25 +30,24 @@ void gestor_alarmas_init(void){
 
 /************************
 Esta funcion introduce un evento si ni hay ningun evento más de este tipo.*/
-void gestor_alarmas_introducir_evento(struct evento evento_introducir){
+void gestor_alarmas_introducir_evento(uint32_t estructura_alarma){
 	//Extraer informacion del evento Set_Alarm (Se extrae del AUX)
-	uint32_t Auxiliar = evento_introducir.auxData;
-	uint8_t ID_evento = Auxiliar >> 24;
-	uint8_t esPeriodica=(Auxiliar >> 23) & 0x01;
-	uint32_t retardo=Auxiliar & 0x007FFFFF;
+	uint8_t ID_evento = estructura_alarma >> 24; //tipo de evento
+	uint8_t esPeriodica=(estructura_alarma >> 23) & 0x01; 
+	uint32_t retardo=estructura_alarma & 0x007FFFFF;	//tiempo evento
 	//Se crea el evento especifico que ha introducido el Set_Alarm
 	struct evento evento_especifico;
-	evento_especifico.ID_evento = ID_evento;
-	evento_especifico.instante_evento = evento_introducir.instante_evento;
+	evento_especifico.ID_evento =ID_evento ;
+	evento_especifico.instante_evento = retardo;
 	//Como necesito volver a usar el retardo en caso de que sea periodica pues 
 	//lo guardo en el propio evento en su campo aux y me evito usar otro vector de almacenaje
 	evento_especifico.auxData=retardo;
 	//Comprobamos si la alarma de ese evento no esta activada 
-	if(activada[evento_especifico.ID_evento] == 0){		
-		cola_gestor[evento_especifico.ID_evento] = evento_especifico;
-		periodicas[evento_especifico.ID_evento] = esPeriodica;
-		activada[evento_especifico.ID_evento] = 1;
-		retardos[evento_especifico.ID_evento] = retardo;
+	if(activada[ID_evento] == 0){		
+		cola_gestor[ID_evento] = evento_especifico;
+		periodicas[ID_evento] = esPeriodica;
+		activada[ID_evento] = 1;
+		retardos[ID_evento] = retardo;
 	}
 }
 /************************

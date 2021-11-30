@@ -10,7 +10,7 @@
 
 void gestor_alarmas_init(void);
 
-void gestor_alarmas_introducir_evento(struct evento evento_introducir);
+void gestor_alarmas_introducir_evento(uint32_t evento);
 
 void gestor_alarmas_restar_periodo(void);
 

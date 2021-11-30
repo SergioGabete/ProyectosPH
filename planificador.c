@@ -52,12 +52,14 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	//double tiempoProcesado=0;
 //	uint32_t configuracionVicEnable;	//Variable que alamacena la configuracion del registro VICIntEnable
 //	uint32_t configuracionVicClr;			//Variable que alamacena la configuracion del registro VICIntEnClr
+	//Devuelve el evento más antiguo para tratar
+	struct evento evento_antiguo= cola_evento_sin_tratar();
 	if(evento_sin_tratar.ID_evento == resta_Periodos){	
 		gestor_alarmas_restar_periodo();	//cada milisegundo llega un evento evento_resta_periodos
 																			//Para restar 1 al periodo de las alarmas activas
 	}
 	if(evento_sin_tratar.ID_evento == Set_Alarm){ 
-		gestor_alarmas_introducir_evento(evento_sin_tratar);
+		gestor_alarmas_introducir_evento(evento_antiguo.auxData);
 		//Al llegat un evento Set_Alarm se llama a la funcion del Gestor_Alarma para poner una alarma
 	}
 	
