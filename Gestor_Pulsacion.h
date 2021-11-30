@@ -22,5 +22,9 @@ void gestor_pulsacion_actualizar_estado_1(void);
 unsigned int gestor_pulsacion_leer_estado_1(void);
 
 void gestor_pulsacion_boton1_pretado(void);
+void gestor_pulsacion_boton2_pretado(void);
+
+void gestor_pulsacion_alarma_boton1(void);
+void gestor_pulsacion_alarma_boton2(void);
 //int gestor_pulsacion(int entrada);
 #endif

@@ -125,3 +125,6 @@ void gestor_IO_confirmar_escritura(){
 	cola_guardar_eventos(Set_Alarm, 0x070003e8);
 }
 
+void gestor_IO_visualizar_GPIO(){
+	
+}

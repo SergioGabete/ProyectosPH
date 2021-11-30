@@ -43,10 +43,9 @@ int main (void) {
 		gestor_IO_iniciar();
 		//Poner alarma para la visualizacion constante de la GPIO
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
-		int parar=0;
 		candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
-		while(parar == 0){  //Mientras no se introduzca el reset de la partida se sigue ejecutando
+		while(planificador_parar() == 0){  //Mientras no se introduzca el reset de la partida se sigue ejecutando
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
 				evento_sin_tratar = cola_evento_sin_tratar();
 				planificador_tratar_evento(evento_sin_tratar);
@@ -58,7 +57,7 @@ int main (void) {
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
 		for(int i=0;i<NUM_FILAS;i++){
 			for(int j=0;j<NUM_COLUMNAS;j++){
-				//cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];		//Esto habra que ponerlo de alguna forma que se acceda de forma global al tablero
+				cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];		//Esto habra que ponerlo de alguna forma que se acceda de forma global al tablero
 				//Podria ser buena idea encolar un evento para modificar la celda pero eso no es cosa del planificador
 				//Habra que cambiar lo de donde esta la cuadricula
 				//¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
@@ -67,6 +66,9 @@ int main (void) {
 		//Se reinician los timers
 		double timer0_finalizacion = timer0_temporizador_parar();
 		double timer1_finalizacion = timer1_temporizador_parar();
+		
+		//Aque se eberia poner lo de parar a 0
+		planificador_retormar_ejecucion();
 	}
 	
 }

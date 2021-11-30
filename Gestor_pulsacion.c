@@ -1,5 +1,6 @@
 #include "Gestor_pulsacion.h"
 #include <LPC210x.H>
+#include "Gestor_Alarmas.h"
 
 static volatile unsigned int estado_pulsacion_0 = NO_PULSADO;
 static volatile unsigned int estado_pulsacion_1 = NO_PULSADO;
@@ -94,6 +95,37 @@ void gestor_pulsacion_boton1_pretado(){
 	gestor_pulsacion_nueva_pulsacion_0();		//Meter estas 2 y el setalarm en el gestor pulsacion
 	gestor_pulsacion_actualizar_estado_0();
 	cola_guardar_eventos(Set_Alarm,0x04800064);
+}
+
+void gestor_pulsacion_boton2_pretado(){
+	gestor_pulsacion_nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
+		gestor_pulsacion_actualizar_estado_1();	//Son del gestor
+		cola_guardar_eventos(Set_Alarm,0x05800064);	//Meter con esas 2 en el gestor	
+}
+
+void gestor_pulsacion_alarma_boton1(void){
+	if(gestor_pulsacion_leer_estado_0()==PULSADO){
+			//Si llega la alarma y el boton sigue pulsado no se hace nada
+		}
+		else{
+			//En caso de que no este pulsado se actualiza el estado a no pulsado
+			gestor_alarmas_quitar_alarma(evento_alarma_pulsaciones_1);
+			gestor_pulsacion_clear_nueva_pulsacion_0();
+			gestor_pulsacion_actualizar_estado_0();
+		}
+}
+
+
+void gestor_pulsacion_alarma_boton2(void){
+	if(gestor_pulsacion_leer_estado_1()==PULSADO){
+			//Si llega la alarma y el boton sigue pulsado no se hace nada
+		}
+		else{
+			//En caso de que no este pulsado se actualiza el estado a no pulsado
+			gestor_pulsacion_actualizar_estado_1();
+			gestor_pulsacion_clear_nueva_pulsacion_1();
+			gestor_alarmas_quitar_alarma(evento_alarma_pulsaciones_2);
+		}
 }
 
 

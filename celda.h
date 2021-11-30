@@ -104,4 +104,13 @@ __inline static uint16_t celda_leer_candidatos(CELDA celdaptr){
 		return (celdaptr >> 7) & 0x01ff;
 }
 
+/***********************************************************
+* introduce una celda erronea*/
+__inline static void celda_introducir_error(CELDA *celdaptr){
+		*celdaptr = 0x0020;
+}
+
+__inline static uint8_t celda_leer_error(CELDA celdaptr){
+		return (celdaptr >> 5) & 0x01;
+}
 #endif // CELDA_H
