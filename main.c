@@ -33,7 +33,7 @@ int main (void) {
 	struct evento evento_sin_tratar;
 	while(1){
 		//Se inicializan todos los perifericos del sistema
-		eint_init();
+		gestor_pulsacion_eint_init();
 		timer1_temporizador_iniciar();
 		timer1_temporizador_empezar();
 		timer0_temporizador_iniciar();

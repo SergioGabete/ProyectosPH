@@ -66,9 +66,10 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		//Se usa t0 para calcular el tiempo de procesado de la entrada
 		double t0 = timer1_temporizador_leer();
 		
-		nueva_pulsacion_0();		//Meter estas 2 y el setalarm en el gestor pulsacion
-		actualizar_estado_0();
-		cola_guardar_eventos(Set_Alarm,0x04800064);
+		/*gestor_pulsacion_nueva_pulsacion_0();		//Meter estas 2 y el setalarm en el gestor pulsacion
+		gestor_pulsacion_actualizar_estado_0();
+		cola_guardar_eventos(Set_Alarm,0x04800064);*/
+		gestor_pulsacion_boton1_pretado();
 		
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
@@ -87,22 +88,22 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 				cola_guardar_eventos(Set_Alarm, 0x070003e8);	//Se programa una alarma para desactivar el led tras un segundo
 			}else{
 				celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+				//Esto a lo mejor hay que cambiarlo ^^
 			}
 			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
 			double t1 = timer1_temporizador_leer();
 			tiempoProcesado = t1 - t0;
 		}
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
-		if((i==0) && (j==0) & (valor == 0)){
+		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
 				parar = 1;
 			}
 	}
+	
+	
 	if(evento_sin_tratar.ID_evento == evento_boton2){
-		nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
-		actualizar_estado_1();	//Son del gestor
-//		configuracionVicEnable=VICIntEnable;
-//		configuracionVicClr=VICIntEnClr;
-//		VICIntEnClr = 0xffffffff;
+		gestor_pulsacion_nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
+		gestor_pulsacion_actualizar_estado_1();	//Son del gestor
 		cola_guardar_eventos(Set_Alarm,0x05800064);	//Meter con esas 2 en el gestor	
 //		VICIntEnable = configuracionVicEnable;
 //		VICIntEnClr = configuracionVicClr;
@@ -122,24 +123,24 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	}
 	
 	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_1){
-		if(leer_estado_0()==PULSADO){
+		if(gestor_pulsacion_leer_estado_0()==PULSADO){
 			//Si llega la alarma y el boton sigue pulsado no se hace nada
 		}
 		else{
 			//En caso de que no este pulsado se actualiza el estado a no pulsado
 			gestor_alarmas_quitar_alarma(evento_alarma_pulsaciones_1);
-			clear_nueva_pulsacion_0();
-			actualizar_estado_0();
+			gestor_pulsacion_clear_nueva_pulsacion_0();
+			gestor_pulsacion_actualizar_estado_0();
 		}
 	}
 	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_2){
-		if(leer_estado_1()==PULSADO){
+		if(gestor_pulsacion_leer_estado_1()==PULSADO){
 			//Si llega la alarma y el boton sigue pulsado no se hace nada
 		}
 		else{
 			//En caso de que no este pulsado se actualiza el estado a no pulsado
-			actualizar_estado_1();
-			clear_nueva_pulsacion_1();
+			gestor_pulsacion_actualizar_estado_1();
+			gestor_pulsacion_clear_nueva_pulsacion_1();
 			gestor_alarmas_quitar_alarma(evento_alarma_pulsaciones_2);
 		}
 	} 

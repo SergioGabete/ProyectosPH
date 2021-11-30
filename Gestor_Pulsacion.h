@@ -11,14 +11,16 @@ enum {
 
 void eint_init(void); 
 	
-unsigned int nueva_pulsacion_0(void);
-void clear_nueva_pulsacion_0(void);
-void actualizar_estado_0(void);
-unsigned int leer_estado_0(void);
+unsigned int gestor_pulsacion_nueva_pulsacion_0(void);
+void gestor_pulsacion_clear_nueva_pulsacion_0(void);
+void gestor_pulsacion_actualizar_estado_0(void);
+unsigned int gestor_pulsacion_leer_estado_0(void);
 
-unsigned int nueva_pulsacion_1(void);
-void clear_nueva_pulsacion_1(void);
-void actualizar_estado_1(void);
-unsigned int leer_estado_1(void);
+unsigned int gestor_pulsacion_nueva_pulsacion_1(void);
+void gestor_pulsacion_clear_nueva_pulsacion_1(void);
+void gestor_pulsacion_actualizar_estado_1(void);
+unsigned int gestor_pulsacion_leer_estado_1(void);
+
+void gestor_pulsacion_boton1_pretado();
 //int gestor_pulsacion(int entrada);
 #endif
