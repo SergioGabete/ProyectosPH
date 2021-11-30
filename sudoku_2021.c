@@ -291,7 +291,7 @@ No llamar a nada de hardware que no sea el el modulo que lo gestiona
 
 
 //Pasarle el struct al gestor de alarmas
-//Quitar los doubles de los timers que se pierde precision
+//Quitar los doubles de los timers que se pierde precision	HECHO
 
 Revisar un poco el tema de los eventos
 
@@ -299,6 +299,6 @@ Tocar la cola con lo del overflow
 
 Añadir mas de 8 tipos de alarmas
 
-Hacer lo del latido idle				LISTO
+Hacer lo del latido idle				HECHO
 */
 
