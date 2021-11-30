@@ -5,9 +5,9 @@
 
 /**************************************
 Variables que cuentan el numero de veces que ha alcanzado el maximo sus respectivos contadores*/
-static volatile double timer0_int_count = 0;
+static volatile unsigned long timer0_int_count = 0;
 
-static volatile double timer1_int_count = 0;
+static volatile unsigned long timer1_int_count = 0;
 
 //Variable que controla el periodo de las alarmas
 static volatile unsigned int periodo_global = 0;
@@ -45,7 +45,7 @@ void timer0_temporizador_empezar(void){
 
 /************************
 Funcion que devuelve el tiempo que ha contado el timer0 hasta el momento*/
-unsigned int timer0_temporizador_leer(void){
+unsigned long timer0_temporizador_leer(void){
 	return timer0_int_count + T0TC*(1 / 14999.9);
 	//timer0_int_count no va multiplicado por nada porque usamos 1 milisegundo
 	//Devuelve el numero de tics*milisegundos que cuenta cada tic + lo que lleva el timer0
@@ -53,7 +53,7 @@ unsigned int timer0_temporizador_leer(void){
 
 /************************
 Funcion que para el timer0 y devuelve lo que lleva contado hasta el momento*/
-unsigned int timer0_temporizador_parar(void){
+unsigned long timer0_temporizador_parar(void){
 	//double t0_tiempo = (double)timer0_int_count + T0TC*(1 / 14999.9);
 	T0TCR = 0;
 	//Hay que resetear tambien T0MR0 
@@ -121,18 +121,18 @@ void timer1_temporizador_empezar(void){
 
 /************************
 Funcion que devuelve el tiempo que ha contado el timer1 hasta el momento*/
-unsigned int timer1_temporizador_leer(void){
-	return timer1_int_count + T1TC*(1 / 14999.9);
+unsigned long timer1_temporizador_leer(void){
+	return timer1_int_count + T1TC*((unsigned long)1 / 14999.9);
 	//Devuelve el tiempo que llevaba en milisegundos
 }
 
 /************************
 Funcion que para el timer1 y devuelve lo que lleva contado hasta el momento*/
-unsigned int timer1_temporizador_parar(void){
+unsigned long timer1_temporizador_parar(void){
 	//double t1_tiempo = (double)timer1_int_count + T1TC*(1 / 14999.9);
 	T1TCR = 0;
 	//Hay que resetear tambien T0MR0 ? o al poner a 0 el enable del T0TC 
-	return timer1_int_count + T1TC*(1 / 14999.9);
+	return timer1_int_count + T1TC*((unsigned long)1 / 14999.9);
 }
 
 

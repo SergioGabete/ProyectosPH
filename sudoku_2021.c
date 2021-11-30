@@ -295,7 +295,7 @@ No llamar a nada de hardware que no sea el el modulo que lo gestiona
 
 Revisar un poco el tema de los eventos
 
-Tocar la cola con lo del overflow
+Tocar la cola con lo del overflow	HECHO
 
 Añadir mas de 8 tipos de alarmas
 

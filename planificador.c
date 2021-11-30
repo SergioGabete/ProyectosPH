@@ -145,7 +145,7 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
 		uint8_t valor = gestor_IO_leer_valor_introducir();
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+		uint16_t celda = celda_leer_contenido(&cuadricula_C_C[i][j]);	//Devuelve 0
 		uint8_t pista = celda_leer_pista(celda); 
 		//uint16_t candidatos_celda = celda_leer_candidatos(celda);
 		
@@ -156,7 +156,7 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		
 		//Se escriben en la GPIO los candidatos y el valor de la celda seleccionada
 		//gestor_IO_escribir(0,4,valor_celda);
-		gestor_IO_escribir_celda(valor);
+		gestor_IO_escribir_celda(valor_celda);
 		//gestor_IO_escribir(4,12,candidatos_celda);
 		gestor_IO_escribir_candidatos(candidatos_celda);
 		
