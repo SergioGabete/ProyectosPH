@@ -13,6 +13,7 @@ static volatile uint8_t ID[8];//Conocer informacion de los eventos
 static volatile uint8_t periodicas[8];
 static volatile uint8_t activada[8];
 static volatile uint32_t retardos[8]; //cuanto le falta a cada una de las alarmas
+static volatile uint32_t retardos_alarma[8];
 
 /************************
 Funcion que inicializa el gestor de alarmas para su posterior funcionamiento.*/
@@ -21,6 +22,7 @@ void gestor_alarmas_init(void){
 		periodicas[i]=0;
 		activada[i]=0;
 		retardos[i]=0;
+		retardos_alarma[i]=0;
 	}
 }
 
@@ -38,6 +40,7 @@ void gestor_alarmas_introducir_evento(uint32_t estructura_alarma){
 		periodicas[ID_evento] = esPeriodica;
 		activada[ID_evento] = 1;
 		retardos[ID_evento] = retardo;
+		retardos_alarma[ID_evento] = retardo;
 	} 
 }
 /************************
@@ -54,7 +57,7 @@ void gestor_alarmas_restar_periodo(void){
 				if(periodicas[i] == 0){ //Al no ser periodica se elimina
 					activada[i] = 0;
 				}else{ //En el caso de ser periodica hay que volver a meter el periodo original en el vector
-					retardos[i]=retardos[i];
+					retardos[i]=retardos_alarma[i];	
 				}
 			}
 		}

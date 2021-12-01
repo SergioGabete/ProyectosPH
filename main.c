@@ -48,11 +48,11 @@ int main (void) {
 		while(planificador_parar() == 0){  //Mientras no se introduzca el reset de la partida se sigue ejecutando
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
 				evento_sin_tratar = cola_evento_sin_tratar();
-				planificador_tratar_evento(evento_sin_tratar);
+				planificador_tratar_evento(evento_sin_tratar, cuadricula_C_C);
 			}else{
 				//Si no hay eventos a tratar se pasa a modo idle
 				gestor_IO_activar_iddle();
-				idle_procesador();
+				idle_procesador();					//Esto a lo mejor hay que hacerlo a traver del planificador
 				gestor_IO_desactivar_iddle();
 			}
 		}

@@ -46,7 +46,7 @@ void planificador_retormar_ejecucion(){
 
 /****************************************
 *	La funcion realiza una accion dependiendo del evento que le llegue al planificador*/
-void planificador_tratar_evento(struct evento evento_sin_tratar){
+void planificador_tratar_evento(struct evento evento_sin_tratar,CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS]){
 	//int parar;
 	//uint32_t estado_GPIO=0;
 	//double tiempoProcesado=0;
@@ -145,7 +145,7 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
 		uint8_t valor = gestor_IO_leer_valor_introducir();
-		uint16_t celda = celda_leer_contenido(&cuadricula_C_C[i][j]);	//Devuelve 0
+		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);	//Devuelve 0
 		uint8_t pista = celda_leer_pista(celda); 
 		//uint16_t candidatos_celda = celda_leer_candidatos(celda);
 		
