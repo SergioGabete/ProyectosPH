@@ -566,6 +566,16 @@
               <FileType>5</FileType>
               <FilePath>.\cuadricula.h</FilePath>
             </File>
+            <File>
+              <FileName>RTC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RTC.h</FilePath>
+            </File>
+            <File>
+              <FileName>RTC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\RTC.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
