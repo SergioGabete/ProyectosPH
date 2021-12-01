@@ -59,10 +59,7 @@ int main (void) {
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
 		for(int i=0;i<NUM_FILAS;i++){
 			for(int j=0;j<NUM_COLUMNAS;j++){
-				cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];		//Esto habra que ponerlo de alguna forma que se acceda de forma global al tablero
-				//Podria ser buena idea encolar un evento para modificar la celda pero eso no es cosa del planificador
-				//Habra que cambiar lo de donde esta la cuadricula
-				//¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
+				cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];	
 			}
 		}
 		//Se reinician los timers
