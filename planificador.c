@@ -78,7 +78,7 @@ void planificador_tratar_evento(struct evento evento_sin_tratar,CELDA cuadricula
 		
 		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
 		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
-		uint8_t pista = celda_leer_pista(celda); 
+		uint8_t pista = celda_leer_pista(celda);  
 		uint16_t candidatos_celda = celda_leer_candidatos(celda);
 		//if(pista != 1 && (valor > 0 && valor <=9)){
 		if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda

@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\</OutputDirectory>
-          <OutputName>keil_reversi</OutputName>
+          <OutputName>Watchdog</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -350,21 +350,21 @@
             <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
-            <interw>1</interw>
-            <Optim>4</Optim>
+            <interw>0</interw>
+            <Optim>1</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>1</OneElfS>
+            <OneElfS>0</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>1</uC99>
-            <uGnu>1</uGnu>
+            <uC99>0</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>0</v6Lang>
             <v6LangP>0</v6LangP>
@@ -381,7 +381,7 @@
             </VariousControls>
           </Cads>
           <Aads>
-            <interw>1</interw>
+            <interw>0</interw>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <thumb>0</thumb>
@@ -436,140 +436,57 @@
               <FileType>1</FileType>
               <FilePath>.\Retarget.c</FilePath>
             </File>
+            <File>
+              <FileName>WT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\WT.c</FilePath>
+            </File>
+            <File>
+              <FileName>WT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\WT.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Source Code</GroupName>
           <Files>
             <File>
-              <FileName>cola.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\cola.c</FilePath>
-            </File>
-            <File>
-              <FileName>sudoku_2021.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\sudoku_2021.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>celda.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\celda.h</FilePath>
-            </File>
-            <File>
-              <FileName>cola.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\cola.h</FilePath>
-            </File>
-            <File>
-              <FileName>sudoku_2021.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\sudoku_2021.h</FilePath>
-            </File>
-            <File>
-              <FileName>tableros.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\tableros.h</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_Alarmas.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Gestor_Alarmas.h</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_Alarmas.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Gestor_Alarmas.c</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_Pulsacion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Gestor_Pulsacion.c</FilePath>
-            </File>
-            <File>
-              <FileName>pulsacion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\pulsacion.c</FilePath>
-            </File>
-            <File>
-              <FileName>GPIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\GPIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>GPIO.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\GPIO.h</FilePath>
-            </File>
-            <File>
-              <FileName>evento.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\evento.h</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_Pulsacion.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Gestor_Pulsacion.h</FilePath>
-            </File>
-            <File>
-              <FileName>pulsacion.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\pulsacion.h</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_IO.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Gestor_IO.h</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_IO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Gestor_IO.c</FilePath>
-            </File>
-            <File>
-              <FileName>pw_id_control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\pw_id_control.c</FilePath>
-            </File>
-            <File>
-              <FileName>pw_id_control.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\pw_id_control.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\timer.h</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>planificador.c</FileName>
+              <FileName>RTC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\planificador.c</FilePath>
+              <FilePath>.\RTC.c</FilePath>
             </File>
             <File>
-              <FileName>planificador.h</FileName>
+              <FileName>RTC.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\planificador.h</FilePath>
+              <FilePath>.\RTC.h</FilePath>
             </File>
             <File>
-              <FileName>cuadricula.h</FileName>
+              <FileName>Serial_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Serial_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>Serial_port.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\cuadricula.h</FilePath>
+              <FilePath>.\Serial_port.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Documentation</GroupName>
+          <Files>
+            <File>
+              <FileName>Abstract.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Abstract.txt</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

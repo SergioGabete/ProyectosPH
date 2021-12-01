@@ -284,7 +284,7 @@ El planificador solo recibe eventos y lllama a los modulos para tratar esos even
 El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el planificador solo llama a los modulos
 Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
 
-Tambien al desencolar hay seccion critica
+Tambien al desencolar hay seccion critica	HECHO
 //Meter lo de desactivar interrupciones solo en la cola	HECHO
 
 No llamar a nada de hardware que no sea el el modulo que lo gestiona	HECHO
