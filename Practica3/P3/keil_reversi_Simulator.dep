@@ -132,3 +132,6 @@ I (GPIO.h)(0x619F59B9)
 I (cuadricula.h)(0x61A660BC)
 F (.\planificador.h)(0x61A7184B)()
 F (.\cuadricula.h)(0x61A660BC)()
+F (.\WT.h)(0x61A7A68E)()
+F (.\WT.c)(0x61A7A874)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\wt.o --omf_browse .\wt.crf --depend .\wt.d)
+I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)

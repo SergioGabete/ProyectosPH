@@ -566,6 +566,16 @@
               <FileType>5</FileType>
               <FilePath>.\cuadricula.h</FilePath>
             </File>
+            <File>
+              <FileName>WT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\WT.h</FilePath>
+            </File>
+            <File>
+              <FileName>WT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\WT.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
