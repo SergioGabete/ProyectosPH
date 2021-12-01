@@ -56,7 +56,12 @@ int cola_comprobar_nuevos_eventos(void){
 /************************
 Esta funcion devuelve el ultimo envento sin tratar  de la cola de eventos..*/
 struct evento cola_evento_sin_tratar(void){
-		
+		uint32_t configuracionVicEnable;	//Variable que alamacena la configuracion del registro VICIntEnable
+		uint32_t configuracionVicClr;			//Variable que alamacena la configuracion del registro VICIntEnClr
+		configuracionVicEnable=VICIntEnable;
+		configuracionVicClr=VICIntEnClr;
+		VICIntEnClr = 0xffffffff;
+	
 		struct evento antiguo;
 		antiguo.ID_evento=cola_eventos[ultimo_evento_procesado].ID_evento;
 		antiguo.auxData= cola_eventos[ultimo_evento_procesado].auxData;
@@ -64,7 +69,10 @@ struct evento cola_evento_sin_tratar(void){
 		ultimo_evento_procesado = (ultimo_evento_procesado + 1) % 32;
 		
 		overflow = 0;
-		
+			
+		VICIntEnable = configuracionVicEnable;
+		VICIntEnClr = configuracionVicClr;
+	
 		return antiguo;
 		
 }

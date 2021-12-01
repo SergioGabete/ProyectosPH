@@ -46,7 +46,7 @@ void timer0_temporizador_empezar(void){
 /************************
 Funcion que devuelve el tiempo que ha contado el timer0 hasta el momento*/
 unsigned long timer0_temporizador_leer(void){
-	return timer0_int_count + T0TC*(1 / 14999.9);
+	return timer0_int_count*0xffffffff/60+T0TC/60;
 	//timer0_int_count no va multiplicado por nada porque usamos 1 milisegundo
 	//Devuelve el numero de tics*milisegundos que cuenta cada tic + lo que lleva el timer0
 }
@@ -54,10 +54,10 @@ unsigned long timer0_temporizador_leer(void){
 /************************
 Funcion que para el timer0 y devuelve lo que lleva contado hasta el momento*/
 unsigned long timer0_temporizador_parar(void){
-	//double t0_tiempo = (double)timer0_int_count + T0TC*(1 / 14999.9);
+	double t0_tiempo = timer0_temporizador_leer();
 	T0TCR = 0;
 	//Hay que resetear tambien T0MR0 
-	return timer0_int_count + T0TC*(1 / 14999.9);
+	return t0_tiempo;
 }
 
 //Como se va a utilizar T0MR1 habra que añadir cosas para que no se reseten cosas que no queremos
@@ -122,7 +122,7 @@ void timer1_temporizador_empezar(void){
 /************************
 Funcion que devuelve el tiempo que ha contado el timer1 hasta el momento*/
 unsigned long timer1_temporizador_leer(void){
-	return timer1_int_count + T1TC*((unsigned long)1 / 14999.9);
+	return timer1_int_count*0xffffffff/60+T1TC/60;
 	//Devuelve el tiempo que llevaba en milisegundos
 }
 
@@ -130,9 +130,10 @@ unsigned long timer1_temporizador_leer(void){
 Funcion que para el timer1 y devuelve lo que lleva contado hasta el momento*/
 unsigned long timer1_temporizador_parar(void){
 	//double t1_tiempo = (double)timer1_int_count + T1TC*(1 / 14999.9);
+	unsigned long t1_tiempo = timer1_temporizador_leer();
 	T1TCR = 0;
 	//Hay que resetear tambien T0MR0 ? o al poner a 0 el enable del T0TC 
-	return timer1_int_count + T1TC*((unsigned long)1 / 14999.9);
+	return t1_tiempo;
 }
 
 

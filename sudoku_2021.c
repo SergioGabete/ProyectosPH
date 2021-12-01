@@ -285,19 +285,19 @@ El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el plan
 Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
 
 Tambien al desencolar hay seccion critica
-//Meter lo de desactivar interrupciones solo en la cola
+//Meter lo de desactivar interrupciones solo en la cola	HECHO
 
-No llamar a nada de hardware que no sea el el modulo que lo gestiona
+No llamar a nada de hardware que no sea el el modulo que lo gestiona	HECHO
 
 
-//Pasarle el struct al gestor de alarmas
+//Pasarle el struct al gestor de alarmas	HECHO
 //Quitar los doubles de los timers que se pierde precision	HECHO
 
-Revisar un poco el tema de los eventos
+Revisar un poco el tema de los eventos	HECHO
 
 Tocar la cola con lo del overflow	HECHO
 
-Añadir mas de 8 tipos de alarmas
+Añadir mas de 8 tipos de alarmas	NO HECO pero se ignora
 
 Hacer lo del latido idle				HECHO
 */
