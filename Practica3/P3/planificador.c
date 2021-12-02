@@ -47,6 +47,9 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	if(evento_sin_tratar.ID_evento == evento_boton1){
 	sudoku_evento_boton1();
 	}
+	if(evento_sin_tratar.ID_evento == evento_boton2){
+	sudoku_evento_boton2();
+	}
 	
 	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_1){
 		gestor_pulsacion_alarma_boton1();		//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
