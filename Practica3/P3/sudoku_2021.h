@@ -53,5 +53,11 @@ void sudoku_inicializar(void);
 
 void sudoku_reiniciar(void);
 
+void sudoku_evento_boton1(void);
+
+int sudoku_parar(void);
+
+void sudoku_retomar_ejecucion(void);
+
 #endif /* SUDOKU_H_2021 */
 

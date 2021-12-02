@@ -42,7 +42,7 @@ int main (void) {
 		double timer1_finalizacion = timer1_temporizador_parar();
 		
 		//Aque se eberia poner lo de parar a 0
-		planificador_retormar_ejecucion();
+		sudoku_retomar_ejecucion();
 	
 }
 	
