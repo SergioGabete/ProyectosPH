@@ -49,7 +49,7 @@ int sudoku_parar(){
 	return parar;
 }
 
-void sudoku_retormar_ejecucion(){
+void sudoku_retomar_ejecucion(){
 	parar = 0;
 }
 
@@ -86,6 +86,7 @@ void sudoku_evento_boton1(){
 	
 	
 		double t0 = timer1_temporizador_leer();
+	
 		gestor_pulsacion_boton1_pretado();
 		
 		uint8_t i = gestor_IO_leer_fila();
@@ -120,33 +121,37 @@ void sudoku_evento_boton1(){
 		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
 				parar = 1;
 			}
-	}
-	
-	
-	if(evento_sin_tratar.ID_evento == evento_boton2){
-//		gestor_pulsacion_nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
-//		gestor_pulsacion_actualizar_estado_1();	//Son del gestor
-//		cola_guardar_eventos(Set_Alarm,0x05800064);	//Meter con esas 2 en el gestor	
-		gestor_pulsacion_boton2_pretado();
-//		VICIntEnable = configuracionVicEnable;
-//		VICIntEnClr = configuracionVicClr;
+}
+
+void sudoku_evento_visualizacion_GPIO(){
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
 		uint8_t valor = gestor_IO_leer_valor_introducir();
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);	//Devuelve 0
 		uint8_t pista = celda_leer_pista(celda); 
-		uint16_t candidatos_celda = celda_leer_candidatos(celda);
-		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
-			celda_borrar_celda(&cuadricula_C_C[i][j]);
-			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+		
+		uint8_t valor_celda = celda_leer_valor(celda);
+		uint16_t candidatos_celda =celda_leer_candidatos(celda);
+		uint8_t bitSucio = celda_leer_error(celda);
+
+		gestor_IO_escribir_celda(valor_celda);
+		//gestor_IO_escribir(4,12,candidatos_celda);
+		gestor_IO_escribir_candidatos(candidatos_celda);
+		
+		//Si la celda es una pista inicial o un valor erroneo se activa el led 
+		if(bitSucio == 1 || pista == 1){
+			//gestor_IO_escribir(13,1,1);
+			gestor_IO_escribir_led();
 		}
-		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
-		if(gestor_IO_reiniciar(i,j,valor) == 1){
-				parar = 1;
-			}	
-	
-	
+		//Se lee el estado de la GPIO para ver si ha cambiado 
+		//uint32_t estadoNuevo = gestor_IO_leer(0,32);
+		uint32_t estadoNuevo = gestor_IO_leer_estado();
+		if(estadoNuevo != estado_GPIO){	//Si el estado es distinto significa que el usuario sigue jugando y se vuelve a poner la alarma
+			gestor_alarmas_resetear_power_down();
+		}
+		estado_GPIO =gestor_IO_leer_estado(); //Se actualiza el estado
 }
+
 
 
 

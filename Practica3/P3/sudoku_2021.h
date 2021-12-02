@@ -59,5 +59,7 @@ int sudoku_parar(void);
 
 void sudoku_retomar_ejecucion(void);
 
+void sudoku_evento_visualizacion_GPIO(void);
+
 #endif /* SUDOKU_H_2021 */
 

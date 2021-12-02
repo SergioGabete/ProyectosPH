@@ -14,7 +14,7 @@
 //#include "cuadricula.h"
 
 
-void sudoku_inicializar(){
+void planificador_init(){
 	struct evento evento_sin_tratar;
 		while(sudoku_parar() == 0){  //Esto debe ser una funcion de sudoku para saber si parar
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
@@ -45,6 +45,30 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	}
 	
 	if(evento_sin_tratar.ID_evento == evento_boton1){
+	sudoku_evento_boton1();
+	}
+	
+	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_1){
+		gestor_pulsacion_alarma_boton1();		//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
+		//Mejor preguntar a enrique
+	}
+	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_2){
+		gestor_pulsacion_alarma_boton2();	//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
+		//Mejor preguntar a enrique
+	} 
+	if(evento_sin_tratar.ID_evento == evento_visualizacion_GPIO){
+		sudoku_evento_visualizacion_GPIO();
+	}
+	if(evento_sin_tratar.ID_evento == evento_visualizar_led){
+		gestor_IO_quitar_led();
+	}
+	if(evento_sin_tratar.ID_evento == evento_power_down){
+		powerdown_procesador();
+	}
+	
+}
+
+
 		//Se usa t0 para calcular el tiempo de procesado de la entrada
 //		double t0 = timer1_temporizador_leer();
 //		
@@ -88,6 +112,7 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 //	}
 //	
 //	
+
 //	if(evento_sin_tratar.ID_evento == evento_boton2){
 ////		gestor_pulsacion_nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
 ////		gestor_pulsacion_actualizar_estado_1();	//Son del gestor
@@ -108,59 +133,54 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 //		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 //		if(gestor_IO_reiniciar(i,j,valor) == 1){
 //				parar = 1;
-//			}	
-	}
-	
-	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_1){
-		gestor_pulsacion_alarma_boton1();		//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
-		//Mejor preguntar a enrique
-	}
-	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_2){
-		gestor_pulsacion_alarma_boton2();	//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
-		//Mejor preguntar a enrique
-	} 
-	if(evento_sin_tratar.ID_evento == evento_visualizacion_GPIO){
-		//Se extraen los valores de la celda seleccionada por el usuario
-		//Se extraen los candidatos y el valor de la celda seleccionad
-		
-		uint8_t i = gestor_IO_leer_fila();
-		uint8_t j = gestor_IO_leer_columna();
-		uint8_t valor = gestor_IO_leer_valor_introducir();
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);	//Devuelve 0
-		uint8_t pista = celda_leer_pista(celda); 
-		//uint16_t candidatos_celda = celda_leer_candidatos(celda);
-		
-		uint8_t valor_celda = celda_leer_valor(celda);
-		uint16_t candidatos_celda =celda_leer_candidatos(celda);
-		uint8_t bitSucio = celda_leer_error(celda);
-		//uint8_t pista = (celda >> 4) & 0x01;
-		
-		//Se escriben en la GPIO los candidatos y el valor de la celda seleccionada
-		//gestor_IO_escribir(0,4,valor_celda);
-		gestor_IO_escribir_celda(valor_celda);
-		//gestor_IO_escribir(4,12,candidatos_celda);
-		gestor_IO_escribir_candidatos(candidatos_celda);
-		
-		//Si la celda es una pista inicial o un valor erroneo se activa el led 
-		if(bitSucio == 1 || pista == 1){
-			//gestor_IO_escribir(13,1,1);
-			gestor_IO_escribir_led();
-		}
-		//Se lee el estado de la GPIO para ver si ha cambiado 
-		//uint32_t estadoNuevo = gestor_IO_leer(0,32);
-		uint32_t estadoNuevo = gestor_IO_leer_estado();
-		if(estadoNuevo != estado_GPIO){	//Si el estado es distinto significa que el usuario sigue jugando y se vuelve a poner la alarma
-			gestor_alarmas_resetear_power_down();
-		}
-		estado_GPIO =gestor_IO_leer_estado(); //Se actualiza el estado
-	}
-	if(evento_sin_tratar.ID_evento == evento_visualizar_led){
-		gestor_IO_quitar_led();
-	}
-	if(evento_sin_tratar.ID_evento == evento_power_down){
-		powerdown_procesador();
-	}
-	
-}
+//		}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//		uint8_t i = gestor_IO_leer_fila();
+//		uint8_t j = gestor_IO_leer_columna();
+//		uint8_t valor = gestor_IO_leer_valor_introducir();
+//		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);	//Devuelve 0
+//		uint8_t pista = celda_leer_pista(celda); 
+//		//uint16_t candidatos_celda = celda_leer_candidatos(celda);
+//		
+//		uint8_t valor_celda = celda_leer_valor(celda);
+//		uint16_t candidatos_celda =celda_leer_candidatos(celda);
+//		uint8_t bitSucio = celda_leer_error(celda);
+//		//uint8_t pista = (celda >> 4) & 0x01;
+//		
+//		//Se escriben en la GPIO los candidatos y el valor de la celda seleccionada
+//		//gestor_IO_escribir(0,4,valor_celda);
+//		gestor_IO_escribir_celda(valor_celda);
+//		//gestor_IO_escribir(4,12,candidatos_celda);
+//		gestor_IO_escribir_candidatos(candidatos_celda);
+//		
+//		//Si la celda es una pista inicial o un valor erroneo se activa el led 
+//		if(bitSucio == 1 || pista == 1){
+//			//gestor_IO_escribir(13,1,1);
+//			gestor_IO_escribir_led();
+//		}
+//		//Se lee el estado de la GPIO para ver si ha cambiado 
+//		//uint32_t estadoNuevo = gestor_IO_leer(0,32);
+//		uint32_t estadoNuevo = gestor_IO_leer_estado();
+//		if(estadoNuevo != estado_GPIO){	//Si el estado es distinto significa que el usuario sigue jugando y se vuelve a poner la alarma
+//			gestor_alarmas_resetear_power_down();
+//		}
+//		estado_GPIO =gestor_IO_leer_estado(); //Se actualiza el estado
 
 

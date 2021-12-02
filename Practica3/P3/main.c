@@ -32,7 +32,6 @@ int main (void) {
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
-		sudoku_inicializar();
 		//Se llama alplanificador
 		planificador_init();
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
