@@ -260,11 +260,11 @@ void sudoku_evento_boton2(){
 		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
 		uint8_t pista = celda_leer_pista(celda); 
 		uint16_t candidatos_celda = celda_leer_candidatos(celda);
-		sudoku_2021_borrar_valor(i,j);
-//		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
-//			celda_borrar_celda(&cuadricula_C_C[i][j]);
-//			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
-//		}
+		//sudoku_2021_borrar_valor(i,j);
+		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
+			celda_borrar_celda(&cuadricula_C_C[i][j]);
+			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+		}
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){
 				parar = 1;
