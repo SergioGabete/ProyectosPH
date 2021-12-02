@@ -61,5 +61,13 @@ void sudoku_retomar_ejecucion(void);
 
 void sudoku_evento_visualizacion_GPIO(void);
 
+void sudoku_evento_boton2(void);
+
+void sudoku_2021_borrar_valor(int fila,int columna);
+
+int sudoku_2021_comprobar_columnas(int fila, int columna);
+
+
+
 #endif /* SUDOKU_H_2021 */
 

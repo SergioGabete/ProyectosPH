@@ -123,6 +123,8 @@ void sudoku_evento_boton1(){
 			}
 }
 
+
+
 void sudoku_evento_visualizacion_GPIO(){
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
@@ -249,6 +251,25 @@ void sudoku_2021_borrar_valor(int fila,int columna){
 		}
 	}
 }
+
+void sudoku_evento_boton2(){
+		gestor_pulsacion_boton2_pretado();
+		uint8_t i = gestor_IO_leer_fila();
+		uint8_t j = gestor_IO_leer_columna();
+		uint8_t valor = gestor_IO_leer_valor_introducir();
+		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+		uint8_t pista = celda_leer_pista(celda); 
+		uint16_t candidatos_celda = celda_leer_candidatos(celda);
+		sudoku_2021_borrar_valor(i,j);
+//		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
+//			celda_borrar_celda(&cuadricula_C_C[i][j]);
+//			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+//		}
+		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
+		if(gestor_IO_reiniciar(i,j,valor) == 1){
+				parar = 1;
+			}
+}	
 
 
 /*
