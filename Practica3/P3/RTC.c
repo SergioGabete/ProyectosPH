@@ -41,3 +41,4 @@ int RTC_leer_segundos(){
 	return CTIME0 & 0x3F;
 	
 }
+

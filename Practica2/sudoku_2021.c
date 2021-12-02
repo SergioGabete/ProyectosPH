@@ -14,6 +14,8 @@
 #include "cuadricula.h"
 
 
+
+
 void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 	uint8_t fila, uint8_t columna)
 {
@@ -106,8 +108,17 @@ Revisar un poco el tema de los eventos	HECHO
 
 Tocar la cola con lo del overflow	HECHO
 
-Añadir mas de 8 tipos de alarmas	NO HECO pero se ignora
+Añadir mas de 8 tipos de alarmas	
 
 Hacer lo del latido idle				HECHO
+
+
+El sudoku puede llamar a gestor_IO y demas
+El unico que conoce que es una fila o columna es el sudoku
+El planificador simplemente recibe un evento y lo envia
+Poner la cuadricula en sudoku
+El idle simplemente es del planificador, sera una alarma que despertara al procesador y ya.
+Al estar procesando quitas la alarma y cuando acabas la vuelves a poner (esta alarma quita el tic y lo vuelve a poner)
+
 */
 

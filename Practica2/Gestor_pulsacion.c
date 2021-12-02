@@ -125,6 +125,7 @@ void gestor_pulsacion_alarma_boton2(void){
 			gestor_pulsacion_actualizar_estado_1();
 			gestor_pulsacion_clear_nueva_pulsacion_1();
 			gestor_alarmas_quitar_alarma(evento_alarma_pulsaciones_2);
+			//Alternativa: encolar evento que llame al gestor de alarmas en el planificador
 		}
 }
 
