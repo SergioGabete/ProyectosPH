@@ -16,15 +16,15 @@
 
 void planificador_init(){
 	struct evento evento_sin_tratar;
-		while(sudoku_parar() == 0){  //Esto debe ser una funcion de sudoku para saber si parar
+		while(1){  //Esto debe ser una funcion de sudoku para saber si parar
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
 				evento_sin_tratar = cola_evento_sin_tratar();
 				planificador_tratar_evento(evento_sin_tratar);
 			}else{
 				//Si no hay eventos a tratar se pasa a modo idle
-				gestor_IO_activar_iddle();
+				//gestor_IO_activar_iddle();
 				idle_procesador();					//MAL cambiarlo
-				gestor_IO_desactivar_iddle();
+				//gestor_IO_desactivar_iddle();
 			}
 		}
 	
@@ -34,7 +34,7 @@ void planificador_init(){
 /****************************************
 *	La funcion realiza una accion dependiendo del evento que le llegue al planificador*/
 void planificador_tratar_evento(struct evento evento_sin_tratar){
-
+	//quitar alarma del idle
 	switch(evento_sin_tratar.ID_evento){
 		case resta_Periodos:
 			gestor_alarmas_restar_periodo();
@@ -43,9 +43,11 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			gestor_alarmas_introducir_evento(evento_sin_tratar.auxData);
 			break;
 		case evento_boton1:
+			gestor_pulsacion_boton1_pretado();
 			sudoku_evento_boton1();
 			break;
 		case evento_boton2:
+			gestor_pulsacion_boton2_pretado();
 			sudoku_evento_boton2();
 			break;
 		case evento_alarma_pulsaciones_1:
@@ -61,13 +63,22 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			gestor_IO_quitar_led();
 			break;
 		case evento_power_down:
+			//Se para el modo idle
+			gestor_alarmas_quitar_alarma(evento_idle);
 			powerdown_procesador();
+			gestor_alarmas_activar_alarma(evento_idle);
+			break;
+		case evento_idle:
+			gestor_IO_evento_idle();
 			break;
 		default:
 			;
 			break;
 	}
 	
+	//Poner alarma del idle
+	//Llega una alarma de tipo latido que la vaya quitando
+		
 }
 
 

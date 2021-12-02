@@ -7,6 +7,8 @@
 #include "Gestor_Alarmas.h"
 #include <LPC210x.H> 
 
+uint8_t estado_idle_Global=0;
+
 /************************
 Funci�n que inicializa el gestor IO que sirve de enlace entre el planificador y la GPIO y sus pines*/
 void gestor_IO_iniciar(void){
@@ -143,5 +145,16 @@ void gestor_IO_desactivar_iddle(){
 
 uint32_t gestor_IO_leer_estado(){
 	return GPIO_leer(0,32);
+}
+
+void gestor_IO_evento_idle(){
+	//uint8_t estado_idle = GPIO_leer(31,1);
+	if(estado_idle_Global == 1){
+		gestor_IO_desactivar_iddle();
+		estado_idle_Global = 0;
+	}else{
+		gestor_IO_activar_iddle();
+		estado_idle_Global = 1;
+	}
 }
 

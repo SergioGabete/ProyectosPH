@@ -17,7 +17,6 @@
 
 int main (void) {
 	//planificador_init();
-	while(1){
 		//Se inicializan todos los perifericos del sistema
 		gestor_pulsacion_eint_init();
 		timer1_temporizador_iniciar();
@@ -30,20 +29,19 @@ int main (void) {
 		sudoku_inicializar();
 		//Poner alarma para la visualizacion constante de la GPIO
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
+		//Introducir una periodica que sea el idle
+	//00000000 1 00000000000000000010100
+	cola_guardar_eventos(Set_Alarm,0x00800014);
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
 		//Se llama alplanificador
 		planificador_init();
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
-		sudoku_reiniciar();
+		//sudoku_reiniciar();
 		//Se reinician los timers
-		double timer0_finalizacion = timer0_temporizador_parar();
-		double timer1_finalizacion = timer1_temporizador_parar();
 		
 		//Aque se eberia poner lo de parar a 0
-		sudoku_retomar_ejecucion();
-	
-}
+		//sudoku_retomar_ejecucion()
 	
 }
 

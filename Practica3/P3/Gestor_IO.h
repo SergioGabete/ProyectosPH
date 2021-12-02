@@ -53,6 +53,8 @@ void gestor_IO_desactivar_iddle(void);
 
 uint32_t gestor_IO_leer_estado(void);
 
+void gestor_IO_evento_idle(void);
+
 #endif 
 
 

@@ -84,10 +84,10 @@ void sudoku_reiniciar(){
 
 void sudoku_evento_boton1(){
 	
-	
+		//Quitar alarma del idle
 		double t0 = timer1_temporizador_leer();
 	
-		gestor_pulsacion_boton1_pretado();
+		//gestor_pulsacion_boton1_pretado();
 		
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
@@ -119,8 +119,12 @@ void sudoku_evento_boton1(){
 		}
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
-				parar = 1;
+			//	parar = 1;
+			//Reiniciar
+			sudoku_reiniciar();
+			candidatos_actualizar_c(cuadricula_C_C);
 			}
+
 }
 
 
@@ -253,7 +257,7 @@ void sudoku_2021_borrar_valor(int fila,int columna){
 }
 
 void sudoku_evento_boton2(){
-		gestor_pulsacion_boton2_pretado();
+		//gestor_pulsacion_boton2_pretado();
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
 		uint8_t valor = gestor_IO_leer_valor_introducir();
@@ -267,7 +271,9 @@ void sudoku_evento_boton2(){
 		}
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){
-				parar = 1;
+				//parar = 1;
+				sudoku_reiniciar();
+			candidatos_actualizar_c(cuadricula_C_C);
 			}
 }	
 

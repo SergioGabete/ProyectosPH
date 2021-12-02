@@ -11,7 +11,7 @@ struct evento{
 };
 
 enum IDs{
-	evento_boton1, //id0
+	evento_idle, //id0
 	evento_boton2, //id1
 	evento_power_down, //id2
 	resta_Periodos, //id3
@@ -20,6 +20,7 @@ enum IDs{
 	evento_visualizacion_GPIO,	//id6
 	evento_visualizar_led,		//id7
 	Set_Alarm,			//id8
+	evento_boton1,	//id 9
 };
 
 
