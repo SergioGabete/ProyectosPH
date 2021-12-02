@@ -84,7 +84,7 @@ SWI_End
 enable_isr
 				MSR cpsr_c, r8
 				BIC r8, r8, #I_Bit
-				MSR cpsr_c, r8				   ; Enable IRQ
+				MSR cpsr_c, r8				   ; Enable IRQ ;MRS cambiao
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
@@ -113,7 +113,19 @@ disable_isr_fiq
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
-						
+
+;disable_IRQ
+;                LDMFD   SP!, {R8, R12}    ; Load R8, SPSR
+;                ORR     R12, R12, #0x80   ; Set IRQ flag to disable it
+;                MSR     SPSR_cxsf, R12    ; Set SPSR
+;                LDMFD   SP!, {R12, PC}^   ; Restore R12 and Return
+
+;enable_IRQ
+;                LDMFD   SP!, {R8, R12}    ; Load R8, SPSR
+;                BIC     R12, R12, #0x80   ; Set IRQ flag to disable it
+;                MSR     SPSR_cxsf, R12    ; Set SPSR
+;                LDMFD   SP!, {R12, PC}^   ; Restore R12 and Return
+
 				END
 					
 

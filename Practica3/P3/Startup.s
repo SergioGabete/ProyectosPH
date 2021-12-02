@@ -323,6 +323,16 @@ __user_initial_stackheap
                 LDR     R3, = Stack_Mem
                 BX      LR
 
+;; codigo para generar una excepci?n Esto es de Dario pero creo que no hace falta
+;				EXPORT  exception
+;				PRESERVE8 {TRUE}
+;exception				
+;				MOV 	R0,#1
+;				LDR		R1,[R0]
+;				BX      LR
+
+;				EXPORT  Switch_to_PLL
+
 				EXPORT Switch_to_PLL
 Switch_to_PLL
 				LDR     R0, =PLL_BASE

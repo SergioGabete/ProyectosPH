@@ -591,6 +591,16 @@
               <FileType>2</FileType>
               <FilePath>.\SWI.s</FilePath>
             </File>
+            <File>
+              <FileName>Gestor_Interrupciones.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Gestor_Interrupciones.h</FilePath>
+            </File>
+            <File>
+              <FileName>Gestor_Interrupciones.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Gestor_Interrupciones.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
