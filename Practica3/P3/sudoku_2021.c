@@ -122,6 +122,45 @@ int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 }
 
 
+int sudoku_2021_comprobar_columnas(int fila, int columna){
+	if(fila >0 && fila <=9 && columna >0 && columna <= 9){
+			return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
+void sudoku_2021_inicializar_tablero(){
+		for(int i=0;i<NUM_FILAS;i++){
+			for(int j=0;j<NUM_COLUMNAS;j++){
+				cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];	
+			}
+		}
+}
+
+void sudoku_2021_inicializar(){
+	sudoku_2021_inicializar_tablero();
+	candidatos_actualizar_c(cuadricula_C_C);
+}
+
+uint8_t sudoku_2021_obtener_valor_celda(int fila, int columna){
+			//Devuelve el valor de los 8 digitos
+			return cuadricula_C_C[fila-1][columna-1];
+}
+
+void sudoku_2021_borrar_valor(int fila,int columna){
+	//Para borrar habrá que comprobar que el valor de las columnas es válido, y posteriormente comprobar si es una pista,
+	//es decir, no se puede borrar o si no lo es que se borrará
+	if(sudoku_2021_comprobar_columnas(fila, columna) == 1){
+		uint8_t pista = (cuadricula_C_C[fila-1][columna-1] >> 4) & 0x1;
+		
+		if(pista !=1 ) {
+			celda_borrar_celda(&cuadricula_C_C[fila][columna]);
+			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+		}
+	}
+}
 
 
 /*
