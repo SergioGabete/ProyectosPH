@@ -576,6 +576,21 @@
               <FileType>1</FileType>
               <FilePath>.\RTC.c</FilePath>
             </File>
+            <File>
+              <FileName>WT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\WT.c</FilePath>
+            </File>
+            <File>
+              <FileName>WT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\WT.h</FilePath>
+            </File>
+            <File>
+              <FileName>SWI.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\SWI.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

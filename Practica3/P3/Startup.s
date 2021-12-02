@@ -53,7 +53,7 @@ F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
 UND_Stack_Size  EQU     0x00000000
 SVC_Stack_Size  EQU     0x00000400
 ABT_Stack_Size  EQU     0x00000000
-FIQ_Stack_Size  EQU     0x00000000
+FIQ_Stack_Size  EQU     0x00000080
 IRQ_Stack_Size  EQU     0x00000080
 USR_Stack_Size  EQU     0x00000400
 
@@ -161,21 +161,37 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, [PC, #-0x0FF0]     ; Vector from VicVectAddr
                 LDR     PC, FIQ_Addr
 
+; Dario	//Esto se supone que invoca el vector este
+                IMPORT SWI_Handler
+
 Reset_Addr      DCD     Reset_Handler
 Undef_Addr      DCD     Undef_Handler
-SWI_Addr        DCD     SWI_Handler
+SWI_Addr        DCD     SWI_Handler	;Esto redirige algo
 PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
                 DCD     0                      ; Reserved Address 
 IRQ_Addr        DCD     IRQ_Handler
+;					PRESERVE8 {TRUE}
+;FIQ_Addr        DCD     timer0_ISR ;Nueva rutina de tratamiento de las FIQ ser? la de EINT0 Esto es de binhui
 FIQ_Addr        DCD     FIQ_Handler
 
 Undef_Handler   B       Undef_Handler
-SWI_Handler     B       SWI_Handler
-PAbt_Handler    B       PAbt_Handler
+;SWI_Handler     B       SWI_Handler
+;No se que sera esto pero lo dejo por si es necesario
+;				EXTERN	PAbt_Handler_function
+;PAbt_Handler    B       PAbt_Handler_function
+;				EXTERN  DAbt_Handler_function
+;DAbt_Handler    B       DAbt_Handler_function
+PAbt_Handler    B       PAbt_Handler	;Estos dos binui no los ha tocado
 DAbt_Handler    B       DAbt_Handler
 IRQ_Handler     B       IRQ_Handler
 FIQ_Handler     B       FIQ_Handler
+
+;No se que sera esto pero lo dejo por si es necesario
+;				EXTERN	PAbt_Handler_function
+;PAbt_Handler    B       PAbt_Handler_function
+;				EXTERN  DAbt_Handler_function
+;DAbt_Handler    B       DAbt_Handler_function
 
 
 ; Reset Handler
@@ -270,16 +286,22 @@ MEMMAP          EQU     0xE01FC040      ; Memory Mapping Control
                 MOV     SP, R0
                 SUB     R0, R0, #IRQ_Stack_Size
 
-;  Enter User Mode and set its Stack Pointer
-                MSR     CPSR_c, #Mode_USR
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
+;;  Enter User Mode and set its Stack Pointer
+;                MSR     CPSR_c, #Mode_USR
+;                MOV     SP, R0
+;                SUB     SL, SP, #USR_Stack_Size
 
 ;  Enter Supervisor Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_SVC:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
                 SUB     R0, R0, #SVC_Stack_Size
 
+;;;;;;;;;;;;;;;;;;
+;Esto se ha puesto despues para que se meta en modo usuario
+;  Enter User Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_USR
+                MOV     SP, R0
+                SUB     SL, SP, #USR_Stack_Size
 
 ; Enter the C code
 

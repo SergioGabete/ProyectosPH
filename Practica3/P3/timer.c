@@ -12,6 +12,8 @@ static volatile unsigned long timer1_int_count = 0;
 //Variable que controla el periodo de las alarmas
 static volatile unsigned int periodo_global = 0;
 
+static volatile unsigned long timer1_swi_lectura = 0;
+
 void timer0_ISR (void) __irq;   // Generate Interrupt 
 
 void timer1_ISR (void) __irq;    // Generate Interrupt 
@@ -145,3 +147,14 @@ void timer1_ISR (void) __irq {
 			VICVectAddr = 1;
 	 
 }
+
+
+uint32_t __swi(0) clock_gettime(void);
+uint32_t __SWI_0 (void) {
+	//timer1_swi_lectura = timer1_temporizador_leer();
+	return timer1_int_count*0xffffffff/60+T1TC/60;
+}
+
+
+
+
