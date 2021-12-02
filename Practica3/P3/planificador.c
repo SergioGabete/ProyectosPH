@@ -35,38 +35,37 @@ void planificador_init(){
 *	La funcion realiza una accion dependiendo del evento que le llegue al planificador*/
 void planificador_tratar_evento(struct evento evento_sin_tratar){
 
-	if(evento_sin_tratar.ID_evento == resta_Periodos){	
-		gestor_alarmas_restar_periodo();	//cada milisegundo llega un evento evento_resta_periodos
-																			//Para restar 1 al periodo de las alarmas activas
-	}
-	if(evento_sin_tratar.ID_evento == Set_Alarm){ 
-		gestor_alarmas_introducir_evento(evento_sin_tratar.auxData);
-		//Al llegat un evento Set_Alarm se llama a la funcion del Gestor_Alarma para poner una alarma
-	}
-	
-	if(evento_sin_tratar.ID_evento == evento_boton1){
-	sudoku_evento_boton1();
-	}
-	if(evento_sin_tratar.ID_evento == evento_boton2){
-	sudoku_evento_boton2();
-	}
-	
-	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_1){
-		gestor_pulsacion_alarma_boton1();		//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
-		//Mejor preguntar a enrique
-	}
-	if(evento_sin_tratar.ID_evento == evento_alarma_pulsaciones_2){
-		gestor_pulsacion_alarma_boton2();	//estado_GPIO funcion no se si deberia comunicarse directamente con el gestor
-		//Mejor preguntar a enrique
-	} 
-	if(evento_sin_tratar.ID_evento == evento_visualizacion_GPIO){
-		sudoku_evento_visualizacion_GPIO();
-	}
-	if(evento_sin_tratar.ID_evento == evento_visualizar_led){
-		gestor_IO_quitar_led();
-	}
-	if(evento_sin_tratar.ID_evento == evento_power_down){
-		powerdown_procesador();
+	switch(evento_sin_tratar.ID_evento){
+		case resta_Periodos:
+			gestor_alarmas_restar_periodo();
+			break;
+		case Set_Alarm:
+			gestor_alarmas_introducir_evento(evento_sin_tratar.auxData);
+			break;
+		case evento_boton1:
+			sudoku_evento_boton1();
+			break;
+		case evento_boton2:
+			sudoku_evento_boton2();
+			break;
+		case evento_alarma_pulsaciones_1:
+			gestor_pulsacion_alarma_boton1();
+			break;
+		case evento_alarma_pulsaciones_2:
+			gestor_pulsacion_alarma_boton1();
+			break;
+		case evento_visualizacion_GPIO:
+			sudoku_evento_visualizacion_GPIO();
+			break;
+		case  evento_visualizar_led:
+			gestor_IO_quitar_led();
+			break;
+		case evento_power_down:
+			powerdown_procesador();
+			break;
+		default:
+			;
+			break;
 	}
 	
 }
