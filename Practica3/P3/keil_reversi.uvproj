@@ -601,6 +601,16 @@
               <FileType>1</FileType>
               <FilePath>.\Gestor_Interrupciones.c</FilePath>
             </File>
+            <File>
+              <FileName>UART0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UART0.h</FilePath>
+            </File>
+            <File>
+              <FileName>UART0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UART0.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

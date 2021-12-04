@@ -12,6 +12,7 @@
 #include "pw_id_control.h"
 #include "sudoku_2021.h"
 #include "planificador.h"
+#include "UART0.h"
 //#include "cuadricula.h"
 
 
@@ -35,7 +36,10 @@ int main (void) {
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
 		//Se llama alplanificador
+		uart0_init();
+//		uart0_sendchar(65);
 		planificador_init();
+		
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
 		//sudoku_reiniciar();
 		//Se reinician los timers

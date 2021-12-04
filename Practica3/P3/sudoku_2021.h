@@ -67,6 +67,8 @@ void sudoku_2021_borrar_valor(int fila,int columna);
 
 int sudoku_2021_comprobar_columnas(int fila, int columna);
 
+void sudoku_introducir_jugada(uint32_t aux);
+
 //void sudoku_evento_idle(void);
 
 

@@ -19,5 +19,6 @@ void planificador_init(void);
 
 void planificador_reiniciar(void);
 
+
 #endif
 

@@ -13,10 +13,13 @@
 #include "pw_id_control.h"
 //#include "cuadricula.h"
 
+static int parar =0;
+
+
 
 void planificador_init(){
 	struct evento evento_sin_tratar;
-		while(1){  //Esto debe ser una funcion de sudoku para saber si parar
+		while(parar == 0){  //Esto debe ser una funcion de sudoku para saber si parar
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
 				evento_sin_tratar = cola_evento_sin_tratar();
 				planificador_tratar_evento(evento_sin_tratar);
@@ -70,6 +73,15 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			break;
 		case evento_idle:
 			gestor_IO_evento_idle();
+			break;
+		case evento_rst:
+			parar = 1;		//Esto no se si corresponde al planificador
+			break;
+		case evento_new:
+			sudoku_reiniciar();
+			break;
+		case evento_jugada:
+			sudoku_introducir_jugada(evento_sin_tratar.auxData);								//No se si se deberia meter esa funcion nueva de sudoku o usar cosas de la GPIO
 			break;
 		default:
 			;

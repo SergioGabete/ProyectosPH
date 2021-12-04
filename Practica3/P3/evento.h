@@ -21,6 +21,9 @@ enum IDs{
 	evento_visualizar_led,		//id7
 	Set_Alarm,			//id8
 	evento_boton1,	//id 9
+	evento_rst,
+	evento_new,
+	evento_jugada,
 };
 
 
