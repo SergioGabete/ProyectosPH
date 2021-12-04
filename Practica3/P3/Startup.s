@@ -151,6 +151,8 @@ MAMTIM_Val      EQU     0x00000004
 ;  Absolute addressing mode must be used.
 ;  Dummy Handlers are implemented as infinite loops which can be modified.
 
+				IMPORT timer0_ISR
+
 Vectors         LDR     PC, Reset_Addr         
                 LDR     PC, Undef_Addr
                 LDR     PC, SWI_Addr
@@ -159,7 +161,8 @@ Vectors         LDR     PC, Reset_Addr
                 NOP                            ; Reserved Vector 
 ;               LDR     PC, IRQ_Addr
                 LDR     PC, [PC, #-0x0FF0]     ; Vector from VicVectAddr
-                LDR     PC, FIQ_Addr
+                ;LDR     PC, FIQ_Addr
+				LDR 	PC,=timer0_ISR
 
 ; Dario	//Esto se supone que invoca el vector este
                 IMPORT SWI_Handler
@@ -277,6 +280,7 @@ MEMMAP          EQU     0xE01FC040      ; Memory Mapping Control
                 SUB     R0, R0, #ABT_Stack_Size
 
 ;  Enter FIQ Mode and set its Stack Pointer
+			    PRESERVE8 {TRUE}		;PROVOCAR ALINAMIENTO DE LA PILA
                 MSR     CPSR_c, #Mode_FIQ:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
                 SUB     R0, R0, #FIQ_Stack_Size
