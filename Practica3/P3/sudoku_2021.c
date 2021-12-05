@@ -10,8 +10,11 @@
 #include "GPIO.h"
 #include "Gestor_IO.h"
 #include "pw_id_control.h"
+#include "Gestor_Serial.h"
+#include <inttypes.h>
 //#include "tableros.h"
 //#include "cuadricula.h"
+
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
@@ -43,7 +46,11 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 
 static int parar=0;
 static uint32_t estado_GPIO=0;
-static double tiempoProcesado=0;
+
+
+//static int numFilas = 19;
+//static int numColumnas = 109;
+//static int tablero[numFilas][numColumnas];
 
 int sudoku_parar(){
 	return parar;
@@ -116,7 +123,7 @@ void sudoku_evento_boton1(){
 			}
 			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
 			double t1 = timer1_temporizador_leer();
-			tiempoProcesado = t1 - t0;
+			//tiempoProcesado = t1 - t0;
 		}
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
@@ -316,10 +323,53 @@ void sudoku_introducir_jugada(uint32_t aux){
 			//	parar = 1;
 			//Reiniciar
 			sudoku_reiniciar();
-			candidatos_actualizar_c(cuadricula_C_C);
+			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo ha en la funcion reiniciar
 			}
+		sudoku_mostrar_tablero();
 }
 
+void sudoku_mostrar_tablero(){
+	//generar matriz, numFilas = 19, numColumnas = 113
+	//necesito los candidatos, valor y pista
+	int numFilas = 19;
+	int numColumnas = 109;
+	uint16_t celda;
+	uint8_t pista;
+	uint16_t candidatos_celda;
+	uint8_t valor_celda;
+	int tablero[numFilas][numColumnas];
+	
+//			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+//			pista = celda_leer_pista(celda); 
+//			candidatos_celda = celda_leer_candidatos(celda);
+//			valor_celda = celda_leer_valor(celda);
+	
+	for(int i=0;i < numColumnas;i++){
+		tablero[0][i] = '+';
+		tablero[numFilas-1][i] = '+';
+	}
+	//Se ponen los bordes de las celdas y tal
+	tablero[1][0]='|';tablero[3][0]='|';tablero[5][0]='|';tablero[7][0]='|';tablero[9][0]='|';tablero[11][0]='|';tablero[13][0]='|';tablero[15][0]='|';tablero[17][0]='|';
+	tablero[1][12]='|';tablero[3][12]='|';tablero[5][12]='|';tablero[7][12]='|';tablero[9][12]='|';tablero[11][12]='|';tablero[13][12]='|';tablero[15][12]='|';tablero[17][12]='|';
+	tablero[1][24]='|';tablero[3][24]='|';tablero[5][24]='|';tablero[7][24]='|';tablero[9][24]='|';tablero[11][24]='|';tablero[13][24]='|';tablero[15][24]='|';tablero[17][24]='|';
+	tablero[1][36]='|';tablero[3][36]='|';tablero[5][36]='|';tablero[7][36]='|';tablero[9][36]='|';tablero[11][36]='|';tablero[13][36]='|';tablero[15][36]='|';tablero[17][36]='|';
+	tablero[1][48]='|';tablero[3][48]='|';tablero[5][48]='|';tablero[7][48]='|';tablero[9][48]='|';tablero[11][48]='|';tablero[13][48]='|';tablero[15][48]='|';tablero[17][48]='|';
+	tablero[1][60]='|';tablero[3][60]='|';tablero[5][60]='|';tablero[7][60]='|';tablero[9][60]='|';tablero[11][60]='|';tablero[13][60]='|';tablero[15][60]='|';tablero[17][60]='|';
+	tablero[1][72]='|';tablero[3][72]='|';tablero[5][72]='|';tablero[7][72]='|';tablero[9][72]='|';tablero[11][72]='|';tablero[13][72]='|';tablero[15][72]='|';tablero[17][72]='|';
+	tablero[1][84]='|';tablero[3][84]='|';tablero[5][84]='|';tablero[7][84]='|';tablero[9][84]='|';tablero[11][84]='|';tablero[13][84]='|';tablero[15][84]='|';tablero[17][84]='|';
+	tablero[1][96]='|';tablero[3][96]='|';tablero[5][96]='|';tablero[7][96]='|';tablero[9][96]='|';tablero[11][96]='|';tablero[13][96]='|';tablero[15][96]='|';tablero[17][96]='|';
+	tablero[1][108]='|';tablero[3][108]='|';tablero[5][108]='|';tablero[7][108]='|';tablero[9][108]='|';tablero[11][108]='|';tablero[13][108]='|';tablero[15][108]='|';tablero[17][108]='|';
+	for(int i=2;i<numFilas-1;i=i+2){
+		for(int j=0;j<numColumnas;j++){
+			tablero[i][j] = '-';
+		}
+	}
+	
+	
+	
+			
+	gestor_serial_escribir_linea(tablero,numFilas,numColumnas);
+}
 
 /*
 Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
