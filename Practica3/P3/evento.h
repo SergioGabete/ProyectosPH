@@ -24,6 +24,8 @@ enum IDs{
 	evento_rst,
 	evento_new,
 	evento_jugada,
+	evento_continuar_mensaje,
+	evento_fin_mensaje,
 };
 
 

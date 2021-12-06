@@ -20,7 +20,10 @@
 //#include "tableros.h"
 //#include "cuadricula.h"
 
-static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
+//static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
+static char informacionJuego[] ="Bienvenido al sudoku\n\n Vamos a comenzar " ;
+static int indice_mensaje =0, num_caracteres =0;
+static char* mensaje;
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
@@ -86,8 +89,9 @@ void sudoku_inicializar(){
 	candidatos_actualizar_c(cuadricula_C_C);
 }
 
+
 void sudoku_mensajeinicial(){
-	gestor_serial_introducirmensaje(informacionJuego);
+	sudoku_enviar_mensaje(informacionJuego);
 }
 
 void sudoku_reiniciar(){
@@ -336,6 +340,27 @@ void sudoku_introducir_jugada(uint32_t aux){
 			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo ha en la funcion reiniciar
 			}
 		//sudoku_mostrar_tablero();
+}
+
+void sudoku_continuar_mensaje(){
+			if(indice_mensaje<num_caracteres){
+				uart0_sendchar(mensaje[indice_mensaje]);
+				indice_mensaje = indice_mensaje +1;
+			}else if(num_caracteres!=0){
+				num_caracteres=0;
+				//cola_guardar_eventos(evento_fin_mensaje,0);
+			}	
+}
+
+void sudoku_fin_mensaje(){
+	
+}
+
+void sudoku_enviar_mensaje(char msg[]){
+			indice_mensaje=0;
+			num_caracteres=strlen(msg);
+			mensaje=msg;
+			uart0_sendchar(mensaje[indice_mensaje++]);			//Preguntar a enrique si se puede invocar sendchar desde aqui
 }
 /*
 void sudoku_mostrar_tablero(){

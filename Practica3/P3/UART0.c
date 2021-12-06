@@ -2,6 +2,7 @@
 #include <LPC210X.H>   
 #include "cola.h"
 #include "evento.h"
+#include "Gestor_Alarmas.h"
 
 static volatile int buffer_entrada[10];
 static volatile int indice=-1;
@@ -27,6 +28,7 @@ void uart0_init(){
 void uart0_ISR (void) __irq {
 
 		if (((U0IIR & 0x4) == 0x4)&&((U0LSR & 0x01) == 0x1)){
+				gestor_alarmas_resetear_power_down();
 				int ultimo = U0RBR;
 				U0THR = ultimo; //mostrar lo escrito	
 				//Se trata el caracter recibido y se encola el tipo de accion
@@ -70,6 +72,8 @@ void uart0_ISR (void) __irq {
 		}
 		if ((U0IIR & 0x1) == 0x1){
 				//Esperar respuesta de resano
+				cola_guardar_eventos(evento_continuar_mensaje,0);	//En el planificador se llama a sudoku enviar mensaje
+				
 		}
 		
 		VICVectAddr = 0;

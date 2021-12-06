@@ -83,6 +83,9 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		case evento_jugada:
 			sudoku_introducir_jugada(evento_sin_tratar.auxData);								//No se si se deberia meter esa funcion nueva de sudoku o usar cosas de la GPIO
 			break;
+		case evento_continuar_mensaje:
+			sudoku_continuar_mensaje();
+			break;
 		default:
 			;
 			break;

@@ -22,3 +22,4 @@ void gestor_serial_introducirmensaje(char informacion[]){
 				uart0_sendchar(informacion[i]);
 			}
 }
+
