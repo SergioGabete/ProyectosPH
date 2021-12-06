@@ -12,66 +12,42 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (timer.h)(0x61A7A5C1)
 I (evento.h)(0x61AB945D)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
-<<<<<<< Updated upstream
 I (GPIO.h)(0x61A7A5C1)
-F (.\sudoku_2021.c)(0x61AB945D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
+F (.\sudoku_2021.c)(0x61AE401C)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
-I (sudoku_2021.h)(0x61AB945D)
-=======
-I (GPIO.h)(0x619F59B9)
-F (.\sudoku_2021.c)(0x61ACC558)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
-I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
-I (sudoku_2021.h)(0x61AC9B5D)
->>>>>>> Stashed changes
-I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F2F9C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F2F9C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F2F9C)
+I (sudoku_2021.h)(0x61AE402C)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (celda.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\ARMCC\include\time.h)(0x599F2F9E)
 I (timer.h)(0x61A7A5C1)
 I (evento.h)(0x61AB945D)
 I (cola.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
-<<<<<<< Updated upstream
 I (Gestor_Alarmas.h)(0x61AB945D)
 I (Gestor_Pulsacion.h)(0x61A7A5C1)
 I (pulsacion.h)(0x61A7A5C1)
 I (GPIO.h)(0x61A7A5C1)
 I (Gestor_IO.h)(0x61AB945D)
 I (pw_id_control.h)(0x61A7A5C1)
+I (Gestor_Serial.h)(0x61AE3FEC)
+I (UART0.h)(0x61AB945D)
 F (.\timer.c)(0x61AB945D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\timer.o --omf_browse .\timer.crf --depend .\timer.d)
-=======
-I (Gestor_Alarmas.h)(0x61A8D045)
-I (Gestor_Pulsacion.h)(0x61A60E37)
-I (pulsacion.h)(0x618BAA90)
-I (GPIO.h)(0x619F59B9)
-I (Gestor_IO.h)(0x61A8BB3D)
-I (pw_id_control.h)(0x61961FDE)
-I (Gestor_Serial.h)(0x61AC9555)
-F (.\timer.c)(0x61A8E3CB)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\timer.o --omf_browse .\timer.crf --depend .\timer.d)
->>>>>>> Stashed changes
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (timer.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
-<<<<<<< Updated upstream
 I (evento.h)(0x61AB945D)
 I (cola.h)(0x61A7A5C1)
 F (.\celda.h)(0x61A7A5C1)()
 F (.\cola.h)(0x61A7A5C1)()
-F (.\sudoku_2021.h)(0x61AB945D)()
+F (.\sudoku_2021.h)(0x61AE402C)()
 F (.\tableros.h)(0x61A7A5C1)()
 F (.\Gestor_Alarmas.h)(0x61AB945D)()
 F (.\Gestor_Alarmas.c)(0x61AB945D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_alarmas.o --omf_browse .\gestor_alarmas.crf --depend .\gestor_alarmas.d)
-=======
-I (evento.h)(0x61AB775E)
-I (cola.h)(0x61A8FD45)
-F (.\celda.h)(0x61A65937)()
-F (.\cola.h)(0x61A8FD45)()
-F (.\sudoku_2021.h)(0x61AC9B5D)()
-F (.\tableros.h)(0x6142FEA6)()
-F (.\Gestor_Alarmas.h)(0x61A8D045)()
-F (.\Gestor_Alarmas.c)(0x61A8D0FC)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_alarmas.o --omf_browse .\gestor_alarmas.crf --depend .\gestor_alarmas.d)
->>>>>>> Stashed changes
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
 I (cola.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
@@ -120,13 +96,9 @@ I (pw_id_control.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 F (.\pw_id_control.h)(0x61A7A5C1)()
 F (.\timer.h)(0x61A7A5C1)()
-F (.\main.c)(0x61AB945D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\main.o --omf_browse .\main.crf --depend .\main.d)
+F (.\main.c)(0x61AE408B)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\main.o --omf_browse .\main.crf --depend .\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
-<<<<<<< Updated upstream
-I (sudoku_2021.h)(0x61AB945D)
-=======
-I (sudoku_2021.h)(0x61AC9B5D)
->>>>>>> Stashed changes
+I (sudoku_2021.h)(0x61AE402C)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (celda.h)(0x61A7A5C1)
@@ -154,17 +126,10 @@ I (pulsacion.h)(0x61A7A5C1)
 I (cola.h)(0x61A7A5C1)
 I (pw_id_control.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
-<<<<<<< Updated upstream
 I (celda.h)(0x61A7A5C1)
-I (sudoku_2021.h)(0x61AB945D)
+I (sudoku_2021.h)(0x61AE402C)
 I (Gestor_pulsacion.h)(0x61A7A5C1)
 I (timer.h)(0x61A7A5C1)
-=======
-I (celda.h)(0x61A65937)
-I (sudoku_2021.h)(0x61AC9B5D)
-I (Gestor_pulsacion.h)(0x61A60E37)
-I (timer.h)(0x61A65B8E)
->>>>>>> Stashed changes
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
 I (C:\Keil_v5\ARM\ARMCC\include\time.h)(0x599F2F9E)
 I (GPIO.h)(0x61A7A5C1)
@@ -181,28 +146,21 @@ F (.\SWI.s)(0x61AB945D)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork 
 F (.\Gestor_Interrupciones.h)(0x61AB945D)()
 F (.\Gestor_Interrupciones.c)(0x61AB945D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_interrupciones.o --omf_browse .\gestor_interrupciones.crf --depend .\gestor_interrupciones.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
-<<<<<<< Updated upstream
 I (Gestor_Interrupciones.h)(0x61AB945D)
 F (.\UART0.h)(0x61AB945D)()
-F (.\UART0.c)(0x61AB945D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
+F (.\UART0.c)(0x61AE2870)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
 I (UART0.h)(0x61AB945D)
-=======
-I (Gestor_Interrupciones.h)(0x61A9D2F5)
-F (.\UART0.h)(0x61A9D3A2)()
-F (.\UART0.c)(0x61AB92AF)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
-I (UART0.h)(0x61A9D3A2)
->>>>>>> Stashed changes
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (cola.h)(0x61A7A5C1)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
-<<<<<<< Updated upstream
 I (evento.h)(0x61AB945D)
-=======
-I (evento.h)(0x61AB775E)
-F (.\Gestor_Serial.h)(0x61AC9555)()
-F (.\Gestor_Serial.c)(0x61AC9762)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_serial.o --omf_browse .\gestor_serial.crf --depend .\gestor_serial.d)
-I (UART0.h)(0x61A9D3A2)
+F (.\Gestor_Serial.h)(0x61AE3FEC)()
+F (.\Gestor_Serial.c)(0x61AE3FC4)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_serial.o --omf_browse .\gestor_serial.crf --depend .\gestor_serial.d)
+I (UART0.h)(0x61AB945D)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
-I (Gestor_Serial.h)(0x61AC9555)
->>>>>>> Stashed changes
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F2F9C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F2F9C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F2F9C)
+I (Gestor_Serial.h)(0x61AE3FEC)

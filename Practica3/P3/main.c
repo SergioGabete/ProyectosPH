@@ -16,6 +16,7 @@
 //#include "cuadricula.h"
 
 
+
 int main (void) {
 	//planificador_init();
 		//Se inicializan todos los perifericos del sistema
@@ -37,7 +38,8 @@ int main (void) {
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
 		//Se llama alplanificador
 		uart0_init();
-//		uart0_sendchar(65);
+		sudoku_mensajeinicial();
+		uart0_sendchar('b');
 		planificador_init();
 		
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales

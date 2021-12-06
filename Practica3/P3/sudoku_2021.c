@@ -1,4 +1,8 @@
 #include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "sudoku_2021.h"
 #include <time.h>
 #include "timer.h"
@@ -12,9 +16,11 @@
 #include "pw_id_control.h"
 #include "Gestor_Serial.h"
 #include <inttypes.h>
+#include "UART0.h"
 //#include "tableros.h"
 //#include "cuadricula.h"
 
+static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
@@ -76,9 +82,12 @@ int se_puede_modificar(uint8_t pista, uint8_t valor){
 	}
 }
 
-
 void sudoku_inicializar(){
 	candidatos_actualizar_c(cuadricula_C_C);
+}
+
+void sudoku_mensajeinicial(){
+	gestor_serial_introducirmensaje(informacionJuego);
 }
 
 void sudoku_reiniciar(){
@@ -283,7 +292,8 @@ void sudoku_evento_boton2(){
 				sudoku_reiniciar();
 			candidatos_actualizar_c(cuadricula_C_C);
 			}
-}	
+}
+
 
 void sudoku_introducir_jugada(uint32_t aux){
 		uint8_t i = aux >> 16;
@@ -325,9 +335,9 @@ void sudoku_introducir_jugada(uint32_t aux){
 			sudoku_reiniciar();
 			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo ha en la funcion reiniciar
 			}
-		sudoku_mostrar_tablero();
+		//sudoku_mostrar_tablero();
 }
-
+/*
 void sudoku_mostrar_tablero(){
 	//generar matriz, numFilas = 19, numColumnas = 113
 	//necesito los candidatos, valor y pista
@@ -370,7 +380,7 @@ void sudoku_mostrar_tablero(){
 			
 	gestor_serial_escribir_linea(tablero,numFilas,numColumnas);
 }
-
+*/
 /*
 Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
 Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo										HECHO
