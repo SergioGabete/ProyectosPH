@@ -39,7 +39,7 @@ int main (void) {
 		//Se llama alplanificador
 		uart0_init();
 		sudoku_mensajeinicial();
-		uart0_sendchar('B');
+		//uart0_sendchar('B');
 		planificador_init();
 		
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
