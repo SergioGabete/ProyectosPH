@@ -362,50 +362,82 @@ void sudoku_enviar_mensaje(char msg[]){
 			mensaje=msg;
 			uart0_sendchar(mensaje[indice_mensaje++]);			//Preguntar a enrique si se puede invocar sendchar desde aqui
 }
-/*
+
 void sudoku_mostrar_tablero(){
-	//generar matriz, numFilas = 19, numColumnas = 113
-	//necesito los candidatos, valor y pista
+	
 	int numFilas = 19;
-	int numColumnas = 109;
+	int numColumnas = 28;
 	uint16_t celda;
 	uint8_t pista;
-	uint16_t candidatos_celda;
-	uint8_t valor_celda;
+	uint8_t error;
+	//uint16_t candidatos_celda;
+	//uint8_t valor_celda;
 	int tablero[numFilas][numColumnas];
-	
-//			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-//			pista = celda_leer_pista(celda); 
-//			candidatos_celda = celda_leer_candidatos(celda);
-//			valor_celda = celda_leer_valor(celda);
-	
-	for(int i=0;i < numColumnas;i++){
-		tablero[0][i] = '+';
-		tablero[numFilas-1][i] = '+';
+	//Tablero
+	for(int i =0; i<numFilas;i++){
+			for(int j =0 ; j<numColumnas;i++){
+				//Si es fila par se pone un +
+					if(i==0 || i%2==0){
+								tablero[i][j] = '+';
+					}
+					//Posicion filas impar y cada multiplo de 3
+					else if(i%2!=0 && (j==0 || j%3==0)){
+								tablero[i][j] = '|';
+					}
+				//poner el valor y todo eso !!! PReguntar KIKe
+				else if(i%2!=0 && (j==1 || j==4 || j==7 || j==10 ||j==13 || j==6 ||j==19 || j==22 ||j==25 )){
+								celda= celda_leer_contenido(cuadricula_C_C[(2*i+1)-3][(2*j+1)-3]);
+								pista = celda_leer_pista(celda); 
+								error= celda_leer_error(celda);
+								tablero[i][j] = celda;
+								if(pista == 1){
+										tablero[i][j+1] = 'P';
+								}
+								else if(error==1){
+											tablero[i][j+1] = 'E';
+								}
+							}
+
 	}
-	//Se ponen los bordes de las celdas y tal
-	tablero[1][0]='|';tablero[3][0]='|';tablero[5][0]='|';tablero[7][0]='|';tablero[9][0]='|';tablero[11][0]='|';tablero[13][0]='|';tablero[15][0]='|';tablero[17][0]='|';
-	tablero[1][12]='|';tablero[3][12]='|';tablero[5][12]='|';tablero[7][12]='|';tablero[9][12]='|';tablero[11][12]='|';tablero[13][12]='|';tablero[15][12]='|';tablero[17][12]='|';
-	tablero[1][24]='|';tablero[3][24]='|';tablero[5][24]='|';tablero[7][24]='|';tablero[9][24]='|';tablero[11][24]='|';tablero[13][24]='|';tablero[15][24]='|';tablero[17][24]='|';
-	tablero[1][36]='|';tablero[3][36]='|';tablero[5][36]='|';tablero[7][36]='|';tablero[9][36]='|';tablero[11][36]='|';tablero[13][36]='|';tablero[15][36]='|';tablero[17][36]='|';
-	tablero[1][48]='|';tablero[3][48]='|';tablero[5][48]='|';tablero[7][48]='|';tablero[9][48]='|';tablero[11][48]='|';tablero[13][48]='|';tablero[15][48]='|';tablero[17][48]='|';
-	tablero[1][60]='|';tablero[3][60]='|';tablero[5][60]='|';tablero[7][60]='|';tablero[9][60]='|';tablero[11][60]='|';tablero[13][60]='|';tablero[15][60]='|';tablero[17][60]='|';
-	tablero[1][72]='|';tablero[3][72]='|';tablero[5][72]='|';tablero[7][72]='|';tablero[9][72]='|';tablero[11][72]='|';tablero[13][72]='|';tablero[15][72]='|';tablero[17][72]='|';
-	tablero[1][84]='|';tablero[3][84]='|';tablero[5][84]='|';tablero[7][84]='|';tablero[9][84]='|';tablero[11][84]='|';tablero[13][84]='|';tablero[15][84]='|';tablero[17][84]='|';
-	tablero[1][96]='|';tablero[3][96]='|';tablero[5][96]='|';tablero[7][96]='|';tablero[9][96]='|';tablero[11][96]='|';tablero[13][96]='|';tablero[15][96]='|';tablero[17][96]='|';
-	tablero[1][108]='|';tablero[3][108]='|';tablero[5][108]='|';tablero[7][108]='|';tablero[9][108]='|';tablero[11][108]='|';tablero[13][108]='|';tablero[15][108]='|';tablero[17][108]='|';
-	for(int i=2;i<numFilas-1;i=i+2){
-		for(int j=0;j<numColumnas;j++){
-			tablero[i][j] = '-';
-		}
-	}
-	
-	
-	
-			
-	gestor_serial_escribir_linea(tablero,numFilas,numColumnas);
 }
-*/
+	
+	
+	
+				
+	
+	
+	
+////			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+////			pista = celda_leer_pista(celda); 
+////			candidatos_celda = celda_leer_candidatos(celda);
+////			valor_celda = celda_leer_valor(celda);
+//	
+//	for(int i=0;i < numColumnas;i++){
+//		tablero[0][i] = '+';
+//		tablero[numFilas-1][i] = '+';
+//	}
+//	//Se ponen los bordes de las celdas y tal
+//	tablero[1][0]='|';tablero[3][0]='|';tablero[5][0]='|';tablero[7][0]='|';tablero[9][0]='|';tablero[11][0]='|';tablero[13][0]='|';tablero[15][0]='|';tablero[17][0]='|';
+//	tablero[1][12]='|';tablero[3][12]='|';tablero[5][12]='|';tablero[7][12]='|';tablero[9][12]='|';tablero[11][12]='|';tablero[13][12]='|';tablero[15][12]='|';tablero[17][12]='|';
+//	tablero[1][24]='|';tablero[3][24]='|';tablero[5][24]='|';tablero[7][24]='|';tablero[9][24]='|';tablero[11][24]='|';tablero[13][24]='|';tablero[15][24]='|';tablero[17][24]='|';
+//	tablero[1][36]='|';tablero[3][36]='|';tablero[5][36]='|';tablero[7][36]='|';tablero[9][36]='|';tablero[11][36]='|';tablero[13][36]='|';tablero[15][36]='|';tablero[17][36]='|';
+//	tablero[1][48]='|';tablero[3][48]='|';tablero[5][48]='|';tablero[7][48]='|';tablero[9][48]='|';tablero[11][48]='|';tablero[13][48]='|';tablero[15][48]='|';tablero[17][48]='|';
+//	tablero[1][60]='|';tablero[3][60]='|';tablero[5][60]='|';tablero[7][60]='|';tablero[9][60]='|';tablero[11][60]='|';tablero[13][60]='|';tablero[15][60]='|';tablero[17][60]='|';
+//	tablero[1][72]='|';tablero[3][72]='|';tablero[5][72]='|';tablero[7][72]='|';tablero[9][72]='|';tablero[11][72]='|';tablero[13][72]='|';tablero[15][72]='|';tablero[17][72]='|';
+//	tablero[1][84]='|';tablero[3][84]='|';tablero[5][84]='|';tablero[7][84]='|';tablero[9][84]='|';tablero[11][84]='|';tablero[13][84]='|';tablero[15][84]='|';tablero[17][84]='|';
+//	tablero[1][96]='|';tablero[3][96]='|';tablero[5][96]='|';tablero[7][96]='|';tablero[9][96]='|';tablero[11][96]='|';tablero[13][96]='|';tablero[15][96]='|';tablero[17][96]='|';
+//	tablero[1][108]='|';tablero[3][108]='|';tablero[5][108]='|';tablero[7][108]='|';tablero[9][108]='|';tablero[11][108]='|';tablero[13][108]='|';tablero[15][108]='|';tablero[17][108]='|';
+//	for(int i=2;i<numFilas-1;i=i+2){
+//		for(int j=0;j<numColumnas;j++){
+//			tablero[i][j] = '-';
+//		}
+//	}
+//	
+//	
+//	
+//			
+//	gestor_serial_escribir_linea(tablero,numFilas,numColumnas);
+}
 /*
 Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
 Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo										HECHO

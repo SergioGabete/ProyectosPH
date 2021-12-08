@@ -175,7 +175,7 @@ DAbt_Addr       DCD     DAbt_Handler
                 DCD     0                      ; Reserved Address 
 IRQ_Addr        DCD     IRQ_Handler
 ;					PRESERVE8 {TRUE}
-;FIQ_Addr        DCD     timer0_ISR ;Nueva rutina de tratamiento de las FIQ ser? la de EINT0 Esto es de binhui
+;FIQ_Addr        DCD     timer0_ISR 
 FIQ_Addr        DCD     FIQ_Handler
 
 Undef_Handler   B       Undef_Handler
