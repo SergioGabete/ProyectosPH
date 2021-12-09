@@ -4,6 +4,7 @@
 #include "evento.h"
 #include <LPC210X.H> 
 #include "GPIO.h"
+//#include "SWI.h"
 
 static volatile struct evento cola_eventos[32];
 static volatile uint8_t ultimo_evento_guardado = 0; //representa indice ultimo evento guardado

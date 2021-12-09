@@ -8,16 +8,17 @@
 ;/* development tools. Nothing else gives you the right to use this software. */
 ;/*****************************************************************************/
 
+
+T_Bit           EQU     0x20
 I_Bit			EQU     0x80
 F_Bit			EQU		0x40
-T_Bit           EQU     0x20
 
                 PRESERVE8                      ; 8-Byte aligned Stack
                 AREA    SWI_Area, CODE, READONLY
                 ARM
 
-                EXPORT  SWI_Handler2
-SWI_Handler2  
+                EXPORT  SWI_Handler
+SWI_Handler
 
                 STMFD   SP!, {R12, LR}         ; Store R12, LR
                 MRS     R12, SPSR              ; Get SPSR
@@ -30,13 +31,13 @@ SWI_Handler2
 
 ; add code to enable/disable the global IRQ flag
                 CMP     R12,#0xFF              
-                BEQ     enable_isr			;salta a enable_isr
+                BEQ     __enable_isr			;salta a enable_isr
 				CMP     R12,#0xFE              
-                BEQ     disable_isr		    ;salta a disable_isr
+                BEQ     __disable_isr		    ;salta a disable_isr
 				CMP     R12,#0xFD              
-                BEQ     enable_isr_fiq	    ;salta a enable_isr_fiq
+                BEQ     __enable_isr_fiq	    ;salta a enable_isr_fiq
 				CMP     R12,#0xFC              
-                BEQ     disable_isr_fiq     ;salta a disable_isr_fiq
+                BEQ     __disable_isr_fiq     ;salta a disable_isr_fiq
 
                 LDR     R8, SWI_Count
                 CMP     R12, R8
@@ -81,7 +82,7 @@ SWI_End
 
 
 ;                END
-enable_isr
+__enable_isr
 				MSR cpsr_c, r8
 				BIC r8, r8, #I_Bit
 				MSR cpsr_c, r8				   ; Enable IRQ ;MRS cambiao
@@ -89,7 +90,7 @@ enable_isr
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
-disable_isr
+__disable_isr
 
 				MSR cpsr_c, r8
 				ORR r8, r8, #I_Bit
@@ -98,7 +99,7 @@ disable_isr
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 				
-enable_isr_fiq
+__enable_isr_fiq
 				MSR cpsr_c, r8
 				BIC r8, r8, #F_Bit
 				MSR cpsr_c, r8				   ; Enable FIQ
@@ -106,7 +107,7 @@ enable_isr_fiq
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
-disable_isr_fiq
+__disable_isr_fiq
 				MSR cpsr_c, r8
 				ORR r8, r8, #F_Bit
 				MSR cpsr_c, r8				   ; Disable FIQ
