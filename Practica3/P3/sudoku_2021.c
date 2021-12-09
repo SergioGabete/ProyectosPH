@@ -17,6 +17,7 @@
 #include "Gestor_Serial.h"
 #include <inttypes.h>
 #include "UART0.h"
+
 //#include "tableros.h"
 //#include "cuadricula.h"
 
@@ -299,6 +300,93 @@ void sudoku_evento_boton2(){
 }
 
 
+
+
+void sudoku_continuar_mensaje(){
+			if(indice_mensaje<num_caracteres){
+				uart0_sendchar(mensaje[indice_mensaje]);
+				indice_mensaje = indice_mensaje +1;
+			}else if(num_caracteres!=0){
+				num_caracteres=0;
+				//cola_guardar_eventos(evento_fin_mensaje,0);
+			}	
+}
+
+void sudoku_fin_mensaje(){
+	
+}
+
+void sudoku_enviar_mensaje(char msg[]){
+			indice_mensaje=0;
+			num_caracteres=strlen(msg);
+			mensaje=msg;
+			uart0_sendchar(mensaje[indice_mensaje++]);			//Preguntar a enrique si se puede invocar sendchar desde aqui
+}
+
+void sudoku_mostrar_tablero(){
+	
+	const int numFilas = 19;
+	const int numColumnas = 29;
+	uint16_t celda;
+	uint8_t pista;
+	uint8_t error;
+	//uint16_t candidatos_celda;
+	//uint8_t valor_celda;
+	
+	char tablero[numFilas][numColumnas];
+	
+	//Tablero
+	for(int i =0; i<numFilas;i++){
+			for(int j =0 ; j<numColumnas-1;j++){
+				//Si es fila par se pone un +
+					if(i==0 || i%2==0){
+								tablero[i][j] = '+';
+					}
+					//Posicion filas impar y cada multiplo de 3
+					else if(i%2!=0 && (j==0 || j%3==0)){
+								tablero[i][j] = '|';
+					}
+				//poner el valor y todo eso !!! PReguntar KIKe
+				else if(i%2!=0 && (j==1 || j==4 || j==7 || j==10 ||j==13 || j==6 ||j==19 || j==22 ||j==25 )){
+								celda= celda_leer_contenido(cuadricula_C_C[(2*i+1)-3][(2*j+1)-3]);
+								pista = celda_leer_pista(celda); 
+								error= celda_leer_error(celda);
+								tablero[i][j] = celda;
+								if(pista == 1){
+										tablero[i][j+1] = 'P';
+								}
+								else if(error==1){
+											tablero[i][j+1] = 'E';
+								}
+							}
+
+	}
+			
+	
+}
+	for(int i=0;i<numFilas;i++){
+		tablero[i][numColumnas-1] = '\n';
+	}
+	
+//	for(int i=0;i<numFilas;i++){
+//		sudoku_enviar_mensaje(tablero[i]);
+//		//uart0_sendchar('\n');
+//	}
+	
+	//Convertir la matriz en un solo elemento
+	const int numPosiciones = numFilas * numColumnas;
+	char mensajeFinal[numPosiciones];
+	for(int i=0;i<numFilas;i++){
+		for(int j=0;j<numColumnas;j++){
+			mensajeFinal[i*numColumnas + j] = tablero[i][j];
+		}
+	}
+	sudoku_enviar_mensaje(mensajeFinal);
+	
+}
+
+
+
 void sudoku_introducir_jugada(uint32_t aux){
 		uint8_t i = aux >> 16;
 		uint8_t j = aux >> 8;
@@ -339,74 +427,40 @@ void sudoku_introducir_jugada(uint32_t aux){
 			sudoku_reiniciar();
 			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo ha en la funcion reiniciar
 			}
-		//sudoku_mostrar_tablero();
+		
+			sudoku_mostrar_tablero();
 }
 
-void sudoku_continuar_mensaje(){
-			if(indice_mensaje<num_caracteres){
-				uart0_sendchar(mensaje[indice_mensaje]);
-				indice_mensaje = indice_mensaje +1;
-			}else if(num_caracteres!=0){
-				num_caracteres=0;
-				//cola_guardar_eventos(evento_fin_mensaje,0);
-			}	
-}
 
-void sudoku_fin_mensaje(){
-	
-}
+/*
+Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
+Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo										HECHO
+Lo de que los modulos .h solo deben ser visibles para los que los usan o sea que sean privados		HECHO
 
-void sudoku_enviar_mensaje(char msg[]){
-			indice_mensaje=0;
-			num_caracteres=strlen(msg);
-			mensaje=msg;
-			uart0_sendchar(mensaje[indice_mensaje++]);			//Preguntar a enrique si se puede invocar sendchar desde aqui
-}
+El planificador solo recibe eventos y lllama a los modulos para tratar esos eventos
+El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el planificador solo llama a los modulos
+Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
 
-void sudoku_mostrar_tablero(){
-	
-	int numFilas = 19;
-	int numColumnas = 28;
-	uint16_t celda;
-	uint8_t pista;
-	uint8_t error;
-	//uint16_t candidatos_celda;
-	//uint8_t valor_celda;
-	int tablero[numFilas][numColumnas];
-	//Tablero
-	for(int i =0; i<numFilas;i++){
-			for(int j =0 ; j<numColumnas;i++){
-				//Si es fila par se pone un +
-					if(i==0 || i%2==0){
-								tablero[i][j] = '+';
-					}
-					//Posicion filas impar y cada multiplo de 3
-					else if(i%2!=0 && (j==0 || j%3==0)){
-								tablero[i][j] = '|';
-					}
-				//poner el valor y todo eso !!! PReguntar KIKe
-				else if(i%2!=0 && (j==1 || j==4 || j==7 || j==10 ||j==13 || j==6 ||j==19 || j==22 ||j==25 )){
-								celda= celda_leer_contenido(cuadricula_C_C[(2*i+1)-3][(2*j+1)-3]);
-								pista = celda_leer_pista(celda); 
-								error= celda_leer_error(celda);
-								tablero[i][j] = celda;
-								if(pista == 1){
-										tablero[i][j+1] = 'P';
-								}
-								else if(error==1){
-											tablero[i][j+1] = 'E';
-								}
-							}
+Tambien al desencolar hay seccion critica	HECHO
+//Meter lo de desactivar interrupciones solo en la cola	HECHO
 
-	}
-}
-	
-	
-	
-				
-	
-	
-	
+No llamar a nada de hardware que no sea el el modulo que lo gestiona	HECHO
+
+
+//Pasarle el struct al gestor de alarmas	HECHO
+//Quitar los doubles de los timers que se pierde precision	HECHO
+
+Revisar un poco el tema de los eventos	HECHO
+
+Tocar la cola con lo del overflow	HECHO
+
+Añadir mas de 8 tipos de alarmas	NO HECO pero se ignora
+
+Hacer lo del latido idle				HECHO
+*/
+
+
+
 ////			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
 ////			pista = celda_leer_pista(celda); 
 ////			candidatos_celda = celda_leer_candidatos(celda);
@@ -437,31 +491,3 @@ void sudoku_mostrar_tablero(){
 //	
 //			
 //	gestor_serial_escribir_linea(tablero,numFilas,numColumnas);
-}
-/*
-Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
-Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo										HECHO
-Lo de que los modulos .h solo deben ser visibles para los que los usan o sea que sean privados		HECHO
-
-El planificador solo recibe eventos y lllama a los modulos para tratar esos eventos
-El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el planificador solo llama a los modulos
-Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
-
-Tambien al desencolar hay seccion critica	HECHO
-//Meter lo de desactivar interrupciones solo en la cola	HECHO
-
-No llamar a nada de hardware que no sea el el modulo que lo gestiona	HECHO
-
-
-//Pasarle el struct al gestor de alarmas	HECHO
-//Quitar los doubles de los timers que se pierde precision	HECHO
-
-Revisar un poco el tema de los eventos	HECHO
-
-Tocar la cola con lo del overflow	HECHO
-
-Añadir mas de 8 tipos de alarmas	NO HECO pero se ignora
-
-Hacer lo del latido idle				HECHO
-*/
-

@@ -621,6 +621,11 @@
               <FileType>1</FileType>
               <FilePath>.\Gestor_Serial.c</FilePath>
             </File>
+            <File>
+              <FileName>SWI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SWI.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

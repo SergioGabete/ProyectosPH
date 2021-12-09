@@ -16,8 +16,8 @@ T_Bit           EQU     0x20
                 AREA    SWI_Area, CODE, READONLY
                 ARM
 
-                EXPORT  SWI_Handler
-SWI_Handler   
+                EXPORT  SWI_Handler2
+SWI_Handler2  
 
                 STMFD   SP!, {R12, LR}         ; Store R12, LR
                 MRS     R12, SPSR              ; Get SPSR
