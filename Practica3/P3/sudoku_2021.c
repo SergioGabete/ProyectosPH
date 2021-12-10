@@ -349,7 +349,7 @@ void sudoku_mostrar_tablero(){
 								tablero[i][j] = '|';
 					}
 				//poner el valor 
-				else if(i%2!=0 && j%2!=0){
+				 else if(i%2!=0 && j%2!=0){
 								celda= celda_leer_contenido(cuadricula_C_C[i/2][j/2]);
 								pista = celda_leer_pista(celda); 
 								error= celda_leer_error(celda);
