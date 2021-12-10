@@ -36,9 +36,11 @@ void feed_watchdog (void) {				   /* Reload the watchdog timer       */
 //Important! Interrupts must be disabled during the feed sequence. An abort condition will occur if an interrupt happens during the feed sequence
 	
 	//Aqui hay que proteger que se desactiven interrupciones y luego se vuelvan a activar
+	__disable_fiq();
 	__disable_irq();
   WDFEED = 0xAA;						   
   WDFEED = 0x55;  
+	__enable_fiq();
 	__enable_irq();
 }
 
