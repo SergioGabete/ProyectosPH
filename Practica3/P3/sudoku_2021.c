@@ -22,7 +22,7 @@
 //#include "cuadricula.h"
 
 //static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
-static char informacionJuego[] ="Bienvenido al sudoku\n\n Vamos a comenzar " ;
+static char informacionJuego[] ="Bienvenido al sudoku\n\n Vamos a comenzar\n " ;
 static int indice_mensaje =0, num_caracteres =0;
 static char* mensaje;
 
@@ -300,8 +300,6 @@ void sudoku_evento_boton2(){
 }
 
 
-
-
 void sudoku_continuar_mensaje(){
 			if(indice_mensaje<num_caracteres){
 				uart0_sendchar(mensaje[indice_mensaje]);
@@ -312,15 +310,11 @@ void sudoku_continuar_mensaje(){
 			}	
 }
 
-void sudoku_fin_mensaje(){
-	
-}
-
 void sudoku_enviar_mensaje(char msg[]){
 			indice_mensaje=0;
 			num_caracteres=strlen(msg);
 			mensaje=msg;
-			uart0_sendchar(mensaje[indice_mensaje++]);			//Preguntar a enrique si se puede invocar sendchar desde aqui
+			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
 }
 
 void sudoku_mostrar_tablero(){
@@ -365,6 +359,12 @@ void sudoku_mostrar_tablero(){
 	}
 }
 	
+//for(int i=0;i<numFilas;i++){
+//	for(int j=0;j<numColumnas-1;j++){
+//		tablero[i][j] = '#';
+//	}
+//}
+	
 //Pintar los candidatos posteriores al sudoku
 for(int i =0; i< NUM_FILAS; i++){
 	for(int j=0; j<NUM_FILAS;j++){
@@ -376,14 +376,12 @@ for(int i =0; i< NUM_FILAS; i++){
 		}
 	}
 }
+
+
 	for(int i=0;i<numFilas;i++){
 		tablero[i][numColumnas-1] = '\n';
 	}
-	
-//	for(int i=0;i<numFilas;i++){
-//		sudoku_enviar_mensaje(tablero[i]);
-//		//uart0_sendchar('\n');
-//	}
+
 	
 	//Convertir la matriz en un solo elemento
 	const int numPosiciones = numFilas * numColumnas;
