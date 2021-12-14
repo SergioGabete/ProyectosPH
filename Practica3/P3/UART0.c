@@ -18,16 +18,16 @@ void uart0_init(){
   U0LCR = 0x03;                          /* DLAB = 0                          */
 	
 	//Aqui ira lo del vic
-	VICVectAddr5=(unsigned long)uart0_ISR;
-	VICVectCntl5 = 0x20 | 0x6;		//El 6 es el slot de UART0 en lo de los pins de vic
-	VICIntEnable = VICIntEnable | 0x00000040;			//Como el 6 es el slot activas el bit de posicion 6
-	U0IER = 0x3; 
+	VICVectAddr7 = (unsigned long)uart0_ISR;
+	VICVectCntl7 = 0x20|6;
+	VICIntEnable = VICIntEnable | (1<<6);
+	U0IER = 0x3;
 	
 }
 //Recordar poner lo de reiniciar power down pero hay que preguntarle a Enrique
 void uart0_ISR (void) __irq {
 	
-		if (((U0IIR & 0x4) == 0x4)&&((U0LSR & 0x01) == 0x1)){
+		if ((U0IIR&0x4)&&(U0LSR & 0x01)){		//((U0IIR & 0x4) == 0x4)&&((U0LSR & 0x01) == 0x1)
 				gestor_alarmas_resetear_power_down();
 				int ultimo = U0RBR;
 				U0THR = ultimo; //mostrar lo escrito	
@@ -70,7 +70,7 @@ void uart0_ISR (void) __irq {
 				}
 				
 		}
-		if ((U0IIR & 0x1) == 0x1){
+		if ((U0IIR&0x1)){	//	(U0IIR & 0x1) == 0x1	//
 				//Esperar respuesta de resano
 				cola_guardar_eventos(evento_continuar_mensaje,0);	//En el planificador se llama a sudoku enviar mensaje
 				

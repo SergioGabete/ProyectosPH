@@ -18,6 +18,10 @@
 #include <inttypes.h>
 #include "UART0.h"
 
+//#define numFilas 19
+//#define numColumnas 29
+//#define numPosiciones numFilas*numColumnas
+
 //#include "tableros.h"
 //#include "cuadricula.h"
 
@@ -58,9 +62,7 @@ static int parar=0;
 static uint32_t estado_GPIO=0;
 
 
-//static int numFilas = 19;
-//static int numColumnas = 109;
-//static int tablero[numFilas][numColumnas];
+static char mensajeFinal[2000];
 
 int sudoku_parar(){
 	return parar;
@@ -132,7 +134,7 @@ void sudoku_evento_boton1(){
 				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
 				//Esto a lo mejor hay que cambiarlo ^^
 				//mejor ponerlo en plan celda poner error o algo asi
-				celda_introducir_error(&cuadricula_C_C[i][j]);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+				celda_introducir_error(&cuadricula_C_C[i][j],valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
 				
 			}
 			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
@@ -306,6 +308,7 @@ void sudoku_continuar_mensaje(){
 				indice_mensaje = indice_mensaje +1;
 			}else if(num_caracteres!=0){
 				num_caracteres=0;
+				mensaje=NULL;
 				//cola_guardar_eventos(evento_fin_mensaje,0);
 			}	
 }
@@ -318,79 +321,156 @@ void sudoku_enviar_mensaje(char msg[]){
 }
 
 void sudoku_mostrar_tablero(){
-	
-		const int numFilas = 19;
-	const int numColumnas = 19;
+	const int numFilas = 19;
+	const int numColumnas=29;
+	char tablero[numFilas][numColumnas];
+	for(int i=0;i<numFilas;i=i+2){
+		for(int j=0;j<numColumnas-1;j++){
+			if(j%3==0){
+				tablero[i][j] = '+';
+			}else{
+				tablero[i][j] = '-';
+			}
+		}
+	}
+	//Ahora hay que poner los valores y errores y si es pista
+	//Ahora las celdas
+	int iCuadricula=0;
+	int jCuadricula=0;
 	uint16_t celda;
 	uint8_t pista;
 	uint8_t error;
-	//uint16_t candidatos_celda;
-	//uint8_t valor_celda;
-	char tablero[numFilas][numColumnas];//Char que pinta el tablero
-	char candidatos[9][9];//candidatos del tablero
-	//Tablero y sus valores
-	for(int i =0; i<numFilas;i++){
-			for(int j =0 ; j<numColumnas;j++){
-				//Si es fila par se pone un +
-					if((i==0 || i%2==0) && (j==0 || j%2==0)){
-								tablero[i][j] = '+';
+	uint8_t valor;
+	uint16_t candidatos;
+	for(int i=1;i<numFilas;i=i+2){
+		for(int j=0;j<numColumnas-1;j++){
+			if(j%3==0){
+				tablero[i][j] = '|';
+				//Aqui se aumentan los indices para recorrer las celdas
+				//Obtener las cosas de esta celda
+				if(j != numColumnas-2){		//parar que no tenga en cuenta el ultimo |
+					celda = celda_leer_contenido(cuadricula_C_C[iCuadricula][jCuadricula]);
+					pista = celda_leer_pista(celda); 
+					error = celda_leer_error(celda);
+					valor = celda_leer_valor(celda);
+					jCuadricula=jCuadricula+1;
+					if(jCuadricula==NUM_FILAS){		//j llega al final pues se pasa a la siguiente fila
+						iCuadricula=iCuadricula+1;
+						jCuadricula =0;
 					}
-					else if(j%2!=0 && (i==0 || i%2==0)){
-								tablero[i][j] = '-';
-					}
-					//Posicion filas impar y cada multiplo de 3
-					else if(i%2!=0 && (j==0 || j%3==0)){
-								tablero[i][j] = '|';
-					}
-				//poner el valor 
-				 else if(i%2!=0 && j%2!=0){
-								celda= celda_leer_contenido(cuadricula_C_C[i/2][j/2]);
-								pista = celda_leer_pista(celda); 
-								error= celda_leer_error(celda);
-								tablero[i][j] = celda;
-								if(pista == 1){
-										tablero[i][j] = tablero[i][j] + 'P';
-								}
-								else if(error==1){
-										tablero[i][j] = tablero[i][j] + 'E';
-								}
 				}
-
-	}
-}
-	
-//for(int i=0;i<numFilas;i++){
-//	for(int j=0;j<numColumnas-1;j++){
-//		tablero[i][j] = '#';
-//	}
-//}
-	
-//Pintar los candidatos posteriores al sudoku
-for(int i =0; i< NUM_FILAS; i++){
-	for(int j=0; j<NUM_FILAS;j++){
-		celda= celda_leer_contenido(cuadricula_C_C[i][j]);
-		pista = celda_leer_pista(celda);
-		//Sino es una pista
-		if(pista!=1){
-			candidatos[i][j]=celda_leer_candidatos(celda);
+				
+			}else{
+				if(j%3==1){		//es la |. ahi pones el valor
+					if(valor != 0){		//Si el valor no es 0 significa que se ha introducido algo
+						tablero[i][j] = valor + '0';
+					}else{
+						tablero[i][j] =' ';
+					}
+				}else{
+					if(j%3 == 2){		//es el caso |..
+						if((pista&0x1) == 0x1){		//es pista
+							tablero[i][j] ='P';
+						}else{
+							if((error&0x1)==1){//es error
+								tablero[i][j] ='E';
+							}else{
+									if(tablero[i][j-1] != ' '){
+											tablero[i][j]='V';
+									}else{
+											tablero[i][j]=' ';
+									}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
-}
-
-
-	for(int i=0;i<numFilas;i++){
+	
+	/*
+	+--+--+--+
+	|3P|3V|5V|		10+9*2+1
+	*/
+	
+	for(int i=0;i<numFilas;i++){					//Poner fin de linea
 		tablero[i][numColumnas-1] = '\n';
 	}
-
 	
-	//Convertir la matriz en un solo elemento
-	const int numPosiciones = numFilas * numColumnas;
-	char mensajeFinal[numPosiciones];
 	for(int i=0;i<numFilas;i++){
 		for(int j=0;j<numColumnas;j++){
 			mensajeFinal[i*numColumnas + j] = tablero[i][j];
 		}
 	}
+	//Ahora hay que poner los candidatos
+	int indiceFinal = numFilas*numColumnas;
+	//int c1,c2,c3,c4,c5,c6,c7,c8,c9;	
+	for(int i=0;i<NUM_FILAS;i++){		//Recorrer la matriz sacando los candidatos
+		for(int j=0;j<NUM_FILAS;j++){
+			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+			candidatos= celda_leer_candidatos(celda);
+			valor = celda_leer_valor(celda);
+			if(valor == 0x0){		//Significa que no hay valor y por tanto candidatos
+				//Sacar los candidatos
+//				c1=candidatos&0x1;
+//				c2 = (candidatos >> 1) & 0x1;
+//				c3 = (candidatos >> 2) & 0x1;
+//				c4 = (candidatos >> 3) & 0x1;
+//				c5 = (candidatos >> 4) & 0x1;
+//				c6 = (candidatos >> 5) & 0x1;
+//				c7 = (candidatos >> 6) & 0x1;
+//				c8 = (candidatos >> 7) & 0x1;
+//				c9 = (candidatos >> 8) & 0x1;
+				mensajeFinal[indiceFinal]=i+'0';
+				indiceFinal = indiceFinal +1;
+				mensajeFinal[indiceFinal]=j+'0';
+				indiceFinal = indiceFinal +1;
+				mensajeFinal[indiceFinal]=' ';
+				indiceFinal = indiceFinal +1;
+				if((candidatos&0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='1';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 1) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='2';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 2) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='3';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 3) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='4';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 4) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='5';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 5) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='6';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 6) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='7';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 7) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='8';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 8) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='9';
+					indiceFinal = indiceFinal +1;
+				}
+				
+				mensajeFinal[indiceFinal] = '\n';
+				indiceFinal = indiceFinal +1;		
+			}
+		}
+	}
+	
+	mensajeFinal[indiceFinal]='\0';
 	sudoku_enviar_mensaje(mensajeFinal);
 	
 }
@@ -421,7 +501,7 @@ void sudoku_introducir_jugada(uint32_t aux){
 				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
 				//Esto a lo mejor hay que cambiarlo ^^
 				//mejor ponerlo en plan celda poner error o algo asi
-				celda_introducir_error(&cuadricula_C_C[i][j]);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+				celda_introducir_error(&cuadricula_C_C[i][j], valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
 				
 			}
 			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
@@ -442,62 +522,80 @@ void sudoku_introducir_jugada(uint32_t aux){
 }
 
 
-/*
-Lo de que las variable solo accesibles por un modulo y que son globales solo deben ser estaticas HECHO
-Si no tiene que ser global para ese modulo pues no la hagas global a ese modulo										HECHO
-Lo de que los modulos .h solo deben ser visibles para los que los usan o sea que sean privados		HECHO
-
-El planificador solo recibe eventos y lllama a los modulos para tratar esos eventos
-El gestor_IO gestiona todo lo de visualizar la GPIO y ese evento alarma, el planificador solo llama a los modulos
-Hacer un main separado que inicialice las cosas y llame al planificador y al sudoku
-
-Tambien al desencolar hay seccion critica	HECHO
-//Meter lo de desactivar interrupciones solo en la cola	HECHO
-
-No llamar a nada de hardware que no sea el el modulo que lo gestiona	HECHO
-
-
-//Pasarle el struct al gestor de alarmas	HECHO
-//Quitar los doubles de los timers que se pierde precision	HECHO
-
-Revisar un poco el tema de los eventos	HECHO
-
-Tocar la cola con lo del overflow	HECHO
-
-Añadir mas de 8 tipos de alarmas	NO HECO pero se ignora
-
-Hacer lo del latido idle				HECHO
-*/
 
 
 
-////			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-////			pista = celda_leer_pista(celda); 
-////			candidatos_celda = celda_leer_candidatos(celda);
-////			valor_celda = celda_leer_valor(celda);
-//	
-//	for(int i=0;i < numColumnas;i++){
-//		tablero[0][i] = '+';
-//		tablero[numFilas-1][i] = '+';
+
+//	const int numFilas = 19;
+//	const int numColumnas = 19;
+//	uint16_t celda;
+//	uint8_t pista;
+//	uint8_t error;
+//	//uint16_t candidatos_celda;
+//	//uint8_t valor_celda;
+//	char tablero[numFilas][numColumnas];//Char que pinta el tablero
+//	char candidatos[9][9];//candidatos del tablero
+//	//Tablero y sus valores
+//	for(int i =0; i<numFilas;i++){
+//			for(int j =0 ; j<numColumnas;j++){
+//				//Si es fila par se pone un +
+//					if((i==0 || i%2==0) && (j==0 || j%2==0)){
+//								tablero[i][j] = '+';
+//					}
+//					else if(j%2!=0 && (i==0 || i%2==0)){
+//								tablero[i][j] = '-';
+//					}
+//					//Posicion filas impar y cada multiplo de 3
+//					else if(i%2!=0 && (j==0 || j%3==0)){
+//								tablero[i][j] = '|';
+//					}
+//				//poner el valor 
+//				 else if(i%2!=0 && j%2!=0){
+//								celda= celda_leer_contenido(cuadricula_C_C[i/2][j/2]);
+//								pista = celda_leer_pista(celda); 
+//								error= celda_leer_error(celda);
+//								tablero[i][j] = celda;
+//								if(pista == 1){
+//										tablero[i][j] = tablero[i][j] + 'P';
+//								}
+//								else if(error==1){
+//										tablero[i][j] = tablero[i][j] + 'E';
+//								}
+//				}
+
 //	}
-//	//Se ponen los bordes de las celdas y tal
-//	tablero[1][0]='|';tablero[3][0]='|';tablero[5][0]='|';tablero[7][0]='|';tablero[9][0]='|';tablero[11][0]='|';tablero[13][0]='|';tablero[15][0]='|';tablero[17][0]='|';
-//	tablero[1][12]='|';tablero[3][12]='|';tablero[5][12]='|';tablero[7][12]='|';tablero[9][12]='|';tablero[11][12]='|';tablero[13][12]='|';tablero[15][12]='|';tablero[17][12]='|';
-//	tablero[1][24]='|';tablero[3][24]='|';tablero[5][24]='|';tablero[7][24]='|';tablero[9][24]='|';tablero[11][24]='|';tablero[13][24]='|';tablero[15][24]='|';tablero[17][24]='|';
-//	tablero[1][36]='|';tablero[3][36]='|';tablero[5][36]='|';tablero[7][36]='|';tablero[9][36]='|';tablero[11][36]='|';tablero[13][36]='|';tablero[15][36]='|';tablero[17][36]='|';
-//	tablero[1][48]='|';tablero[3][48]='|';tablero[5][48]='|';tablero[7][48]='|';tablero[9][48]='|';tablero[11][48]='|';tablero[13][48]='|';tablero[15][48]='|';tablero[17][48]='|';
-//	tablero[1][60]='|';tablero[3][60]='|';tablero[5][60]='|';tablero[7][60]='|';tablero[9][60]='|';tablero[11][60]='|';tablero[13][60]='|';tablero[15][60]='|';tablero[17][60]='|';
-//	tablero[1][72]='|';tablero[3][72]='|';tablero[5][72]='|';tablero[7][72]='|';tablero[9][72]='|';tablero[11][72]='|';tablero[13][72]='|';tablero[15][72]='|';tablero[17][72]='|';
-//	tablero[1][84]='|';tablero[3][84]='|';tablero[5][84]='|';tablero[7][84]='|';tablero[9][84]='|';tablero[11][84]='|';tablero[13][84]='|';tablero[15][84]='|';tablero[17][84]='|';
-//	tablero[1][96]='|';tablero[3][96]='|';tablero[5][96]='|';tablero[7][96]='|';tablero[9][96]='|';tablero[11][96]='|';tablero[13][96]='|';tablero[15][96]='|';tablero[17][96]='|';
-//	tablero[1][108]='|';tablero[3][108]='|';tablero[5][108]='|';tablero[7][108]='|';tablero[9][108]='|';tablero[11][108]='|';tablero[13][108]='|';tablero[15][108]='|';tablero[17][108]='|';
-//	for(int i=2;i<numFilas-1;i=i+2){
-//		for(int j=0;j<numColumnas;j++){
-//			tablero[i][j] = '-';
+//}
+//	
+////for(int i=0;i<numFilas;i++){
+////	for(int j=0;j<numColumnas-1;j++){
+////		tablero[i][j] = '#';
+////	}
+////}
+//	
+////Pintar los candidatos posteriores al sudoku
+//for(int i =0; i< NUM_FILAS; i++){
+//	for(int j=0; j<NUM_FILAS;j++){
+//		celda= celda_leer_contenido(cuadricula_C_C[i][j]);
+//		pista = celda_leer_pista(celda);
+//		//Sino es una pista
+//		if(pista!=1){
+//			candidatos[i][j]=celda_leer_candidatos(celda);
 //		}
 //	}
+//}
+
+
+//	for(int i=0;i<numFilas;i++){
+//		tablero[i][numColumnas-1] = '\n';
+//	}
+
 //	
-//	
-//	
-//			
-//	gestor_serial_escribir_linea(tablero,numFilas,numColumnas);
+//	//Convertir la matriz en un solo elemento
+//	const int numPosiciones = numFilas * numColumnas;
+//	char mensajeFinal[numPosiciones];
+//	for(int i=0;i<numFilas;i++){
+//		for(int j=0;j<numColumnas;j++){
+//			mensajeFinal[i*numColumnas + j] = tablero[i][j];
+//		}
+//	}
+//	sudoku_enviar_mensaje(mensajeFinal);

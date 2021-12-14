@@ -17,23 +17,7 @@
 enum { BIT_CANDIDATOS = 7 };
 
 typedef uint16_t CELDA;
-/*
-static int NUM_FILAS = 9;
-static int NUM_COLUMNAS = 16;
 
-static CELDA
-cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
-{
-0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
-};*/
 
 /* *****************************************************************************
  * elimina el candidato del valor almacenado en la celda indicada */
@@ -106,8 +90,9 @@ __inline static uint16_t celda_leer_candidatos(CELDA celdaptr){
 
 /***********************************************************
 * introduce una celda erronea*/
-__inline static void celda_introducir_error(CELDA *celdaptr){
+__inline static void celda_introducir_error(CELDA *celdaptr, uint8_t valor){
 		*celdaptr = 0x0020;
+        *celdaptr = *celdaptr | valor;
 }
 
 __inline static uint8_t celda_leer_error(CELDA celdaptr){
