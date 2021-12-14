@@ -19,11 +19,17 @@
 #include "UART0.h"
 #include "Gestor_Serial.h"
 
+//#define numFilas 19
+//#define numColumnas 29
+//#define numPosiciones numFilas*numColumnas
 
+//#include "tableros.h"
+//#include "cuadricula.h"
 
-
+//static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
 static char informacionJuego[] ="Bienvenido al sudoku\n\n Vamos a comenzar\n " ;
-
+static int indice_mensaje =0, num_caracteres =0;
+static char* mensaje;
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
@@ -55,6 +61,7 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 
 static int parar=0;
 static uint32_t estado_GPIO=0;
+
 
 static char mensajeFinal[2000];
 
@@ -295,6 +302,25 @@ void sudoku_evento_boton2(){
 			}
 }
 
+
+//void sudoku_continuar_mensaje(){
+//			if(indice_mensaje<num_caracteres){
+//				uart0_sendchar(mensaje[indice_mensaje]);
+//				indice_mensaje = indice_mensaje +1;
+//			}else if(num_caracteres!=0){
+//				num_caracteres=0;
+//				mensaje=NULL;
+//				//cola_guardar_eventos(evento_fin_mensaje,0);
+//			}	
+//}
+
+//void sudoku_enviar_mensaje(char msg[]){
+//			indice_mensaje=0;
+//			num_caracteres=strlen(msg);
+//			mensaje=msg;
+//			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
+//}
+
 void sudoku_mostrar_tablero(){
 	const int numFilas = 19;
 	const int numColumnas=29;
@@ -386,7 +412,16 @@ void sudoku_mostrar_tablero(){
 			candidatos= celda_leer_candidatos(celda);
 			valor = celda_leer_valor(celda);
 			if(valor == 0x0){		//Significa que no hay valor y por tanto candidatos
-				//Scar los candidatos
+				//Sacar los candidatos
+//				c1=candidatos&0x1;
+//				c2 = (candidatos >> 1) & 0x1;
+//				c3 = (candidatos >> 2) & 0x1;
+//				c4 = (candidatos >> 3) & 0x1;
+//				c5 = (candidatos >> 4) & 0x1;
+//				c6 = (candidatos >> 5) & 0x1;
+//				c7 = (candidatos >> 6) & 0x1;
+//				c8 = (candidatos >> 7) & 0x1;
+//				c9 = (candidatos >> 8) & 0x1;
 				mensajeFinal[indiceFinal]=i+'0';
 				indiceFinal = indiceFinal +1;
 				mensajeFinal[indiceFinal]=j+'0';
@@ -452,7 +487,10 @@ void sudoku_introducir_jugada(uint32_t aux){
 		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
 		uint8_t pista = celda_leer_pista(celda);  
 		uint16_t candidatos_celda = celda_leer_candidatos(celda);
+		
 		if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+			
+			
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
 			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
 			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
@@ -461,10 +499,18 @@ void sudoku_introducir_jugada(uint32_t aux){
 				gestor_IO_confirmar_escritura(); 
 				
 			}else{
-				celda_introducir_error(&cuadricula_C_C[i][j], valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo	
+				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+				//Esto a lo mejor hay que cambiarlo ^^
+				//mejor ponerlo en plan celda poner error o algo asi
+				celda_introducir_error(&cuadricula_C_C[i][j], valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+				
 			}
+			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
+			
 			
 		}		//Esto es del if(se_puede_modificar(pista,valor) == 1){
+		
+		
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
 			//	parar = 1;
@@ -477,47 +523,80 @@ void sudoku_introducir_jugada(uint32_t aux){
 }
 
 
-/*
 
-		//Quitar alarma del idle
-		double t0 = timer1_temporizador_leer();
-	
-		//gestor_pulsacion_boton1_pretado();
-		
-		uint8_t i = gestor_IO_leer_fila();
-		uint8_t j = gestor_IO_leer_columna();
-		uint8_t valor = gestor_IO_leer_valor_introducir();
-		
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
-		uint8_t pista = celda_leer_pista(celda);  
-		uint16_t candidatos_celda = celda_leer_candidatos(celda);
-		
-		if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
-			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
-			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
-			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-				//gestor_IO_escribir_led();	//Se activa el led de la GPIO
-				//cola_guardar_eventos(Set_Alarm, 0x070003e8);	//Se programa una alarma para desactivar el led tras un segundo
-				gestor_IO_confirmar_escritura(); 
-				
-			}else{
-				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				//Esto a lo mejor hay que cambiarlo ^^
-				//mejor ponerlo en plan celda poner error o algo asi
-				celda_introducir_error(&cuadricula_C_C[i][j],valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				
-			}
-			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
-			double t1 = timer1_temporizador_leer();
-			//tiempoProcesado = t1 - t0;
-		}
-		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
-		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
-			//	parar = 1;
-			//Reiniciar
-			sudoku_reiniciar();
-			candidatos_actualizar_c(cuadricula_C_C);
-			}
-*/
 
+
+
+//	const int numFilas = 19;
+//	const int numColumnas = 19;
+//	uint16_t celda;
+//	uint8_t pista;
+//	uint8_t error;
+//	//uint16_t candidatos_celda;
+//	//uint8_t valor_celda;
+//	char tablero[numFilas][numColumnas];//Char que pinta el tablero
+//	char candidatos[9][9];//candidatos del tablero
+//	//Tablero y sus valores
+//	for(int i =0; i<numFilas;i++){
+//			for(int j =0 ; j<numColumnas;j++){
+//				//Si es fila par se pone un +
+//					if((i==0 || i%2==0) && (j==0 || j%2==0)){
+//								tablero[i][j] = '+';
+//					}
+//					else if(j%2!=0 && (i==0 || i%2==0)){
+//								tablero[i][j] = '-';
+//					}
+//					//Posicion filas impar y cada multiplo de 3
+//					else if(i%2!=0 && (j==0 || j%3==0)){
+//								tablero[i][j] = '|';
+//					}
+//				//poner el valor 
+//				 else if(i%2!=0 && j%2!=0){
+//								celda= celda_leer_contenido(cuadricula_C_C[i/2][j/2]);
+//								pista = celda_leer_pista(celda); 
+//								error= celda_leer_error(celda);
+//								tablero[i][j] = celda;
+//								if(pista == 1){
+//										tablero[i][j] = tablero[i][j] + 'P';
+//								}
+//								else if(error==1){
+//										tablero[i][j] = tablero[i][j] + 'E';
+//								}
+//				}
+
+//	}
+//}
+//	
+////for(int i=0;i<numFilas;i++){
+////	for(int j=0;j<numColumnas-1;j++){
+////		tablero[i][j] = '#';
+////	}
+////}
+//	
+////Pintar los candidatos posteriores al sudoku
+//for(int i =0; i< NUM_FILAS; i++){
+//	for(int j=0; j<NUM_FILAS;j++){
+//		celda= celda_leer_contenido(cuadricula_C_C[i][j]);
+//		pista = celda_leer_pista(celda);
+//		//Sino es una pista
+//		if(pista!=1){
+//			candidatos[i][j]=celda_leer_candidatos(celda);
+//		}
+//	}
+//}
+
+
+//	for(int i=0;i<numFilas;i++){
+//		tablero[i][numColumnas-1] = '\n';
+//	}
+
+//	
+//	//Convertir la matriz en un solo elemento
+//	const int numPosiciones = numFilas * numColumnas;
+//	char mensajeFinal[numPosiciones];
+//	for(int i=0;i<numFilas;i++){
+//		for(int j=0;j<numColumnas;j++){
+//			mensajeFinal[i*numColumnas + j] = tablero[i][j];
+//		}
+//	}
+//	sudoku_enviar_mensaje(mensajeFinal);

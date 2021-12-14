@@ -73,6 +73,11 @@ void sudoku_mostrar_tablero(void);
 
 void sudoku_mensajeinicial(void);
 
+void sudoku_continuar_mensaje(void);
+
+void sudoku_fin_mensaje(void);
+
+void sudoku_enviar_mensaje(char msg[]);
 
 //void sudoku_evento_idle(void);
 
