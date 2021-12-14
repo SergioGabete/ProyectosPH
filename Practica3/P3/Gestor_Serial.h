@@ -3,9 +3,9 @@
 
 
 
-void gestor_serial_escribir_linea(int ch[19][109],int numFilas,int numColumnas);
+void gestor_serial_continuar_mensaje(void);
 
-void gestor_serial_introducirmensaje(char informacion[]);
+void gestor_serial_enviar_mensaje(char msg[]);
 
 #endif
 

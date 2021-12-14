@@ -7,19 +7,25 @@
 #include "Gestor_Serial.h"
 
 
-void gestor_serial_escribir_linea(int ch[19][109],int numFilas, int numColumnas){
-	for(int i=0;i<numColumnas;i++){
-		for(int j=0;j<numColumnas;j++){
-			uart0_sendchar(ch[i][j]);
-		}
-	}
-	uart0_sendchar('\n');
+static int indice_mensaje =0, num_caracteres =0;
+static char* mensaje;
+static char mensajeFinal[2000];
+
+void gestor_serial_continuar_mensaje(){
+			if(indice_mensaje<num_caracteres){
+				uart0_sendchar(mensaje[indice_mensaje]);
+				indice_mensaje = indice_mensaje +1;
+			}else if(num_caracteres!=0){
+				num_caracteres=0;
+				mensaje=NULL;
+				//cola_guardar_eventos(evento_fin_mensaje,0);
+			}	
 }
 
-void gestor_serial_introducirmensaje(char informacion[]){
-			int longitud = strlen(informacion);
-			for(int i =0 ; i < longitud; i++){
-				uart0_sendchar(informacion[i]);
-			}
+void gestor_serial_enviar_mensaje(char msg[]){
+			indice_mensaje=0;
+			num_caracteres=strlen(msg);
+			mensaje=msg;
+			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
 }
 

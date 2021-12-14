@@ -17,6 +17,7 @@
 #include "Gestor_Serial.h"
 #include <inttypes.h>
 #include "UART0.h"
+#include "Gestor_Serial.h"
 
 //#define numFilas 19
 //#define numColumnas 29
@@ -94,7 +95,7 @@ void sudoku_inicializar(){
 
 
 void sudoku_mensajeinicial(){
-	sudoku_enviar_mensaje(informacionJuego);
+	gestor_serial_enviar_mensaje(informacionJuego);
 }
 
 void sudoku_reiniciar(){
@@ -302,23 +303,23 @@ void sudoku_evento_boton2(){
 }
 
 
-void sudoku_continuar_mensaje(){
-			if(indice_mensaje<num_caracteres){
-				uart0_sendchar(mensaje[indice_mensaje]);
-				indice_mensaje = indice_mensaje +1;
-			}else if(num_caracteres!=0){
-				num_caracteres=0;
-				mensaje=NULL;
-				//cola_guardar_eventos(evento_fin_mensaje,0);
-			}	
-}
+//void sudoku_continuar_mensaje(){
+//			if(indice_mensaje<num_caracteres){
+//				uart0_sendchar(mensaje[indice_mensaje]);
+//				indice_mensaje = indice_mensaje +1;
+//			}else if(num_caracteres!=0){
+//				num_caracteres=0;
+//				mensaje=NULL;
+//				//cola_guardar_eventos(evento_fin_mensaje,0);
+//			}	
+//}
 
-void sudoku_enviar_mensaje(char msg[]){
-			indice_mensaje=0;
-			num_caracteres=strlen(msg);
-			mensaje=msg;
-			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
-}
+//void sudoku_enviar_mensaje(char msg[]){
+//			indice_mensaje=0;
+//			num_caracteres=strlen(msg);
+//			mensaje=msg;
+//			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
+//}
 
 void sudoku_mostrar_tablero(){
 	const int numFilas = 19;
@@ -471,7 +472,7 @@ void sudoku_mostrar_tablero(){
 	}
 	
 	mensajeFinal[indiceFinal]='\0';
-	sudoku_enviar_mensaje(mensajeFinal);
+	gestor_serial_enviar_mensaje(mensajeFinal);
 	
 }
 
