@@ -11,6 +11,7 @@
 #include "GPIO.h"
 #include "Gestor_IO.h"
 #include "pw_id_control.h"
+#include "Gestor_Serial.h"
 //#include "cuadricula.h"
 
 static int parar =0;
@@ -84,7 +85,10 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			sudoku_introducir_jugada(evento_sin_tratar.auxData);								//No se si se deberia meter esa funcion nueva de sudoku o usar cosas de la GPIO
 			break;
 		case evento_continuar_mensaje:
-			sudoku_continuar_mensaje();
+			gestor_serial_continuar_mensaje();
+			break;
+		case evento_reset_power_down:
+			gestor_alarmas_resetear_power_down();
 			break;
 		default:
 			;

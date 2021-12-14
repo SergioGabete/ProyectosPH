@@ -28,8 +28,6 @@
 
 //static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
 static char informacionJuego[] ="Bienvenido al sudoku\n\n Vamos a comenzar\n " ;
-static int indice_mensaje =0, num_caracteres =0;
-static char* mensaje;
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
