@@ -9,7 +9,7 @@
 
 static int indice_mensaje =0, num_caracteres =0;
 static char* mensaje;
-static char mensajeFinal[2000];
+//static char mensajeFinal[2000];
 
 void gestor_serial_continuar_mensaje(){
 			if(indice_mensaje<num_caracteres){
