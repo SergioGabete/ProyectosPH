@@ -427,39 +427,39 @@ void sudoku_mostrar_tablero(){
 				indiceFinal = indiceFinal +1;
 				mensajeFinal[indiceFinal]=' ';
 				indiceFinal = indiceFinal +1;
-				if((candidatos&0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if((candidatos&0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='1';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 1) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 1) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='2';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 2) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 2) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='3';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 3) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 3) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='4';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 4) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 4) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='5';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 5) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 5) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='6';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 6) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 6) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='7';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 7) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 7) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='8';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 8) & 0x1) == 1){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 8) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
 					mensajeFinal[indiceFinal]='9';
 					indiceFinal = indiceFinal +1;
 				}
