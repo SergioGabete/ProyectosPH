@@ -28,7 +28,8 @@ void uart0_init(){
 void uart0_ISR (void) __irq {
 	
 		if ((U0IIR&0x4)&&(U0LSR & 0x01)){		//((U0IIR & 0x4) == 0x4)&&((U0LSR & 0x01) == 0x1)
-				gestor_alarmas_resetear_power_down();
+				//gestor_alarmas_resetear_power_down();	Esto mejor hacerlo en forma de evento y que lo llame el planificador
+				cola_guardar_eventos(evento_reset_power_down,0);
 				int ultimo = U0RBR;
 				U0THR = ultimo; //mostrar lo escrito	
 				//Se trata el caracter recibido y se encola el tipo de accion
