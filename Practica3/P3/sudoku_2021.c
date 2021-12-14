@@ -87,6 +87,8 @@ int se_puede_modificar(uint8_t pista, uint8_t valor){
 	}
 }
 
+
+
 void sudoku_inicializar(){
 	candidatos_actualizar_c(cuadricula_C_C);
 }
@@ -195,14 +197,26 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     uint8_t valor = celda_leer_valor(cuadricula[fila][columna]);
 
     /* recorrer fila descartando valor de listas candidatos */
-    for (j=0;j<NUM_FILAS;j++)
+    for (j=0;j<NUM_FILAS;j++){
+			
+			//if(celda_leer_valor(cuadricula[fila][j]) == 0){
+				celda_eliminar_candidato(&cuadricula[fila][j],valor);
+			//}
+			//else{ // Celda con valor, no necesita candidatos
+				//celda_eliminar_candidatos(&cuadricula[fila][j]);
+			//}
+		}
 	//celda_eliminar_candidato(&cuadricula[fila][j],valor);
-		celda_eliminar_candidato(&cuadricula[fila][j],valor);
 
     /* recorrer columna descartando valor de listas candidatos */
-    for (i=0;i<NUM_FILAS;i++)
+    for (i=0;i<NUM_FILAS;i++){
+			//if(celda_leer_valor(cuadricula[i][columna]) == 0){
+				celda_eliminar_candidato(&cuadricula[i][columna],valor);			
+			//else{ // Celda con valor, no necesita candidatos
+				//celda_eliminar_candidatos(&cuadricula[i][columna]);
+			//}
+		}
 	//celda_eliminar_candidato(&cuadricula[i][columna],valor);
-		celda_eliminar_candidato(&cuadricula[i][columna],valor);
 
     /* determinar fronteras región */
     init_i = init_region[fila];
@@ -213,42 +227,41 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     /* recorrer region descartando valor de listas candidatos */
     for (i=init_i; i<end_i; i++) {
       for(j=init_j; j<end_j; j++) {
-	      //celda_eliminar_candidato(&cuadricula[i][j],valor);
-				celda_eliminar_candidato(&cuadricula[i][columna],valor);
-	    }
+				//if(celda_leer_valor(cuadricula[i][j]) == 0){
+					celda_eliminar_candidato(&cuadricula[i][j],valor);
+				//}
+				//else{ // Celda con valor, no necesita candidatos
+					//celda_eliminar_candidatos(&cuadricula[i][j]);
+				//}
+			}
     }
 }
 
 int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 {
-   int celdas_vacias = 0;
-   uint8_t i;
-   uint8_t j;
-	//Primero se ponen a 0 las listas de candidatos para que en el caso
-	//de eliminar o cambiar el valor de una celda no se corrompa el
-	//tablero entero
-	for(i=0;i<NUM_FILAS;i++){
-		for(j=0;j<NUM_FILAS;j++){
+  int celdas_vacias = 0;
+  uint8_t i;
+	uint8_t j;
+	
+	//borrar todos los candidatos
+	for ( i=0; i<NUM_FILAS;i++){
+		for (j=0; j <NUM_FILAS;j++){
 			celda_inicializar_candidatos(&cuadricula[i][j]);
 		}
 	}
-	//Una vez inicializadas las listas de candidatos se debe recorrer el 
-	//tablero para actualizar las listas de los candidatos de las celdas
-		for(i=0;i<NUM_FILAS;i++){
-			for(j=0;j<NUM_FILAS;j++){
-				//En caso de que la celda sea 0 se suma 1 a la variable
-				//que cuenta las celdas vacias
-				if(celda_leer_valor(cuadricula[i][j])==0x00){
-					celdas_vacias=celdas_vacias+1;
-					//En caso de que el valor de la celda no sea 0 se debe propagar 
-					//ese valor a lo largo de la fila, columna y region
-				}	else{		
-					candidatos_propagar_c(cuadricula,i,j);
-				}					
+	
+	//recalcular candidatos de las celdas vacias calculando cuantas hay vacias
+	for ( i=0; i<NUM_FILAS;i++){
+		for (j=0; j <NUM_FILAS;j++){
+			if (celda_leer_valor(cuadricula[i][j]) == 0){
+				celdas_vacias ++;
 			}
-		}
-		//se devuelve el numero de celdas vacias
-		return celdas_vacias;
+			else{
+				candidatos_propagar_c(cuadricula,i,j);
+			}
+		}	
+	}
+	return celdas_vacias; //retornar el numero de celdas vacias
 }
 
 
@@ -318,6 +331,10 @@ void sudoku_evento_boton2(){
 //			mensaje=msg;
 //			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
 //}
+
+uint16_t sudoku_get_valor_candidatos(uint8_t fila,uint8_t columna){
+	return cuadricula_C_C[fila][columna]>>7 ;
+}
 
 void sudoku_mostrar_tablero(){
 	const int numFilas = 19;

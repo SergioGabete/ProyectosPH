@@ -62,6 +62,7 @@ Los 9 candidatos de cada celda se ponen a 0 para indicar
 que cualquier numero puede ser candidato*/
 __inline static void celda_inicializar_candidatos(CELDA *celdaptr){
 	*celdaptr = (*celdaptr & 0x007F);
+	
 }
 /***********************************************************
 * sustituye el valor de los 16 bits de celda por valor*/
