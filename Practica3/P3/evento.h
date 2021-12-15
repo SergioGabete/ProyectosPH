@@ -26,6 +26,7 @@ enum IDs{
 	evento_jugada,
 	evento_continuar_mensaje,
 	evento_reset_power_down,
+	evento_fin_partida,
 };
 
 

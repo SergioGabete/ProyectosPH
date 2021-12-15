@@ -18,6 +18,7 @@
 #include <inttypes.h>
 #include "UART0.h"
 #include "Gestor_Serial.h"
+#include "RTC.h"
 
 
 static char informacionJuego[] ="Bienvenido al sudoku\n" ;
@@ -52,6 +53,8 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 
 static int parar=0;
 static uint32_t estado_GPIO=0;
+static int tiempo_minutos;
+static int tiempo_segundos;
 
 
 static char mensajeFinal[2000];
@@ -100,6 +103,42 @@ void sudoku_reiniciar(){
 	}
 	candidatos_actualizar_c(cuadricula_C_C);
 }
+
+
+//Convierte el int en char s[]
+void sudoku_convertir(int n, char s[])
+ {
+     int i = 0;
+     char c;
+     do {       
+         s[i++] = n % 10 + '0';  
+     } while ((n /= 10) > 0);     
+
+     s[i] = '\0';
+		 int  j=strlen(s);
+     for (int z = 0; z<j; z++, j--) {
+         c = s[z];
+         s[z] = s[j];
+         s[j] = c;
+     }
+} 
+
+void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
+	char minutos[5];
+	char segundos[5];
+	tiempo_minutos= RTC_leer_minutos();
+	tiempo_segundos = RTC_leer_segundos();
+	sudoku_convertir(tiempo_minutos,minutos);
+	sudoku_convertir(tiempo_segundos,segundos);
+	//Envios de mensajes
+	strcat(mensaje_tiempo,"Información de la partida: ");
+	strcat(mensaje_tiempo,"\n Tiempo total de partida: ");
+	strcat(mensaje_tiempo,minutos);
+	strcat(mensaje_tiempo," minutos y  ");
+	strcat(mensaje_tiempo,segundos);
+	strcat(mensaje_tiempo,"segundos \n");
+}                                              
+	
 
 void sudoku_evento_boton1(){
 	

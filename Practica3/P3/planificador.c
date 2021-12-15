@@ -15,6 +15,7 @@
 //#include "cuadricula.h"
 
 static int parar =0;
+static char mensaje[100];
 
 
 
@@ -91,6 +92,10 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			break;
 		case evento_reset_power_down:
 			gestor_alarmas_resetear_power_down();
+			break;
+		case evento_fin_partida:
+			sudoku_tiempo_total_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
 			break;
 		default:
 			;
