@@ -139,6 +139,10 @@ void sudoku_reset_partida(char reset_partida[]){
 	strcat(reset_partida, "Has hecho un reset del sudoku\0");
 }
 
+void sudoku_nueva_partida(char nueva_partida[]){
+	strcat(nueva_partida, "Has iniciado una nueva partida\0");
+}
+
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	char minutos[5];
 	char segundos[5];

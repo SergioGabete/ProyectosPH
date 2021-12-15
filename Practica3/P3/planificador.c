@@ -86,6 +86,9 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			break;
 		case evento_new:
 			sudoku_reiniciar();
+			sudoku_nueva_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_mostrar_tablero();
 			break;
 		case evento_jugada:
 			sudoku_introducir_jugada(evento_sin_tratar.auxData);								//No se si se deberia meter esa funcion nueva de sudoku o usar cosas de la GPIO

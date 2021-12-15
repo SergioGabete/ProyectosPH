@@ -79,6 +79,8 @@ void sudoku_fin_partida(char fin_partida[]);
 
 void sudoku_reset_partida(char reset_partida[]);
 
+void sudoku_nueva_partida(char nueva_partida[]);
+
 void sudoku_convertir(int n, char s[]);
 
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]);
