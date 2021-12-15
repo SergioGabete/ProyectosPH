@@ -73,6 +73,7 @@ void sudoku_mostrar_tablero(void);
 
 void sudoku_mensajeinicial(void);
 
+void sudoku_mostrar_tablero_inicial(void);
 
 //void sudoku_evento_idle(void);
 

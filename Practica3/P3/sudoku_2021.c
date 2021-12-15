@@ -19,14 +19,7 @@
 #include "UART0.h"
 #include "Gestor_Serial.h"
 
-//#define numFilas 19
-//#define numColumnas 29
-//#define numPosiciones numFilas*numColumnas
 
-//#include "tableros.h"
-//#include "cuadricula.h"
-
-//static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
 static char informacionJuego[] ="Bienvenido al sudoku\n" ;
 
 static CELDA
@@ -62,6 +55,7 @@ static uint32_t estado_GPIO=0;
 
 
 static char mensajeFinal[2000];
+static char mensajeInicial[2000];
 
 int sudoku_parar(){
 	return parar;
@@ -314,24 +308,6 @@ void sudoku_evento_boton2(){
 }
 
 
-//void sudoku_continuar_mensaje(){
-//			if(indice_mensaje<num_caracteres){
-//				uart0_sendchar(mensaje[indice_mensaje]);
-//				indice_mensaje = indice_mensaje +1;
-//			}else if(num_caracteres!=0){
-//				num_caracteres=0;
-//				mensaje=NULL;
-//				//cola_guardar_eventos(evento_fin_mensaje,0);
-//			}	
-//}
-
-//void sudoku_enviar_mensaje(char msg[]){
-//			indice_mensaje=0;
-//			num_caracteres=strlen(msg);
-//			mensaje=msg;
-//			uart0_sendchar('\n');			//Preguntar a enrique si se puede invocar sendchar desde aqui
-//}
-
 uint16_t sudoku_get_valor_candidatos(uint8_t fila,uint8_t columna){
 	return cuadricula_C_C[fila][columna]>>7 ;
 }
@@ -525,6 +501,155 @@ void sudoku_introducir_jugada(uint32_t aux){
 			}
 		
 			sudoku_mostrar_tablero();
+}
+
+
+
+
+void sudoku_mostrar_tablero_inicial(){
+	//La idea es coger el array mensajeInicial y mensajeFinal y juntarlos
+	const int numFilas = 19;
+	const int numColumnas=29;
+	char tablero[numFilas][numColumnas];
+	for(int i=0;i<numFilas;i=i+2){
+		for(int j=0;j<numColumnas-1;j++){
+			if(j%3==0){
+				tablero[i][j] = '+';
+			}else{
+				tablero[i][j] = '-';
+			}
+		}
+	}
+	//Ahora hay que poner los valores y errores y si es pista
+	//Ahora las celdas
+	int iCuadricula=0;
+	int jCuadricula=0;
+	uint16_t celda;
+	uint8_t pista;
+	uint8_t error;
+	uint8_t valor;
+	uint16_t candidatos;
+	for(int i=1;i<numFilas;i=i+2){
+		for(int j=0;j<numColumnas-1;j++){
+			if(j%3==0){
+				tablero[i][j] = '|';
+				//Aqui se aumentan los indices para recorrer las celdas
+				//Obtener las cosas de esta celda
+				if(j != numColumnas-2){		//parar que no tenga en cuenta el ultimo |
+					celda = celda_leer_contenido(cuadricula_C_C[iCuadricula][jCuadricula]);
+					pista = celda_leer_pista(celda); 
+					error = celda_leer_error(celda);
+					valor = celda_leer_valor(celda);
+					jCuadricula=jCuadricula+1;
+					if(jCuadricula==NUM_FILAS){		//j llega al final pues se pasa a la siguiente fila
+						iCuadricula=iCuadricula+1;
+						jCuadricula =0;
+					}
+				}
+				
+			}else{
+				if(j%3==1){		//es la |. ahi pones el valor
+					if(valor != 0){		//Si el valor no es 0 significa que se ha introducido algo
+						tablero[i][j] = valor + '0';
+					}else{
+						tablero[i][j] =' ';
+					}
+				}else{
+					if(j%3 == 2){		//es el caso |..
+						if((pista&0x1) == 0x1){		//es pista
+							tablero[i][j] ='P';
+						}else{
+							if((error&0x1)==1){//es error
+								tablero[i][j] ='E';
+							}else{
+									if(tablero[i][j-1] != ' '){
+											tablero[i][j]='V';
+									}else{
+											tablero[i][j]=' ';
+									}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	for(int i=0;i<numFilas;i++){					//Poner fin de linea
+		tablero[i][numColumnas-1] = '\n';
+	}
+	
+	for(int i=0;i<numFilas;i++){
+		for(int j=0;j<numColumnas;j++){
+			mensajeFinal[i*numColumnas + j] = tablero[i][j];
+		}
+	}
+	//Ahora hay que poner los candidatos
+	int indiceFinal = numFilas*numColumnas;
+	//int c1,c2,c3,c4,c5,c6,c7,c8,c9;	
+	for(int i=0;i<NUM_FILAS;i++){		//Recorrer la matriz sacando los candidatos
+		for(int j=0;j<NUM_FILAS;j++){
+			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+			candidatos= celda_leer_candidatos(celda);
+			valor = celda_leer_valor(celda);
+			if(valor == 0x0){		//Significa que no hay valor y por tanto candidatos
+				mensajeFinal[indiceFinal]=i+'0';
+				indiceFinal = indiceFinal +1;
+				mensajeFinal[indiceFinal]=j+'0';
+				indiceFinal = indiceFinal +1;
+				mensajeFinal[indiceFinal]=' ';
+				indiceFinal = indiceFinal +1;
+				if((candidatos&0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='1';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 1) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='2';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 2) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='3';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 3) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='4';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 4) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='5';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 5) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='6';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 6) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='7';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 7) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='8';
+					indiceFinal = indiceFinal +1;
+				}
+				if(((candidatos >> 8) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+					mensajeFinal[indiceFinal]='9';
+					indiceFinal = indiceFinal +1;
+				}
+				
+				mensajeFinal[indiceFinal] = '\n';
+				indiceFinal = indiceFinal +1;		
+			}
+		}
+	}
+	
+	mensajeFinal[indiceFinal]='\0';
+	
+	//Ahora se juntan 
+	
+	 /* make space for the new string (should check the return value ...) */
+	strcpy(mensajeInicial, informacionJuego); /* copy name into the new var */
+	strcat(mensajeInicial, mensajeFinal); /* add the extension */
+	gestor_serial_enviar_mensaje(mensajeInicial);
 }
 
 

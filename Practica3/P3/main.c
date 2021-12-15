@@ -46,7 +46,8 @@ int main (void) {
 		__enable_irq();
 		//Se llama alplanificador
 		uart0_init();
-		sudoku_mensajeinicial();
+		//sudoku_mensajeinicial();
+		sudoku_mostrar_tablero_inicial();
 		//uart0_sendchar('B');
 		planificador_init();
 		
