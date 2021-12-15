@@ -17,3 +17,4 @@
 .\main.o: pw_id_control.h
 .\main.o: planificador.h
 .\main.o: UART0.h
+.\main.o: WT.h

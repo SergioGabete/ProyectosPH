@@ -13,6 +13,7 @@
 #include "sudoku_2021.h"
 #include "planificador.h"
 #include "UART0.h"
+#include "WT.h"
 //#include "cuadricula.h"
 
 //void PAbt_Handler_function(void) {}
@@ -31,6 +32,7 @@ int main (void) {
 		gestor_alarmas_init();
 		gestor_IO_iniciar();
 		sudoku_inicializar();
+		WT_init(20);
 		//Poner alarma para la visualizacion constante de la GPIO
 	__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x068000C8);

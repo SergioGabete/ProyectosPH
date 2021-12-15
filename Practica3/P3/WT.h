@@ -1,7 +1,7 @@
-#ifndef EVENTO_H
-#define EVENTO_H
+#ifndef WT_H
+#define WT_H
 
-void WT_init(void);
+void WT_init(int segundos);
 
 void feed_watchdog (void);
 

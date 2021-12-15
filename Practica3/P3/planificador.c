@@ -12,6 +12,7 @@
 #include "Gestor_IO.h"
 #include "pw_id_control.h"
 #include "Gestor_Serial.h"
+#include "WT.h"
 //#include "cuadricula.h"
 
 //static int parar =0;
@@ -21,7 +22,8 @@ static char mensaje[100];
 void planificador_init(){
 	struct evento evento_sin_tratar;
 		while(1){  //Esto debe ser una funcion de sudoku para saber si parar
-			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
+			if(cola_comprobar_nuevos_eventos() == 1){				//Si hay eventos nuevos sin tratar se desencola un evento
+				feed_watchdog();
 				__disable_irq();
 				evento_sin_tratar = cola_evento_sin_tratar();
 				__enable_irq();
