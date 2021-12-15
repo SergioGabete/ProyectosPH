@@ -130,6 +130,15 @@ void sudoku_convertir(int n, char s[])
      }
 } 
 
+//Mensaje que determina porque se ha dejado de jugar
+void sudoku_fin_partida(char fin_partida[]){
+	strcat(fin_partida, "Enhorabuena, has completado el sudoku con exito");
+}
+//Mensaje que determina porque se ha dejado de jugar
+void sudoku_reset_partida(char reset_partida[]){
+	strcat(reset_partida, "Has hecho un reset del sudoku\0");
+}
+
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	char minutos[5];
 	char segundos[5];
@@ -138,12 +147,13 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	sudoku_convertir(tiempo_minutos,minutos);
 	sudoku_convertir(tiempo_segundos,segundos);
 	//Envios de mensajes
-	strcat(mensaje_tiempo,"Informacion de la partida acabada: ");
-	strcat(mensaje_tiempo,"\n Tiempo total de partida: ");
+	strcat(mensaje_tiempo,"\nInformacion de la partida acabada: \0");
+	strcat(mensaje_tiempo,"\nTiempo total de partida: \0");
 	strcat(mensaje_tiempo,minutos);
-	strcat(mensaje_tiempo," minutos y  ");
+	strcat(mensaje_tiempo," minutos y  \0");
 	strcat(mensaje_tiempo,segundos);
-	strcat(mensaje_tiempo,"segundos \n");
+	strcat(mensaje_tiempo,"segundos \n\0");
+	strcat(mensaje_tiempo,"\n Quiere volver a jugar, si es asi inicie una nueva partida #NEW");
 }                                              
 	
 

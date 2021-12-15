@@ -14,14 +14,13 @@
 #include "Gestor_Serial.h"
 //#include "cuadricula.h"
 
-static int parar =0;
+//static int parar =0;
 static char mensaje[100];
-
 
 
 void planificador_init(){
 	struct evento evento_sin_tratar;
-		while(parar == 0){  //Esto debe ser una funcion de sudoku para saber si parar
+		while(1){  //Esto debe ser una funcion de sudoku para saber si parar
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
 				__disable_irq();
 				evento_sin_tratar = cola_evento_sin_tratar();
@@ -79,7 +78,11 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			gestor_IO_evento_idle();
 			break;
 		case evento_rst:
-			parar = 1;		//Esto no se si corresponde al planificador
+			sudoku_reset_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_tiempo_total_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+			//parar = 1;		//Esto no se si corresponde al planificador
 			break;
 		case evento_new:
 			sudoku_reiniciar();
@@ -97,6 +100,8 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			sudoku_confirmar_jugada();
 			break;
 		case evento_fin_partida:
+			sudoku_fin_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
 			sudoku_tiempo_total_partida(mensaje);
 			gestor_serial_enviar_mensaje(mensaje);
 			break;
