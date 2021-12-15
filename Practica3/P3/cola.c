@@ -39,10 +39,6 @@ void cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData){
 			overflow=1;
 		}
 	
-	//cola_eventos[ultimo_evento_guardado] = nuevo;
-	//ultimo_evento_guardado = (ultimo_evento_guardado+1)%32;
-//		VICIntEnable = configuracionVicEnable;
-//		VICIntEnClr = configuracionVicClr;
 }
 
 /************************

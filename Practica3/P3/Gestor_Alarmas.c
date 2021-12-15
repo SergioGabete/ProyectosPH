@@ -77,8 +77,13 @@ void gestor_alarmas_activar_alarma(uint8_t id){
 }
 
 void gestor_alarmas_resetear_power_down(){
-	gestor_alarmas_quitar_alarma(2);							//Preguntar si esto de verdad va dentro del gestor de alarmas
+	gestor_alarmas_quitar_alarma(2);							//Cambiar y poner en vez de dos el evento_power_down
 	__disable_irq();
 	cola_guardar_eventos(Set_Alarm,0x02003A98);
 	__enable_irq();
+}
+
+
+void gestor_alarmas_quitar_confirmar_jugada(){
+	gestor_alarmas_quitar_alarma(evento_confirmar_jugada);
 }

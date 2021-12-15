@@ -57,8 +57,14 @@ static int tiempo_minutos;
 static int tiempo_segundos;
 
 
-static char mensajeFinal[2000];
-static char mensajeInicial[2000];
+static char mensajeFinal[1000];
+static char mensajeInicial[1000];
+
+//Variables para saber si estamos en jugada introducida por comandos o por GPIO
+static uint8_t iComando;
+static uint8_t jComando;
+static uint8_t valorComando;
+static int estoy_en_comando =0;		//Si es 0 significa que no esta en comando
 
 int sudoku_parar(){
 	return parar;
@@ -141,7 +147,7 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	
 
 void sudoku_evento_boton1(){
-	
+		if(estoy_en_comando == 0){
 		//Quitar alarma del idle
 		double t0 = timer1_temporizador_leer();
 	
@@ -182,7 +188,12 @@ void sudoku_evento_boton1(){
 			sudoku_reiniciar();
 			candidatos_actualizar_c(cuadricula_C_C);
 			}
-
+		}else{		//En este caso significa que estoy en comando
+			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
+			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
+			sudoku_mostrar_tablero();
+		}
 }
 
 
@@ -326,6 +337,7 @@ void sudoku_2021_borrar_valor(int fila,int columna){
 }
 
 void sudoku_evento_boton2(){
+		if(estoy_en_comando == 0){
 		//gestor_pulsacion_boton2_pretado();
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
@@ -344,6 +356,15 @@ void sudoku_evento_boton2(){
 				sudoku_reiniciar();
 			candidatos_actualizar_c(cuadricula_C_C);
 			}
+		}else{
+			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
+			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
+			//Propagar para quitar el valor
+			celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
+			candidatos_actualizar_c(cuadricula_C_C);
+			sudoku_mostrar_tablero();
+		}
 }
 
 
@@ -499,9 +520,13 @@ void sudoku_mostrar_tablero(){
 
 
 void sudoku_introducir_jugada(uint32_t aux){
+		estoy_en_comando = 1;
 		uint8_t i = aux >> 16;
 		uint8_t j = aux >> 8;
 		uint8_t valor = aux;
+		iComando = i;
+		jComando = j;
+		valorComando = valor;
 		
 		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
 		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
@@ -514,9 +539,8 @@ void sudoku_introducir_jugada(uint32_t aux){
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
 			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
 			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-				//gestor_IO_escribir_led();	//Se activa el led de la GPIO
-				//cola_guardar_eventos(Set_Alarm, 0x070003e8);	//Se programa una alarma para desactivar el led tras un segundo
-				gestor_IO_confirmar_escritura(); 
+				
+				//gestor_IO_confirmar_escritura(); 	//Se quita porque ya no hace falta al introducir por linea serie
 				
 			}else{
 				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
@@ -540,6 +564,13 @@ void sudoku_introducir_jugada(uint32_t aux){
 			}
 		
 			sudoku_mostrar_tablero();
+			//Se pone una alarma de 3 segundos para confirmar
+			//el formato del aux sera	00000001 0 00000000000101110111000
+			
+			//gestor_IO_confirmar_escritura();	//lo activa durante un segundo pero yo lo desactivare cuando llegue el evento de confirmar escritura
+			gestor_IO_escribir_led();
+			//cola_guardar_eventos(Set_Alarm,0x01000BB8);
+			cola_guardar_eventos(Set_Alarm,0x01008BB8);		//le meto un poco a la alarma para probarlo bien
 }
 
 
@@ -674,7 +705,6 @@ void sudoku_mostrar_tablero_inicial(){
 					mensajeFinal[indiceFinal]='9';
 					indiceFinal = indiceFinal +1;
 				}
-				
 				mensajeFinal[indiceFinal] = '\n';
 				indiceFinal = indiceFinal +1;		
 			}
@@ -685,10 +715,17 @@ void sudoku_mostrar_tablero_inicial(){
 	
 	//Ahora se juntan 
 	
-	 /* make space for the new string (should check the return value ...) */
+	/* make space for the new string (should check the return value ...) */
 	strcpy(mensajeInicial, informacionJuego); /* copy name into the new var */
 	strcat(mensajeInicial, mensajeFinal); /* add the extension */
 	gestor_serial_enviar_mensaje(mensajeInicial);
 }
 
+//Significa que ha llegado la alarma de 3 segundos tras introducir la jugada
+//Se muestra el tablero y se quita el led de confirmar escritura
+void sudoku_confirmar_jugada(){
+	sudoku_mostrar_tablero();	//Se muestra otra vez porque lo exigen y se quita el led 
+	gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+	estoy_en_comando = 0;
+}
 

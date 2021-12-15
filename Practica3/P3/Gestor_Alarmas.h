@@ -20,5 +20,7 @@ void gestor_alarmas_resetear_power_down(void);
 
 void gestor_alarmas_activar_alarma(uint8_t id);
 
+void gestor_alarmas_quitar_confirmar_jugada(void);
+
 #endif
 

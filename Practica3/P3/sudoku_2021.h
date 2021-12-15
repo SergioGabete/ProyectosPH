@@ -78,6 +78,7 @@ void sudoku_mostrar_tablero_inicial(void);
 void sudoku_convertir(int n, char s[]);
 
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]);
+void sudoku_confirmar_jugada(void);
 
 //void sudoku_evento_idle(void);
 

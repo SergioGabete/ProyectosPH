@@ -12,7 +12,7 @@ struct evento{
 
 enum IDs{
 	evento_idle, //id0
-	evento_boton2, //id1
+	evento_confirmar_jugada, //id1
 	evento_power_down, //id2
 	resta_Periodos, //id3
 	evento_alarma_pulsaciones_1,	//id4
@@ -27,6 +27,7 @@ enum IDs{
 	evento_continuar_mensaje,
 	evento_reset_power_down,
 	evento_fin_partida,
+	evento_boton2,
 };
 
 

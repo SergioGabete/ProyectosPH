@@ -97,6 +97,9 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			sudoku_tiempo_total_partida(mensaje);
 			gestor_serial_enviar_mensaje(mensaje);
 			break;
+		case evento_confirmar_jugada:
+			sudoku_confirmar_jugada();
+			break;
 		default:
 			;
 			break;
