@@ -22,7 +22,9 @@ void planificador_init(){
 	struct evento evento_sin_tratar;
 		while(parar == 0){  //Esto debe ser una funcion de sudoku para saber si parar
 			if(cola_comprobar_nuevos_eventos() == 1){ //Si hay eventos nuevos sin tratar se desencola un evento
+				__disable_irq();
 				evento_sin_tratar = cola_evento_sin_tratar();
+				__enable_irq();
 				planificador_tratar_evento(evento_sin_tratar);
 			}else{
 				//Si no hay eventos a tratar se pasa a modo idle

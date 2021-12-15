@@ -427,16 +427,6 @@ void sudoku_mostrar_tablero(){
 			candidatos= celda_leer_candidatos(celda);
 			valor = celda_leer_valor(celda);
 			if(valor == 0x0){		//Significa que no hay valor y por tanto candidatos
-				//Sacar los candidatos
-//				c1=candidatos&0x1;
-//				c2 = (candidatos >> 1) & 0x1;
-//				c3 = (candidatos >> 2) & 0x1;
-//				c4 = (candidatos >> 3) & 0x1;
-//				c5 = (candidatos >> 4) & 0x1;
-//				c6 = (candidatos >> 5) & 0x1;
-//				c7 = (candidatos >> 6) & 0x1;
-//				c8 = (candidatos >> 7) & 0x1;
-//				c9 = (candidatos >> 8) & 0x1;
 				mensajeFinal[indiceFinal]=i+'0';
 				indiceFinal = indiceFinal +1;
 				mensajeFinal[indiceFinal]=j+'0';
@@ -538,80 +528,3 @@ void sudoku_introducir_jugada(uint32_t aux){
 }
 
 
-
-
-
-
-//	const int numFilas = 19;
-//	const int numColumnas = 19;
-//	uint16_t celda;
-//	uint8_t pista;
-//	uint8_t error;
-//	//uint16_t candidatos_celda;
-//	//uint8_t valor_celda;
-//	char tablero[numFilas][numColumnas];//Char que pinta el tablero
-//	char candidatos[9][9];//candidatos del tablero
-//	//Tablero y sus valores
-//	for(int i =0; i<numFilas;i++){
-//			for(int j =0 ; j<numColumnas;j++){
-//				//Si es fila par se pone un +
-//					if((i==0 || i%2==0) && (j==0 || j%2==0)){
-//								tablero[i][j] = '+';
-//					}
-//					else if(j%2!=0 && (i==0 || i%2==0)){
-//								tablero[i][j] = '-';
-//					}
-//					//Posicion filas impar y cada multiplo de 3
-//					else if(i%2!=0 && (j==0 || j%3==0)){
-//								tablero[i][j] = '|';
-//					}
-//				//poner el valor 
-//				 else if(i%2!=0 && j%2!=0){
-//								celda= celda_leer_contenido(cuadricula_C_C[i/2][j/2]);
-//								pista = celda_leer_pista(celda); 
-//								error= celda_leer_error(celda);
-//								tablero[i][j] = celda;
-//								if(pista == 1){
-//										tablero[i][j] = tablero[i][j] + 'P';
-//								}
-//								else if(error==1){
-//										tablero[i][j] = tablero[i][j] + 'E';
-//								}
-//				}
-
-//	}
-//}
-//	
-////for(int i=0;i<numFilas;i++){
-////	for(int j=0;j<numColumnas-1;j++){
-////		tablero[i][j] = '#';
-////	}
-////}
-//	
-////Pintar los candidatos posteriores al sudoku
-//for(int i =0; i< NUM_FILAS; i++){
-//	for(int j=0; j<NUM_FILAS;j++){
-//		celda= celda_leer_contenido(cuadricula_C_C[i][j]);
-//		pista = celda_leer_pista(celda);
-//		//Sino es una pista
-//		if(pista!=1){
-//			candidatos[i][j]=celda_leer_candidatos(celda);
-//		}
-//	}
-//}
-
-
-//	for(int i=0;i<numFilas;i++){
-//		tablero[i][numColumnas-1] = '\n';
-//	}
-
-//	
-//	//Convertir la matriz en un solo elemento
-//	const int numPosiciones = numFilas * numColumnas;
-//	char mensajeFinal[numPosiciones];
-//	for(int i=0;i<numFilas;i++){
-//		for(int j=0;j<numColumnas;j++){
-//			mensajeFinal[i*numColumnas + j] = tablero[i][j];
-//		}
-//	}
-//	sudoku_enviar_mensaje(mensajeFinal);

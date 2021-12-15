@@ -52,7 +52,9 @@ void gestor_alarmas_restar_periodo(void){
 			//Si el retardo es 0 pues lo encolas porque ha acabado la alarma
 			if(retardos[i] == 0){
 				//Nos daria igual el valor de AuxData ????
+				__disable_irq();
 				cola_guardar_eventos(ID[i], 0);
+				__enable_irq();
 				//Ahora al haber acabado se comprueba si es periodica para eliminarlo o no
 				if(periodicas[i] == 0){ //Al no ser periodica se elimina
 					activada[i] = 0;
@@ -76,5 +78,7 @@ void gestor_alarmas_activar_alarma(uint8_t id){
 
 void gestor_alarmas_resetear_power_down(){
 	gestor_alarmas_quitar_alarma(2);							//Preguntar si esto de verdad va dentro del gestor de alarmas
+	__disable_irq();
 	cola_guardar_eventos(Set_Alarm,0x02003A98);
+	__enable_irq();
 }
