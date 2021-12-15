@@ -138,7 +138,7 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	sudoku_convertir(tiempo_minutos,minutos);
 	sudoku_convertir(tiempo_segundos,segundos);
 	//Envios de mensajes
-	strcat(mensaje_tiempo,"Información de la partida: ");
+	strcat(mensaje_tiempo,"Informacion de la partida acabada: ");
 	strcat(mensaje_tiempo,"\n Tiempo total de partida: ");
 	strcat(mensaje_tiempo,minutos);
 	strcat(mensaje_tiempo," minutos y  ");

@@ -93,12 +93,12 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 		case evento_reset_power_down:
 			gestor_alarmas_resetear_power_down();
 			break;
+		case evento_confirmar_jugada:
+			sudoku_confirmar_jugada();
+			break;
 		case evento_fin_partida:
 			sudoku_tiempo_total_partida(mensaje);
 			gestor_serial_enviar_mensaje(mensaje);
-			break;
-		case evento_confirmar_jugada:
-			sudoku_confirmar_jugada();
 			break;
 		default:
 			;
