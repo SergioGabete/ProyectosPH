@@ -32,12 +32,18 @@ int main (void) {
 		gestor_IO_iniciar();
 		sudoku_inicializar();
 		//Poner alarma para la visualizacion constante de la GPIO
+	__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
+	__enable_irq();
 		//Introducir una periodica que sea el idle
 	//00000000 1 00000000000000000010100
+	__disable_irq();
 	cola_guardar_eventos(Set_Alarm,0x00800014);
+	__enable_irq();
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
+		__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
+		__enable_irq();
 		//Se llama alplanificador
 		uart0_init();
 		sudoku_mensajeinicial();

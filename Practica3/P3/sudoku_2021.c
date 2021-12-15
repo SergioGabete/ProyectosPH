@@ -27,7 +27,7 @@
 //#include "cuadricula.h"
 
 //static char informacionJuego[] ="\n\nBienvenido al sudoku\n\n Vamos a comenzar " ;
-static char informacionJuego[] ="Bienvenido al sudoku\n\n Vamos a comenzar\n " ;
+static char informacionJuego[] ="Bienvenido al sudoku\n" ;
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =

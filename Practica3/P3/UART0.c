@@ -52,7 +52,7 @@ void uart0_ISR (void) __irq {
 						if((buffer_entrada[0] == '#')&&
 							(buffer_entrada[1] - '0' >=0 && buffer_entrada[1] - '0' <= 8)&&	//Si son numeros validos pues se introduce
 							(buffer_entrada[2] - '0' >=0 && buffer_entrada[2] - '0' <= 8)&&
-							(buffer_entrada[3] - '0' >=0 && buffer_entrada[3] - '0' <= 8)&&
+							(buffer_entrada[3] - '0' >=0 && buffer_entrada[3] - '0' <= 9)&&
 							(buffer_entrada[5] == '!') &&
 								((buffer_entrada[1] - '0' + buffer_entrada[2] - '0' + buffer_entrada[3] - '0') % 8 ==  buffer_entrada[4] - '0')){ //Jugada correcta
 								//Como guardar informacion en el auxiliar
