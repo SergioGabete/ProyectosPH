@@ -21,7 +21,7 @@
 #include "RTC.h"
 
 
-static char informacionJuego[] ="Bienvenido al sudoku\n" ;
+static char informacionJuego[] ="Bienvenido al sudoku\nPara jugar puede introducir los siguientes comandos:\n$NEW para empezar una nueva partida\n$RST para detener la partida\n$FCVR donde F es la fila a introducir, C la columna y V el valor. R sera la suma de los 3 anteriores modulo 8" ;
 
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
@@ -57,6 +57,7 @@ static int tiempo_minutos;
 static int tiempo_segundos;
 
 
+static char mensajeFinal2[1000];
 static char mensajeFinal[1000];
 static char mensajeInicial[1000];
 
@@ -651,7 +652,7 @@ void sudoku_mostrar_tablero_inicial(){
 	
 	for(int i=0;i<numFilas;i++){
 		for(int j=0;j<numColumnas;j++){
-			mensajeFinal[i*numColumnas + j] = tablero[i][j];
+			mensajeFinal2[i*numColumnas + j] = tablero[i][j];
 		}
 	}
 	//Ahora hay que poner los candidatos
@@ -663,61 +664,61 @@ void sudoku_mostrar_tablero_inicial(){
 			candidatos= celda_leer_candidatos(celda);
 			valor = celda_leer_valor(celda);
 			if(valor == 0x0){		//Significa que no hay valor y por tanto candidatos
-				mensajeFinal[indiceFinal]=i+'0';
+				mensajeFinal2[indiceFinal]=i+'0';
 				indiceFinal = indiceFinal +1;
-				mensajeFinal[indiceFinal]=j+'0';
+				mensajeFinal2[indiceFinal]=j+'0';
 				indiceFinal = indiceFinal +1;
-				mensajeFinal[indiceFinal]=' ';
+				mensajeFinal2[indiceFinal]=' ';
 				indiceFinal = indiceFinal +1;
 				if((candidatos&0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='1';
+					mensajeFinal2[indiceFinal]='1';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 1) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='2';
+					mensajeFinal2[indiceFinal]='2';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 2) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='3';
+					mensajeFinal2[indiceFinal]='3';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 3) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='4';
+					mensajeFinal2[indiceFinal]='4';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 4) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='5';
+					mensajeFinal2[indiceFinal]='5';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 5) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='6';
+					mensajeFinal2[indiceFinal]='6';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 6) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='7';
+					mensajeFinal2[indiceFinal]='7';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 7) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='8';
+					mensajeFinal2[indiceFinal]='8';
 					indiceFinal = indiceFinal +1;
 				}
 				if(((candidatos >> 8) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-					mensajeFinal[indiceFinal]='9';
+					mensajeFinal2[indiceFinal]='9';
 					indiceFinal = indiceFinal +1;
 				}
-				mensajeFinal[indiceFinal] = '\n';
+				mensajeFinal2[indiceFinal] = '\n';
 				indiceFinal = indiceFinal +1;		
 			}
 		}
 	}
 	
-	mensajeFinal[indiceFinal]='\0';
+	mensajeFinal2[indiceFinal]='\0';
 	
 	//Ahora se juntan 
 	
 	/* make space for the new string (should check the return value ...) */
 	strcpy(mensajeInicial, informacionJuego); /* copy name into the new var */
-	strcat(mensajeInicial, mensajeFinal); /* add the extension */
+	strcat(mensajeInicial, mensajeFinal2); /* add the extension */
 	gestor_serial_enviar_mensaje(mensajeInicial);
 }
 
