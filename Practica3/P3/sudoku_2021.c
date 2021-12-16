@@ -59,7 +59,7 @@ static int tiempo_segundos;
 
 static char mensajeFinal2[1000];
 static char mensajeFinal[1000];
-static char mensajeInicial[1000];
+static char mensajeInicial[1200];
 
 //Variables para saber si estamos en jugada introducida por comandos o por GPIO
 static uint8_t iComando;
@@ -376,8 +376,12 @@ void sudoku_evento_boton2(){
 			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
 			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
 			//Propagar para quitar el valor
-			celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
-			candidatos_actualizar_c(cuadricula_C_C);
+			uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
+			uint8_t valor_celda = celda_leer_valor(celda);
+			if(valor_celda == valorComando){
+				celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
+				candidatos_actualizar_c(cuadricula_C_C);
+			}
 			sudoku_mostrar_tablero();
 		}
 }
@@ -547,8 +551,8 @@ void sudoku_introducir_jugada(uint32_t aux){
 		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
 		uint8_t pista = celda_leer_pista(celda);  
 		uint16_t candidatos_celda = celda_leer_candidatos(celda);
-		
-		if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+		uint8_t valor_celda = celda_leer_valor(celda);
+		if(se_puede_modificar(pista,valor) == 1 && (valor != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
 			
 			
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
@@ -740,8 +744,9 @@ void sudoku_mostrar_tablero_inicial(){
 //Significa que ha llegado la alarma de 3 segundos tras introducir la jugada
 //Se muestra el tablero y se quita el led de confirmar escritura
 void sudoku_confirmar_jugada(){
+	estoy_en_comando = 0;
 	sudoku_mostrar_tablero();	//Se muestra otra vez porque lo exigen y se quita el led 
 	gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
-	estoy_en_comando = 0;
+	//estoy_en_comando = 0;
 }
 
