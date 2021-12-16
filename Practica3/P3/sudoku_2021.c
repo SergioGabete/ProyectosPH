@@ -53,8 +53,6 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 
 static int parar=0;
 static uint32_t estado_GPIO=0;
-static int tiempo_minutos;
-static int tiempo_segundos;
 
 
 static char mensajeFinal2[1000];
@@ -111,54 +109,45 @@ void sudoku_reiniciar(){
 	candidatos_actualizar_c(cuadricula_C_C);
 }
 
-
-//Convierte el int en char s[]
-void sudoku_convertir(int n, char s[])
- {
-     int i = 0;
-     char c;
-     do {       
-         s[i++] = n % 10 + '0';  
-     } while ((n /= 10) > 0);     
-
-     s[i] = '\0';
-		 int  j=strlen(s);
-     for (int z = 0; z<j; z++, j--) {
-         c = s[z];
-         s[z] = s[j];
-         s[j] = c;
-     }
+//Transforma el entero a cadena de caracteres
+void sudoku_mostrar_tiempo(int num,char cadena[]){
+	char caracter[2];								//caracter donde se almacena el numero
+	caracter[1]='\0';
+	if (num==0){										//Numero es 0
+		caracter[0]='0';
+		strcat(cadena,caracter);			//Concatenamos el numero 0 a la cadena
+	}else{
+		while(num!=0){								//Mientra que el numero no sea 0
+			caracter[0]=((num%10)+'0');	//numero = numero%10 + '0'
+			strcat(cadena,caracter);		//Concatenamos un numero a la cadena
+			num=num/10;									//Numero = numero /10
+		}
+	}
 } 
 
 //Mensaje que determina porque se ha dejado de jugar
 void sudoku_fin_partida(char fin_partida[]){
-	strcat(fin_partida, "Enhorabuena, has completado el sudoku con exito");
+	strcat(fin_partida, "\nEnhorabuena, has completado el sudoku con exito");
 }
 //Mensaje que determina porque se ha dejado de jugar
 void sudoku_reset_partida(char reset_partida[]){
-	strcat(reset_partida, "Has hecho un reset del sudoku\0");
+	strcat(reset_partida, "\nHas hecho un reset del sudoku\0");
 }
 
 void sudoku_nueva_partida(char nueva_partida[]){
-	strcat(nueva_partida, "Has iniciado una nueva partida\0");
+	strcat(nueva_partida, "\nHas iniciado una nueva partida\0");
 }
 
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
-	char minutos[5];
-	char segundos[5];
-	tiempo_minutos= RTC_leer_minutos();
-	tiempo_segundos = RTC_leer_segundos();
-	sudoku_convertir(tiempo_minutos,minutos);
-	sudoku_convertir(tiempo_segundos,segundos);
 	//Envios de mensajes
 	strcat(mensaje_tiempo,"\nInformacion de la partida acabada: \0");
 	strcat(mensaje_tiempo,"\nTiempo total de partida: \0");
-	strcat(mensaje_tiempo,minutos);
+	sudoku_mostrar_tiempo(RTC_leer_minutos(),mensaje_tiempo);
 	strcat(mensaje_tiempo," minutos y  \0");
-	strcat(mensaje_tiempo,segundos);
-	strcat(mensaje_tiempo,"segundos \n\0");
+	sudoku_mostrar_tiempo(RTC_leer_segundos(),mensaje_tiempo);
+	strcat(mensaje_tiempo,"  segundos \n\0");
 	strcat(mensaje_tiempo,"\n Quiere volver a jugar, si es asi inicie una nueva partida #NEW");
-}                                              
+}                                             
 	
 
 void sudoku_evento_boton1(){

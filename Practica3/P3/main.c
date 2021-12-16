@@ -14,6 +14,7 @@
 #include "planificador.h"
 #include "UART0.h"
 #include "WT.h"
+#include "RTC.h"
 //#include "cuadricula.h"
 
 //void PAbt_Handler_function(void) {}
@@ -32,6 +33,7 @@ int main (void) {
 		gestor_alarmas_init();
 		gestor_IO_iniciar();
 		sudoku_inicializar();
+		RTC_init();
 		WT_init(20);
 		//Poner alarma para la visualizacion constante de la GPIO
 	__disable_irq();

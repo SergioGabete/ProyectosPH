@@ -81,7 +81,7 @@ void sudoku_reset_partida(char reset_partida[]);
 
 void sudoku_nueva_partida(char nueva_partida[]);
 
-void sudoku_convertir(int n, char s[]);
+void sudoku_mostrar_tiempo(int num,char cadena[]);
 
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]);
 void sudoku_confirmar_jugada(void);
