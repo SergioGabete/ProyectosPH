@@ -244,6 +244,9 @@ void sudoku_evento_visualizacion_GPIO(){
 void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 	uint8_t fila, uint8_t columna)
 {
+		uint16_t celda;
+	uint8_t valor_celda;
+		
     uint8_t j, i , init_i, init_j, end_i, end_j;
     /* puede ayudar esta "look up table" a mejorar el rendimiento */
     const uint8_t init_region[NUM_FILAS] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
@@ -256,10 +259,12 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 			
 			//if(celda_leer_valor(cuadricula[fila][j]) == 0){
 				celda_eliminar_candidato(&cuadricula[fila][j],valor);
-			//}
-			//else{ // Celda con valor, no necesita candidatos
-				//celda_eliminar_candidatos(&cuadricula[fila][j]);
-			//}
+			celda = celda_leer_contenido(cuadricula[fila][j]);
+			valor_celda = celda_leer_valor(celda);
+			if(valor == valor_celda && j!=columna){
+				celda_modificar_bit_error(&cuadricula[fila][j]);
+			}
+			
 		}
 	//celda_eliminar_candidato(&cuadricula[fila][j],valor);
 
@@ -267,9 +272,11 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     for (i=0;i<NUM_FILAS;i++){
 			//if(celda_leer_valor(cuadricula[i][columna]) == 0){
 				celda_eliminar_candidato(&cuadricula[i][columna],valor);			
-			//else{ // Celda con valor, no necesita candidatos
-				//celda_eliminar_candidatos(&cuadricula[i][columna]);
-			//}
+			celda = celda_leer_contenido(cuadricula[i][columna]);
+			valor_celda = celda_leer_valor(celda);
+			if(valor == valor_celda && i!=fila){
+				celda_modificar_bit_error(&cuadricula[i][columna]);
+			}
 		}
 	//celda_eliminar_candidato(&cuadricula[i][columna],valor);
 
@@ -284,10 +291,11 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
       for(j=init_j; j<end_j; j++) {
 				//if(celda_leer_valor(cuadricula[i][j]) == 0){
 					celda_eliminar_candidato(&cuadricula[i][j],valor);
-				//}
-				//else{ // Celda con valor, no necesita candidatos
-					//celda_eliminar_candidatos(&cuadricula[i][j]);
-				//}
+				celda = celda_leer_contenido(cuadricula[i][j]);
+			valor_celda = celda_leer_valor(celda);
+			if(valor == valor_celda && j!=columna && i!=fila){
+				celda_modificar_bit_error(&cuadricula[i][j]);
+			}
 			}
     }
 }
@@ -434,19 +442,29 @@ void sudoku_mostrar_tablero(){
 					}
 				}else{
 					if(j%3 == 2){		//es el caso |..
-						if((pista&0x1) == 0x1){		//es pista
-							tablero[i][j] ='P';
+						if(((pista&0x1) == 0x1)&&((error&0x1)==1)){	//Si es pista y hay error se pone 0
+							tablero[i][j] ='X';
 						}else{
-							if((error&0x1)==1){//es error
-								tablero[i][j] ='E';
+							
+//							if(((error&0x1)==1)&&(valor!=0)){		//Significa que es valor introducido y he metido otra igual
+//								tablero[i][j] ='X';
+//							}else{
+							if((pista&0x1) == 0x1){		//es pista
+								tablero[i][j] ='P';
 							}else{
-									if(tablero[i][j-1] != ' '){
-											tablero[i][j]='V';
-									}else{
-											tablero[i][j]=' ';
-									}
+								if((error&0x1)==1){//es error
+									tablero[i][j] ='E';
+								}else{
+										if(tablero[i][j-1] != ' '){
+												tablero[i][j]=' ';
+										}else{
+												tablero[i][j]=' ';
+										}
+								}
 							}
-						}
+						//}
+					}
+				
 					}
 				}
 			}
@@ -750,4 +768,6 @@ void sudoku_confirmar_jugada(){
 	
 	//estoy_en_comando = 0;
 }
+
+
 

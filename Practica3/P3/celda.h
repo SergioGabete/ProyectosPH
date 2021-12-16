@@ -108,4 +108,9 @@ __inline static void celda_modificar_bit_error(CELDA *celdaptr){
         *celdaptr = *celdaptr | 0x0020;
 }
 
+__inline static void celda_quitar_bit_error(CELDA *celdaptr){
+        *celdaptr = *celdaptr & 0xffdf;
+}
+
+
 #endif // CELDA_H

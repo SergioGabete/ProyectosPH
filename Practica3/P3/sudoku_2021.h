@@ -42,6 +42,12 @@ candidatos_actualizar_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 int
 candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 
+void candidatos_actualizar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
+void
+candidatos_propagar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
+                             uint8_t fila, uint8_t columna);
+
+
 //int
 //candidatos_actualizar_arm_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 
