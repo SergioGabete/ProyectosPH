@@ -378,7 +378,7 @@ void sudoku_evento_boton2(){
 			//Propagar para quitar el valor
 			uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
 			uint8_t valor_celda = celda_leer_valor(celda);
-			if(valor_celda == valorComando){
+			if(valor_celda != valorComando){
 				celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
 				candidatos_actualizar_c(cuadricula_C_C);
 			}
