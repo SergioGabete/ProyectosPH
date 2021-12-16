@@ -721,6 +721,7 @@ void sudoku_mostrar_tablero_inicial(){
 					indiceFinal = indiceFinal +1;
 				}
 				mensajeFinal2[indiceFinal] = '\n';
+				
 				indiceFinal = indiceFinal +1;		
 			}
 		}

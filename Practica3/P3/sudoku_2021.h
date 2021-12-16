@@ -88,6 +88,8 @@ void sudoku_confirmar_jugada(void);
 
 
 
+void sudoku_confirmar_jugada(void);
+
 //void sudoku_evento_idle(void);
 
 
