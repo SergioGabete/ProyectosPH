@@ -22,7 +22,8 @@
 
 
 static char informacionJuego[] ="Bienvenido al sudoku\nPara jugar puede introducir los siguientes comandos:\n$NEW para empezar una nueva partida\n$RST para detener la partida\n$FCVR donde F es la fila a introducir, C la columna y V el valor. R sera la suma de los 3 anteriores modulo 8" ;
-
+static int tiempo;
+static int tiempo_computo=0;
 static CELDA
 cuadricula_C_C_Aux[NUM_FILAS][NUM_COLUMNAS] =
 {
@@ -92,7 +93,9 @@ int se_puede_modificar(uint8_t pista, uint8_t valor){
 
 
 void sudoku_inicializar(){
-	candidatos_actualizar_c(cuadricula_C_C);
+		tiempo=timer1_temporizador_leer();
+		candidatos_actualizar_c(cuadricula_C_C);	
+		tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 }
 
 
@@ -106,7 +109,9 @@ void sudoku_reiniciar(){
 			cuadricula_C_C[i][j] = cuadricula_C_C_Aux[i][j];
 		}
 	}
-	candidatos_actualizar_c(cuadricula_C_C);
+	tiempo=timer1_temporizador_leer();
+	candidatos_actualizar_c(cuadricula_C_C);	
+	tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 }
 
 //Transforma el entero a cadena de caracteres
@@ -146,6 +151,9 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	strcat(mensaje_tiempo," minutos y  \0");
 	sudoku_mostrar_tiempo(RTC_leer_segundos(),mensaje_tiempo);
 	strcat(mensaje_tiempo,"  segundos \n\0");
+	strcat(mensaje_tiempo, "El tiempo en computo de la funcion candidatos_actualizar es : \0");
+	sudoku_mostrar_tiempo(tiempo_computo,mensaje_tiempo);
+	strcat(mensaje_tiempo," segundos\0");
 	strcat(mensaje_tiempo,"\n Quiere volver a jugar, si es asi inicie una nueva partida #NEW");
 }                                             
 	
@@ -183,7 +191,9 @@ void sudoku_evento_boton1(){
 			//	parar = 1;
 			//Reiniciar
 			sudoku_reiniciar();
+			tiempo=timer1_temporizador_leer();
 			candidatos_actualizar_c(cuadricula_C_C);
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 			}
 		}else{		//En este caso significa que estoy en comando
 			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
@@ -350,7 +360,9 @@ void sudoku_2021_borrar_valor(int fila,int columna){
 		
 		if(pista !=1 ) {
 			celda_borrar_celda(&cuadricula_C_C[fila][columna]);
-			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+			tiempo=timer1_temporizador_leer();
+			candidatos_actualizar_c(cuadricula_C_C);//Para evitar los valores corruptos se vuelve a actualizar 
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 		}
 	}
 }
@@ -367,13 +379,18 @@ void sudoku_evento_boton2(){
 		//sudoku_2021_borrar_valor(i,j);
 		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
 			celda_borrar_celda(&cuadricula_C_C[i][j]);
+			tiempo=timer1_temporizador_leer();
 			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+			
 		}
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){
 				//parar = 1;
 				sudoku_reiniciar();
-			candidatos_actualizar_c(cuadricula_C_C);
+			tiempo=timer1_temporizador_leer();
+			candidatos_actualizar_c(cuadricula_C_C);	
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 			}
 		}else{
 			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
@@ -383,7 +400,9 @@ void sudoku_evento_boton2(){
 			//uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
 			//celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
 			
-			candidatos_actualizar_c(cuadricula_C_C);
+			tiempo=timer1_temporizador_leer();
+			candidatos_actualizar_c(cuadricula_C_C);	
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 			sudoku_mostrar_tablero();
 		}
 }
@@ -582,7 +601,9 @@ void sudoku_introducir_jugada(uint32_t aux){
 			//	parar = 1;
 			//Reiniciar
 			sudoku_reiniciar();
-			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo ha en la funcion reiniciar
+			tiempo=timer1_temporizador_leer();
+			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo hace la funcion reiniciar
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 			}
 		
 			sudoku_mostrar_tablero();
