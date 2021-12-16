@@ -104,4 +104,8 @@ __inline static void celda_introducir_celda(CELDA* celdaptr, uint16_t celda_ente
 		*celdaptr = celda_entera;
 }
 
+__inline static void celda_modificar_bit_error(CELDA *celdaptr){
+        *celdaptr = *celdaptr | 0x0020;
+}
+
 #endif // CELDA_H

@@ -53,7 +53,7 @@ int main (void) {
 		uart0_init();
 		//sudoku_mensajeinicial();
 		sudoku_mostrar_tablero_inicial();
-		uart0_sendchar('B');
+		//uart0_sendchar('B');
 		planificador_init();
 		
 		//Si ha habido un reset de la partida se actualiza el tablero a sus valores iniciales
