@@ -377,11 +377,8 @@ void sudoku_evento_boton2(){
 			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
 			//Propagar para quitar el valor
 			uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
-			uint8_t valor_celda = celda_leer_valor(celda);
-			if(valor_celda != valorComando){
-				celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
-				candidatos_actualizar_c(cuadricula_C_C);
-			}
+			celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
+			candidatos_actualizar_c(cuadricula_C_C);
 			sudoku_mostrar_tablero();
 		}
 }
@@ -553,7 +550,6 @@ void sudoku_introducir_jugada(uint32_t aux){
 		uint16_t candidatos_celda = celda_leer_candidatos(celda);
 		uint8_t valor_celda = celda_leer_valor(celda);
 		if(se_puede_modificar(pista,valor) == 1 && (valor != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
-			
 			
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
 			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
