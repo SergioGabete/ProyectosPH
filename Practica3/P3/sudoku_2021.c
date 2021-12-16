@@ -207,6 +207,20 @@ void sudoku_evento_boton1(){
 			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
 			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
 			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
+			//Como se ha confirmado pues se introduce y se propaga
+			uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
+			uint8_t pista = celda_leer_pista(celda);
+			uint8_t valor_celda = celda_leer_valor(celda);
+			uint16_t candidatos_celda=celda_leer_candidatos(celda);
+			if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+			
+			celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
+			candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	//Si quita el propagar porque a lo mejor luego se quita
+			if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+			}else{
+				celda_introducir_error(&cuadricula_C_C[iComando][jComando], valorComando);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+			}
+		}
 			sudoku_mostrar_tablero();
 		}
 }
@@ -376,8 +390,9 @@ void sudoku_evento_boton2(){
 			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
 			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
 			//Propagar para quitar el valor
-			uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
-			celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
+			//uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
+			//celda_borrar_celda(&cuadricula_C_C[iComando][jComando]);		//Las variables que hemos guardado las uso para borrar la celda
+			
 			candidatos_actualizar_c(cuadricula_C_C);
 			sudoku_mostrar_tablero();
 		}
@@ -544,6 +559,8 @@ void sudoku_introducir_jugada(uint32_t aux){
 		jComando = j;
 		valorComando = valor;
 		
+	//Idea: guardar el estado de la celda, mostrar tablero y cuando acabe pues lo vuelves a meter
+	
 		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
 		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
 		uint8_t pista = celda_leer_pista(celda);  
@@ -552,22 +569,12 @@ void sudoku_introducir_jugada(uint32_t aux){
 		if(se_puede_modificar(pista,valor) == 1 && (valor != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
 			
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
-			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
+			//candidatos_propagar_c(cuadricula_C_C,i,j);	//Si quita el propagar porque a lo mejor luego se quita
 			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-				
-				//gestor_IO_confirmar_escritura(); 	//Se quita porque ya no hace falta al introducir por linea serie
-				
 			}else{
-				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				//Esto a lo mejor hay que cambiarlo ^^
-				//mejor ponerlo en plan celda poner error o algo asi
 				celda_introducir_error(&cuadricula_C_C[i][j], valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				
 			}
-			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
-			
-			
-		}		//Esto es del if(se_puede_modificar(pista,valor) == 1){
+		}
 		
 		
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
@@ -584,8 +591,10 @@ void sudoku_introducir_jugada(uint32_t aux){
 			
 			//gestor_IO_confirmar_escritura();	//lo activa durante un segundo pero yo lo desactivare cuando llegue el evento de confirmar escritura
 			gestor_IO_escribir_led();
-			//cola_guardar_eventos(Set_Alarm,0x01000BB8);
-			cola_guardar_eventos(Set_Alarm,0x01008BB8);		//le meto un poco a la alarma para probarlo bien
+			
+			celda_introducir_celda(&cuadricula_C_C[i][j],celda);	//Vuelvo a escribir la celda porque la he cambiado y no se ha confirmado
+			cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
+			//cola_guardar_eventos(Set_Alarm,0x01008BB8);
 }
 
 
@@ -741,8 +750,22 @@ void sudoku_mostrar_tablero_inicial(){
 //Se muestra el tablero y se quita el led de confirmar escritura
 void sudoku_confirmar_jugada(){
 	estoy_en_comando = 0;
-	sudoku_mostrar_tablero();	//Se muestra otra vez porque lo exigen y se quita el led 
 	gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+	uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
+			uint8_t pista = celda_leer_pista(celda);
+			uint8_t valor_celda = celda_leer_valor(celda);
+			uint16_t candidatos_celda=celda_leer_candidatos(celda);
+			if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+			
+			celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
+			candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	//Si quita el propagar porque a lo mejor luego se quita
+			if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+			}else{
+				celda_introducir_error(&cuadricula_C_C[iComando][jComando], valorComando);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+			}
+		}
+			sudoku_mostrar_tablero();
+	
 	//estoy_en_comando = 0;
 }
 

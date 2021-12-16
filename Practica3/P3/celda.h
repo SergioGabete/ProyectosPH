@@ -99,4 +99,9 @@ __inline static void celda_introducir_error(CELDA *celdaptr, uint8_t valor){
 __inline static uint8_t celda_leer_error(CELDA celdaptr){
 		return (celdaptr >> 5) & 0x01;
 }
+
+__inline static void celda_introducir_celda(CELDA* celdaptr, uint16_t celda_entera){
+		*celdaptr = celda_entera;
+}
+
 #endif // CELDA_H
