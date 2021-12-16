@@ -19,6 +19,8 @@ int main (void) {
   init_serial();                           /* Initialize Serial Interface   */
 	RTC_init();
 	WT_init();
+	
+	sendchar('B');
 	while (1){
 		sendchar(getchar());
 		sendchar ('\n');

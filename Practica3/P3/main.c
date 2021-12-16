@@ -35,6 +35,7 @@ int main (void) {
 		sudoku_inicializar();
 		RTC_init();
 		WT_init(20);
+		feed_watchdog();
 		//Poner alarma para la visualizacion constante de la GPIO
 	__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x068000C8);

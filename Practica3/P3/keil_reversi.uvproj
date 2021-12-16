@@ -592,16 +592,6 @@
               <FilePath>.\SWI.s</FilePath>
             </File>
             <File>
-              <FileName>Gestor_Interrupciones.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Gestor_Interrupciones.h</FilePath>
-            </File>
-            <File>
-              <FileName>Gestor_Interrupciones.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Gestor_Interrupciones.c</FilePath>
-            </File>
-            <File>
               <FileName>UART0.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\UART0.h</FilePath>

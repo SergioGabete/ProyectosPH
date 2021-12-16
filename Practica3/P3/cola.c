@@ -26,14 +26,14 @@ void cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData){
 			GPIO_escribir(30,1,1);
 			while(1){}
 		}
-		__disable_irq();
+		//__disable_irq();
 		//Guarda los parametros en sus respectivas variables e incrementa en una el valor de ultimo evento.
 		cola_eventos[ultimo_evento_guardado].ID_evento = ID_evento;
 		cola_eventos[ultimo_evento_guardado].auxData = auxData;
 		cola_eventos[ultimo_evento_guardado].instante_evento = timer1_temporizador_leer();
 		ultimo_evento_guardado= (ultimo_evento_guardado + 1) % 32;
 		
-		__enable_irq();
+		//__enable_irq();
 		//Si el ultimo evento que se ha guardado es el mismo que el que se ha procesado activa la variable overflow
 		if(ultimo_evento_guardado == ultimo_evento_procesado){
 			overflow=1;
@@ -60,13 +60,13 @@ struct evento cola_evento_sin_tratar(void){
 //		configuracionVicEnable=VICIntEnable;
 //		configuracionVicClr=VICIntEnClr;
 //		VICIntEnClr = 0xffffffff;
-		__disable_irq();
+		//__disable_irq();
 		struct evento antiguo;
 		antiguo.ID_evento=cola_eventos[ultimo_evento_procesado].ID_evento;
 		antiguo.auxData= cola_eventos[ultimo_evento_procesado].auxData;
 	  antiguo.instante_evento = cola_eventos[ultimo_evento_procesado].instante_evento;
 		ultimo_evento_procesado = (ultimo_evento_procesado + 1) % 32;
-		__enable_irq();
+		//__enable_irq();
 		overflow = 0;
 			
 //		VICIntEnable = configuracionVicEnable;

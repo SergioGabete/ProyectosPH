@@ -15,7 +15,6 @@
 ".\rtc.o"
 ".\wt.o"
 ".\swi.o"
-".\gestor_interrupciones.o"
 ".\uart0.o"
 ".\gestor_serial.o"
 --strict --scatter ".\keil_reversi.sct"

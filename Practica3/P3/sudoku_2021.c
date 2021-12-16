@@ -170,16 +170,9 @@ void sudoku_evento_boton1(){
 			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
 			candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
 			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-				//gestor_IO_escribir_led();	//Se activa el led de la GPIO
-				//cola_guardar_eventos(Set_Alarm, 0x070003e8);	//Se programa una alarma para desactivar el led tras un segundo
 				gestor_IO_confirmar_escritura(); 
-				
 			}else{
-				//celda_actualizar_celda(&cuadricula_C_C[i][j],0x0020);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				//Esto a lo mejor hay que cambiarlo ^^
-				//mejor ponerlo en plan celda poner error o algo asi
 				celda_introducir_error(&cuadricula_C_C[i][j],valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				
 			}
 			//se calcula la diferencia de las variables de tiempo del procesado de la entrada
 			double t1 = timer1_temporizador_leer();

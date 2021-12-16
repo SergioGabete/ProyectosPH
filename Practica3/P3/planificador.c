@@ -22,9 +22,10 @@ static char mensaje[100];
 void planificador_init(){
 	struct evento evento_sin_tratar;
 		//Prueba del watchdog
-	/*while(1){
-		cola_guardar_eventos(0,0);
-	}*/
+//	while(1){
+//		cola_guardar_eventos(0,0);
+//		feed_watchdog();
+//	}
 		while(1){  //Esto debe ser una funcion de sudoku para saber si parar
 			if(cola_comprobar_nuevos_eventos() == 1){				//Si hay eventos nuevos sin tratar se desencola un evento
 				feed_watchdog();
