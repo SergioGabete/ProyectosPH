@@ -65,6 +65,7 @@ static uint8_t iComando;
 static uint8_t jComando;
 static uint8_t valorComando;
 static int estoy_en_comando =0;		//Si es 0 significa que no esta en comando
+static int conteos_introducir_jugada =0;
 
 int sudoku_parar(){
 	return parar;
@@ -653,8 +654,10 @@ void sudoku_introducir_jugada(uint32_t aux){
 			gestor_IO_escribir_led();
 			
 			celda_introducir_celda(&cuadricula_C_C[i][j],celda);	//Vuelvo a escribir la celda porque la he cambiado y no se ha confirmado
-			cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
+			//cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
 			//cola_guardar_eventos(Set_Alarm,0x01008BB8);
+			conteos_introducir_jugada = 0;
+			cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
 }
 
 
@@ -809,6 +812,17 @@ void sudoku_mostrar_tablero_inicial(){
 //Significa que ha llegado la alarma de 3 segundos tras introducir la jugada
 //Se muestra el tablero y se quita el led de confirmar escritura
 void sudoku_confirmar_jugada(){
+	if(conteos_introducir_jugada != 6){
+		conteos_introducir_jugada = conteos_introducir_jugada +1;
+		if(conteos_introducir_jugada%2==0){
+			gestor_IO_escribir_led();
+		}else{
+			gestor_IO_quitar_led();
+		}
+		gestor_alarmas_quitar_alarma(evento_confirmar_jugada);
+		cola_guardar_eventos(Set_Alarm,0x010001F4);	//Ponemos otra vez la alarma
+	}else{
+	
 	estoy_en_comando = 0;
 	gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
 	uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
@@ -850,7 +864,7 @@ void sudoku_confirmar_jugada(){
 		}
 	}
 			sudoku_mostrar_tablero();
-	
+}
 	//estoy_en_comando = 0;
 }
 
@@ -872,8 +886,9 @@ void candidatos_actualizar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],uin
 //El fallo es que detecta los de fila, columna y la region puede detectar el mismo
 void
 candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
+		
 		uint16_t celda;
-	uint8_t valor_celda;
+		uint8_t valor_celda;
 		
     uint8_t j, i , init_i, init_j, end_i, end_j;
     /* puede ayudar esta "look up table" a mejorar el rendimiento */
