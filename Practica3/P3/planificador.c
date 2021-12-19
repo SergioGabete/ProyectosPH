@@ -84,17 +84,19 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			gestor_IO_evento_idle();
 			break;
 		case evento_rst:
-			sudoku_reset_partida(mensaje);
-			gestor_serial_enviar_mensaje(mensaje);
-			sudoku_tiempo_total_partida(mensaje);
-			gestor_serial_enviar_mensaje(mensaje);
+//			sudoku_reset_partida(mensaje);
+//			gestor_serial_enviar_mensaje(mensaje);
+//			sudoku_tiempo_total_partida(mensaje);
+//			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_evento_rst(mensaje);
 			//parar = 1;		//Esto no se si corresponde al planificador
 			break;
 		case evento_new:
-			sudoku_reiniciar();
-			sudoku_nueva_partida(mensaje);
-			gestor_serial_enviar_mensaje(mensaje);
-			sudoku_mostrar_tablero();
+//			sudoku_reiniciar();
+//			sudoku_nueva_partida(mensaje);
+//			gestor_serial_enviar_mensaje(mensaje);
+//			sudoku_mostrar_tablero();
+			sudoku_evento_new(mensaje);
 			break;
 		case evento_jugada:
 			sudoku_introducir_jugada(evento_sin_tratar.auxData);								//No se si se deberia meter esa funcion nueva de sudoku o usar cosas de la GPIO
@@ -109,10 +111,11 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			sudoku_confirmar_jugada();
 			break;
 		case evento_fin_partida:
-			sudoku_fin_partida(mensaje);
-			gestor_serial_enviar_mensaje(mensaje);
-			sudoku_tiempo_total_partida(mensaje);
-			gestor_serial_enviar_mensaje(mensaje);
+//			sudoku_fin_partida(mensaje);
+//			gestor_serial_enviar_mensaje(mensaje);
+//			sudoku_tiempo_total_partida(mensaje);
+//			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_evento_fin_partida(mensaje);
 			break;
 		default:
 			;

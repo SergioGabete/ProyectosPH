@@ -95,6 +95,11 @@ void sudoku_confirmar_jugada(void);
 
 void sudoku_confirmar_jugada(void);
 
+
+void sudoku_evento_rst(char reset_partida[]);
+void sudoku_evento_new(char reset_partida[]);
+void sudoku_evento_fin_partida(char reset_partida[]);
+
 //void sudoku_evento_idle(void);
 
 

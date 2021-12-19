@@ -633,9 +633,7 @@ void sudoku_introducir_jugada(uint32_t aux){
 				celda_modificar_bit_error(&cuadricula_C_C[i][j]);
 			}
 		}
-	}
-		
-		
+	}	
 		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
 		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
 			//	parar = 1;
@@ -660,9 +658,6 @@ void sudoku_introducir_jugada(uint32_t aux){
 			cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
 }
 
-
-
-
 void sudoku_mostrar_tablero_inicial(){
 	//La idea es coger el array mensajeInicial y mensajeFinal y juntarlos
 	const int numFilas = 19;
@@ -677,8 +672,7 @@ void sudoku_mostrar_tablero_inicial(){
 			}
 		}
 	}
-	//Ahora hay que poner los valores y errores y si es pista
-	//Ahora las celdas
+	
 	int iCuadricula=0;
 	int jCuadricula=0;
 	uint16_t celda;
@@ -690,8 +684,6 @@ void sudoku_mostrar_tablero_inicial(){
 		for(int j=0;j<numColumnas-1;j++){
 			if(j%3==0){
 				tablero[i][j] = '|';
-				//Aqui se aumentan los indices para recorrer las celdas
-				//Obtener las cosas de esta celda
 				if(j != numColumnas-2){		//parar que no tenga en cuenta el ultimo |
 					celda = celda_leer_contenido(cuadricula_C_C[iCuadricula][jCuadricula]);
 					pista = celda_leer_pista(celda); 
@@ -800,10 +792,6 @@ void sudoku_mostrar_tablero_inicial(){
 	}
 	
 	mensajeFinal2[indiceFinal]='\0';
-	
-	//Ahora se juntan 
-	
-	/* make space for the new string (should check the return value ...) */
 	strcpy(mensajeInicial, informacionJuego); /* copy name into the new var */
 	strcat(mensajeInicial, mensajeFinal2); /* add the extension */
 	gestor_serial_enviar_mensaje(mensajeInicial);
@@ -839,13 +827,6 @@ void sudoku_confirmar_jugada(){
 				candidatos_actualizar_c(cuadricula_C_C);
 			}else{
 			if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
-//			if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
-//				celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
-//				if(valorComando != valor_celda && error == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
-//					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
-//				}
-//				candidatos_actualizar_c(cuadricula_C_C);
-//			}
 				celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
 				if(valorComando != valor_celda && error == 1){		//Significa que no he vuelto a introducir el mismo valor y habia un error
 					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
@@ -972,4 +953,26 @@ candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
 			}
     }
 		}
+}
+
+void sudoku_evento_rst(char mensaje[]){
+	//char mensaje[1000];
+	sudoku_reset_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_tiempo_total_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+}
+void sudoku_evento_new(char mensaje[]){
+	//char mensaje[1000];
+		sudoku_reiniciar();
+			sudoku_nueva_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_mostrar_tablero();
+}
+void sudoku_evento_fin_partida(char mensaje[]){
+	//char mensaje[1000];
+	sudoku_fin_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
+			sudoku_tiempo_total_partida(mensaje);
+			gestor_serial_enviar_mensaje(mensaje);
 }

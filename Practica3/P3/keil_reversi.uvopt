@@ -156,7 +156,7 @@
           <Type>0</Type>
           <LineNumber>660</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>8616</Address>
+          <Address>8684</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -165,7 +165,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\sudoku_2021.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\keil_reversi\sudoku_2021.c\660</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>
