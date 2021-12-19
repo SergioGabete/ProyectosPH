@@ -17,7 +17,7 @@
 
 //static int parar =0;
 static char mensaje[100];
-static int reset =0;	//variable que sirve para avisar que hemos llegado a reset
+static int reset =1;	//variable que sirve para avisar que hemos llegado a reset
 
 void planificador_init(){
 	struct evento evento_sin_tratar;
@@ -37,7 +37,10 @@ void planificador_init(){
 					if(evento_sin_tratar.ID_evento ==evento_continuar_mensaje){
 						planificador_tratar_evento(evento_sin_tratar);
 					}
-					else if(evento_sin_tratar.ID_evento==evento_new){
+					if(evento_sin_tratar.ID_evento == evento_power_down){
+						planificador_tratar_evento(evento_sin_tratar);
+					}
+					if(evento_sin_tratar.ID_evento==evento_new){
 						reset=0;
 						planificador_tratar_evento(evento_sin_tratar);
 					}
