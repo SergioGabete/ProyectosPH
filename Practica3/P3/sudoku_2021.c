@@ -21,7 +21,7 @@
 #include "RTC.h"
 
 
-static char informacionJuego[] ="Bienvenido al sudoku\nPara jugar puede introducir los siguientes comandos:\n$NEW para empezar una nueva partida\n$RST para detener la partida\n$FCVR donde F es la fila a introducir, C la columna y V el valor. R sera la suma de los 3 anteriores modulo 8" ;
+static char informacionJuego[] ="Bienvenido al sudoku\nPara jugar puede introducir los siguientes comandos:\n$NEW para empezar una nueva partida\n$RST para detener la partida\n$FCVR donde F es la fila a introducir, C la columna y V el valor. R sera la suma de los 3 anteriores modulo 8\nDespues de introducir una jugada, durante 3 segundos se puede cancelar con el boton2 o confirmar con el boton1\nSi no se hace nada se confirma por defecto\nAl introducir una casilla invalida saldran errores en las que tengan el mismo valor\nSi en ese caso es una Pista saldra una X indicando que no se puede modificar" ;
 static int tiempo;
 static int tiempo_computo=0;
 static CELDA
@@ -58,7 +58,7 @@ static uint32_t estado_GPIO=0;
 
 static char mensajeFinal2[1000];
 static char mensajeFinal[1000];
-static char mensajeInicial[1200];
+static char mensajeInicial[1500];
 
 //Variables para saber si estamos en jugada introducida por comandos o por GPIO
 static uint8_t iComando;
@@ -154,16 +154,17 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	strcat(mensaje_tiempo, "El tiempo en computo de la funcion candidatos_actualizar es : \0");
 	sudoku_mostrar_tiempo(tiempo_computo,mensaje_tiempo);
 	strcat(mensaje_tiempo," segundos\0");
-	strcat(mensaje_tiempo,"\n Quiere volver a jugar, si es asi inicie una nueva partida #NEW");
+	strcat(mensaje_tiempo,"¿Quiere volver a jugar? Si es asi inicie una nueva partida con el comando #NEW!");
 }                                             
 	
 
 void sudoku_evento_boton1(){
+	gestor_pulsacion_boton1_pretado();	
 		if(estoy_en_comando == 0){
 		//Quitar alarma del idle
 		double t0 = timer1_temporizador_leer();
 	
-		//gestor_pulsacion_boton1_pretado();
+		//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
 		
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
@@ -203,6 +204,7 @@ void sudoku_evento_boton1(){
 			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 			}
 		}else{		//En este caso significa que estoy en comando
+			//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
 			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
 			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
 			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
@@ -389,8 +391,8 @@ void sudoku_2021_borrar_valor(int fila,int columna){
 }
 
 void sudoku_evento_boton2(){
+		gestor_pulsacion_boton2_pretado();			//ESTO estaba comentado
 		if(estoy_en_comando == 0){
-		//gestor_pulsacion_boton2_pretado();
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
 		uint8_t valor = gestor_IO_leer_valor_introducir();
@@ -402,7 +404,7 @@ void sudoku_evento_boton2(){
 		//sudoku_2021_borrar_valor(i,j);
 		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
 			celda_borrar_celda(&cuadricula_C_C[i][j]);
-			if(valor != valor_celda && error_celda == 1){		//Si voy a introducir un valor y no habia error y el valor es distinto pues propago
+			if(error_celda == 1){		//En este caso el valor da igual porque solo borras
 				candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
 			}
 			tiempo=timer1_temporizador_leer();
@@ -419,6 +421,7 @@ void sudoku_evento_boton2(){
 			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 			}
 		}else{
+			//gestor_pulsacion_boton2_pretado();
 			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
 			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
 			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos

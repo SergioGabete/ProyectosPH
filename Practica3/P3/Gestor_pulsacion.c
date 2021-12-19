@@ -126,9 +126,9 @@ void gestor_pulsacion_alarma_boton2(void){
 		}
 		else{
 			//En caso de que no este pulsado se actualiza el estado a no pulsado
-			gestor_pulsacion_actualizar_estado_1();
-			gestor_pulsacion_clear_nueva_pulsacion_1();
 			gestor_alarmas_quitar_alarma(evento_alarma_pulsaciones_2);
+			gestor_pulsacion_clear_nueva_pulsacion_1();
+			gestor_pulsacion_actualizar_estado_1();
 		}
 }
 
