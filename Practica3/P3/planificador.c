@@ -17,7 +17,7 @@
 
 //static int parar =0;
 static char mensaje[100];
-
+static int reset =0;	//variable que sirve para avisar que hemos llegado a reset
 
 void planificador_init(){
 	struct evento evento_sin_tratar;
@@ -26,19 +26,41 @@ void planificador_init(){
 //		cola_guardar_eventos(0,0);
 //		feed_watchdog();
 //	}
-		while(1){  //Esto debe ser una funcion de sudoku para saber si parar
-			if(cola_comprobar_nuevos_eventos() == 1){				//Si hay eventos nuevos sin tratar se desencola un evento
-				feed_watchdog();
-				__disable_irq();
-				evento_sin_tratar = cola_evento_sin_tratar();
-				__enable_irq();
-				planificador_tratar_evento(evento_sin_tratar);
-			}else{
+		while(1){
+		while(reset!=0){
+			if(cola_comprobar_nuevos_eventos() == 1){	
+					//Si hay eventos nuevos sin tratar se desencola un evento
+					feed_watchdog();
+					__disable_irq();
+					evento_sin_tratar = cola_evento_sin_tratar();
+					__enable_irq();
+					if(evento_sin_tratar.ID_evento ==evento_continuar_mensaje){
+						planificador_tratar_evento(evento_sin_tratar);
+					}
+					else if(evento_sin_tratar.ID_evento==evento_new){
+						reset=0;
+						planificador_tratar_evento(evento_sin_tratar);
+					}
+		 }else{
 				//Si no hay eventos a tratar se pasa a modo idle
 				//gestor_IO_activar_iddle();
 				idle_procesador();					
 			}
 		}
+		while(reset!=1){  //Esto debe ser una funcion de sudoku para saber si parar
+			if(cola_comprobar_nuevos_eventos() == 1){					//Si hay eventos nuevos sin tratar se desencola un evento
+					feed_watchdog();
+					__disable_irq();
+					evento_sin_tratar = cola_evento_sin_tratar();
+					__enable_irq();
+					planificador_tratar_evento(evento_sin_tratar);
+		 }else{
+				//Si no hay eventos a tratar se pasa a modo idle
+				//gestor_IO_activar_iddle();
+				idle_procesador();					
+			}
+		}
+	}
 	
 }
 
@@ -89,6 +111,7 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 //			sudoku_tiempo_total_partida(mensaje);
 //			gestor_serial_enviar_mensaje(mensaje);
 			sudoku_evento_rst(mensaje);
+			reset=1;
 			//parar = 1;		//Esto no se si corresponde al planificador
 			break;
 		case evento_new:

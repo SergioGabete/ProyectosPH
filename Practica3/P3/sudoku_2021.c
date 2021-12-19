@@ -155,7 +155,7 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	strcat(mensaje_tiempo, "El tiempo en computo de la funcion candidatos_actualizar es : \0");
 	sudoku_mostrar_tiempo(tiempo_computo,mensaje_tiempo);
 	strcat(mensaje_tiempo," segundos\0");
-	strcat(mensaje_tiempo,"¿Quiere volver a jugar? Si es asi inicie una nueva partida con el comando #NEW!");
+	strcat(mensaje_tiempo,"\nQuiere volver a jugar? Si es asi inicie una nueva partida con el comando #NEW!\n");
 }                                             
 	
 
