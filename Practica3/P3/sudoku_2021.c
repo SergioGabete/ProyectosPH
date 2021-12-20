@@ -59,7 +59,7 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 0x0003, 0x0004, 0x0005, 0x0002, 0x0008, 0x0016, 0x0000, 0x0000, 0x0019, 0, 0, 0, 0, 0, 0, 0
 };
 
-static int parar=0;
+
 static uint32_t estado_GPIO=0;
 
 
@@ -217,6 +217,9 @@ void sudoku_evento_boton1(){
 						gestor_IO_confirmar_escritura(); 
 					}else{
 						celda_modificar_bit_error(&cuadricula_C_C[i][j]);
+						///////////////////////////////////////////////////////////////////////////////
+					candidatos_actualizar_c(cuadricula_C_C);		//CAMBIADO//////////////////////////////////////////////////////////////////////////
+					///////////////////////////////////////////////////////////////
 						//celda_introducir_error(&cuadricula_C_C[i][j],valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
 					}
 					//se calcula la diferencia de las variables de tiempo del procesado de la entrada
@@ -231,6 +234,14 @@ void sudoku_evento_boton1(){
 					tiempo=timer1_temporizador_leer();
 					candidatos_actualizar_c(cuadricula_C_C);
 					tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+					}
+				
+					if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
+						__disable_fiq();
+						__disable_irq();
+						cola_guardar_eventos(evento_rst,0);
+						__enable_fiq();
+						__enable_irq();
 					}
 			}else{		//En este caso significa que estoy en comando
 				//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
@@ -261,11 +272,21 @@ void sudoku_evento_boton1(){
 						if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
 						}else{
 							celda_modificar_bit_error(&cuadricula_C_C[iComando][jComando]);
+							///////////////////////////////////////////////////////////////////////////////
+					candidatos_actualizar_c(cuadricula_C_C);		//CAMBIADO//////////////////////////////////////////////////////////////////////////
+					///////////////////////////////////////////////////////////////
 							//celda_introducir_error(&cuadricula_C_C[iComando][jComando], valorComando);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
 						}
 					}
 				}
 				sudoku_mostrar_tablero();
+				if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
+					__disable_fiq();
+					__disable_irq();
+					cola_guardar_eventos(evento_rst,0);
+					__enable_fiq();
+					__enable_irq();
+				}
 			}
 	}
 }
@@ -718,7 +739,7 @@ void sudoku_mostrar_tablero_inicial(){
 								tablero[i][j] ='E';
 							}else{
 									if(tablero[i][j-1] != ' '){
-											tablero[i][j]='V';
+											tablero[i][j]=' ';
 									}else{
 											tablero[i][j]=' ';
 									}
@@ -840,7 +861,10 @@ void sudoku_confirmar_jugada(){
 				if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
 				}else{
 					celda_modificar_bit_error(&cuadricula_C_C[iComando][jComando]);
-					//celda_introducir_error(&cuadricula_C_C[iComando][jComando], valorComando);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+					//No llamar a actualizar simplemente como es error pues dejas los candidatos ahi
+					///////////////////////////////////////////////////////////////////////////////
+					candidatos_actualizar_c(cuadricula_C_C);		//CAMBIADO//////////////////////////////////////////////////////////////////////////
+					///////////////////////////////////////////////////////////////
 				}
 				candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	//Si quita el propagar porque a lo mejor luego se quita
 			}
@@ -848,13 +872,13 @@ void sudoku_confirmar_jugada(){
 				sudoku_mostrar_tablero();
 		
 				//Mirar si se han llenado todas las celdas para acabar
-			if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
+			/*if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
 				__disable_fiq();
 				__disable_irq();
 				cola_guardar_eventos(evento_rst,0);
 				__enable_fiq();
 				__enable_irq();
-			}
+			}*/
 	}
 	//estoy_en_comando = 0;
 }
@@ -878,7 +902,6 @@ void candidatos_actualizar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],uin
 //El fallo es que detecta los de fila, columna y la region puede detectar el mismo
 void
 candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
-		
 		uint16_t celda;
 		uint8_t valor_celda;
 		
@@ -901,7 +924,7 @@ candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
 			celda = celda_leer_contenido(cuadricula_C_C[i][columna]);
 			//Extraer el valor y ver si es el mismo
 			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor){
+			if(valor_celda == valor && i!=fila){		//Para que no lea otra vez la celda desde la que se mira (ya se ha tenido en cuenta al recorrer la fila)
 				varios_detectados = varios_detectados +1;
 			}	
 		}
