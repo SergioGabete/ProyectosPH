@@ -67,7 +67,8 @@ __inline static void celda_inicializar_candidatos(CELDA *celdaptr){
 /***********************************************************
 * sustituye el valor de los 16 bits de celda por valor*/
 __inline static void celda_actualizar_celda(CELDA *celdaptr, uint16_t valor){
-        *celdaptr = 0xff80;
+        //*celdaptr = 0xff80;
+        *celdaptr = 0x0000;
         *celdaptr =*celdaptr | valor;
 		
 }
