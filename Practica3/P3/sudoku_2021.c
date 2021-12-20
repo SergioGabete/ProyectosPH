@@ -74,7 +74,8 @@ int sudoku_parar(){
 void sudoku_retomar_ejecucion(){
 	parar = 0;
 }
-
+/************************
+Esta funcion devuelve el valor nuevo de los candidatos en cada celda en valorNuevo..*/
 int valor_en_candidatos(uint16_t candidatos_celda, uint8_t valorNuevo){
 	if( ((candidatos_celda >> (valorNuevo -1) ) & 0x1) == 0){
 		return 1;
@@ -83,6 +84,9 @@ int valor_en_candidatos(uint16_t candidatos_celda, uint8_t valorNuevo){
 	}
 }
 
+/************************
+Esta funcion devuelve si el valor que le hemos pasado se pue modificadr, es decir si no es una pista y
+su valor esta comprendido entre 0 y 9.*/
 int se_puede_modificar(uint8_t pista, uint8_t valor){
 	if(pista != 1 && (valor > 0 && valor <=9)){
 		return 1;
@@ -91,19 +95,23 @@ int se_puede_modificar(uint8_t pista, uint8_t valor){
 	}
 }
 
-
-
+/************************
+Esta funcion inicializa el sudoku, es decir actualizamos el valor de la cuadricula, ademas calculamos 
+el timpo en computo de dicha función*/
 void sudoku_inicializar(){
 		tiempo=timer1_temporizador_leer();
 		candidatos_actualizar_c(cuadricula_C_C);	
 		tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 }
 
-
+/************************
+Esta funcion escribe el mensaje inicial de nuestro sudoku.*/
 void sudoku_mensajeinicial(){
 	gestor_serial_enviar_mensaje(informacionJuego);
 }
 
+/************************
+Esta funcion reinicia el sudoku, es decir , resetea el valor de la cuadricula y vuelve a actualizarla.*/
 void sudoku_reiniciar(){
 	for(int i=0;i<NUM_FILAS;i++){
 		for(int j=0;j<NUM_FILAS;j++){
@@ -115,7 +123,8 @@ void sudoku_reiniciar(){
 	tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
 }
 
-//Transforma el entero a cadena de caracteres
+/************************
+Esta funcion ttransforma un entero num a una cadena de caracteres cadena.*/
 void sudoku_mostrar_tiempo(int num,char cadena[]){
 	char caracter[2];								//caracter donde se almacena el numero
 	caracter[1]='\0';
@@ -130,20 +139,24 @@ void sudoku_mostrar_tiempo(int num,char cadena[]){
 		}
 	}
 } 
-
-//Mensaje que determina porque se ha dejado de jugar
+/************************
+Esta funcion envia un mensaje que determina porque se ha dejado de jugar .*/
 void sudoku_fin_partida(char fin_partida[]){
 	strcat(fin_partida, "\nEnhorabuena, has completado el sudoku con exito");
 }
-//Mensaje que determina porque se ha dejado de jugar
+/************************
+Esta funcion envia un mensaje que determina porque se ha dejado de jugar .*/
 void sudoku_reset_partida(char reset_partida[]){
 	strcat(reset_partida, "\nHas hecho un reset del sudoku\0");
 }
-
+/************************
+Esta funcion envia un mensaje para avisar que se ha iniciado una nueva partida .*/
 void sudoku_nueva_partida(char nueva_partida[]){
 	strcat(nueva_partida, "\nHas iniciado una nueva partida\0");
 }
-
+/************************
+Esta funcion nos informa del timpo total de la partida, el tiempo en computo de la función candaddatos_actualizar
+y además nos pregunta si queremos volver a jugar una nueva partida.*/
 void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	//Envios de mensajes
 	strcat(mensaje_tiempo,"\nInformacion de la partida acabada: \0");
@@ -158,7 +171,8 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	strcat(mensaje_tiempo,"\nQuiere volver a jugar? Si es asi inicie una nueva partida con el comando #NEW!\n");
 }                                             
 	
-
+/************************
+Esta funcion realiza las acciones necesarias cuando presionamos el boton 1.*/
 void sudoku_evento_boton1(){
 		gestor_pulsacion_boton1_pretado();	
 		if(estoy_en_comando == 0){
@@ -237,7 +251,8 @@ void sudoku_evento_boton1(){
 }
 
 
-
+/************************
+Esta funcion sirve para visualizar las acciones en nuestra GPIO*/
 void sudoku_evento_visualizacion_GPIO(){
 		uint8_t i = gestor_IO_leer_fila();
 		uint8_t j = gestor_IO_leer_columna();
@@ -269,7 +284,8 @@ void sudoku_evento_visualizacion_GPIO(){
 
 
 
-
+/************************
+Función que propaga los datos de la cuadricula.*/
 void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 	uint8_t fila, uint8_t columna)
 {
@@ -327,6 +343,8 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     }
 }
 
+/************************
+Esta funcion actualiza la cuadricula .*/
 int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 {
   int celdas_vacias = 0;
@@ -354,7 +372,8 @@ int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 	return celdas_vacias; //retornar el numero de celdas vacias
 }
 
-
+/************************
+Esta funcion realiza las acciones necesarias cuando presionamos el boton 2.*/
 void sudoku_evento_boton2(){
 		gestor_pulsacion_boton2_pretado();			//ESTO estaba comentado
 		if(estoy_en_comando == 0){
@@ -396,10 +415,14 @@ void sudoku_evento_boton2(){
 		}
 }
 
+/************************
+Esta funcion obtiene el valor de los candidatos.*/
 uint16_t sudoku_get_valor_candidatos(uint8_t fila,uint8_t columna){
 	return cuadricula_C_C[fila][columna]>>7 ;
 }
 
+/************************
+Esta funcion nos mostrara el tablero en el cual realizaremos nuestro juego.*/
 void sudoku_mostrar_tablero(){
 	const int numFilas = 19;
 	const int numColumnas=29;
@@ -549,7 +572,8 @@ void sudoku_mostrar_tablero(){
 	gestor_serial_enviar_mensaje(mensajeFinal);
 	
 }
-
+/************************
+Esta funcion nos permite introducir una jugada en nuestro sudoku.*/
 void sudoku_introducir_jugada(uint32_t aux){
 		estoy_en_comando = 1;
 		uint8_t i = aux >> 16;
@@ -607,7 +631,8 @@ void sudoku_introducir_jugada(uint32_t aux){
 		conteos_introducir_jugada = 0;
 		cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
 }
-
+/************************
+Esta funcion nos muestra el tablero inicial.*/
 void sudoku_mostrar_tablero_inicial(){
 	//La idea es coger el array mensajeInicial y mensajeFinal y juntarlos
 	const int numFilas = 19;
@@ -747,6 +772,8 @@ void sudoku_mostrar_tablero_inicial(){
 	gestor_serial_enviar_mensaje(mensajeInicial);
 }
 
+/************************
+Esta funcion nos confirma que nuestra jugada ha sido correcta .*/
 //Significa que ha llegado la alarma de 3 segundos tras introducir la jugada
 //Se muestra el tablero y se quita el led de confirmar escritura
 void sudoku_confirmar_jugada(){
@@ -794,7 +821,8 @@ void sudoku_confirmar_jugada(){
 
 
 
-
+/************************
+Esta funcion detecta los errores cuando actualizamos la cuadricula.*/
 void candidatos_actualizar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],uint8_t valor_introducido){
 	 //int celdas_vacias = 0;
   uint8_t i;
@@ -897,7 +925,8 @@ candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
     }
 		}
 }
-
+/************************
+Esta funcion realiza las acciones necesarias para resetear la partida.*/
 void sudoku_evento_rst(char mensaje[]){
 	//char mensaje[1000];
 	sudoku_reset_partida(mensaje);
@@ -905,6 +934,8 @@ void sudoku_evento_rst(char mensaje[]){
 	sudoku_tiempo_total_partida(mensaje);
 	gestor_serial_enviar_mensaje(mensaje);
 }
+/************************
+Esta funcion realiza las acciones necesarias para empezar una nueva partida.*/
 void sudoku_evento_new(char mensaje[]){
 	//char mensaje[1000];
 		sudoku_reiniciar();
@@ -912,6 +943,8 @@ void sudoku_evento_new(char mensaje[]){
 		gestor_serial_enviar_mensaje(mensaje);
 		sudoku_mostrar_tablero();
 }
+/************************
+Esta funcion realiza las acciones necesarias para finalizar la partida.*/
 void sudoku_evento_fin_partida(char mensaje[]){
 	//char mensaje[1000];
 	sudoku_fin_partida(mensaje);
