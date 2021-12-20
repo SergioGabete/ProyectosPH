@@ -22,6 +22,7 @@ void RTC_init(){
 	// prepara el RTC para que cuente los segundo (calculado para 60 MHz)
 	PREINT = 0x726;
 	PREFRAC = 0x700;
+	CCR=0x02;
 	// enable of the RTC
 	CCR=0x01;
 
