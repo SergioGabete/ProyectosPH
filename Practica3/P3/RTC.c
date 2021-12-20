@@ -20,8 +20,8 @@ Esta funcion inicializa el RTC, para ello preparamos el RTC para que cuente los 
 void RTC_init(){
 	//hay que deshabilitar alguna interrupcion?
 	// prepara el RTC para que cuente los segundo (calculado para 60 MHz)
-	PREINT = 0x726;
-	PREFRAC = 0x700;
+	PREINT = 0x726;// Resultado de hacer (60000000/ 32768) - 1 = 1830 = 0x726
+	PREFRAC = 0x700;// Resultado de hacer 60000000 - (1831 * 32768) = 1792 = 0x700
 	CCR=0x02;
 	// enable of the RTC
 	CCR=0x01;

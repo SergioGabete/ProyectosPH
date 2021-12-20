@@ -17,6 +17,10 @@ F_Bit			EQU		0x40
                 AREA    SWI_Area, CODE, READONLY
                 ARM
 
+
+;Esta función se encarga de determinar  el número de
+;interrupciones que ha ocurrido y según este se dirige a una de las llamadas al sistema, tras
+;esto volverá a modo usuario donde se produjo la interrupcion
                 EXPORT  SWI_Handler
 SWI_Handler
 
