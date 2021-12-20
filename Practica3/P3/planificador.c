@@ -34,13 +34,14 @@ void planificador_init(){
 					__disable_irq();
 					evento_sin_tratar = cola_evento_sin_tratar();
 					__enable_irq();
-					if(evento_sin_tratar.ID_evento ==evento_continuar_mensaje){
+					if(evento_sin_tratar.ID_evento ==evento_continuar_mensaje
+						|| evento_sin_tratar.ID_evento == evento_power_down
+						|| evento_sin_tratar.ID_evento == evento_idle
+						|| evento_sin_tratar.ID_evento == Set_Alarm
+						|| evento_sin_tratar.ID_evento == resta_Periodos){
 						planificador_tratar_evento(evento_sin_tratar);
 					}
-					if(evento_sin_tratar.ID_evento == evento_power_down){
-						planificador_tratar_evento(evento_sin_tratar);
-					}
-					if(evento_sin_tratar.ID_evento==evento_new){
+					if(evento_sin_tratar.ID_evento==0xb){	//evento_sin_tratar.ID_evento==evento_new
 						reset=0;
 						planificador_tratar_evento(evento_sin_tratar);
 					}
@@ -71,7 +72,8 @@ void planificador_init(){
 /****************************************
 *	La funcion realiza una accion dependiendo del evento que le llegue al planificador*/
 void planificador_tratar_evento(struct evento evento_sin_tratar){
-	//quitar alarma del idle
+	//La cosa es que al resetear o al hacer new habra que limpiar la cola y el gestor de alarmas
+	//porque habra alarmas o eventos introducidos pero no los queremos
 	switch(evento_sin_tratar.ID_evento){
 		case resta_Periodos:
 			gestor_alarmas_restar_periodo();
