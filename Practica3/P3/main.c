@@ -37,17 +37,23 @@ int main (void) {
 		WT_init(20);
 		feed_watchdog();
 		//Poner alarma para la visualizacion constante de la GPIO
+	__disable_fiq();
 	__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
+	__enable_fiq();
 	__enable_irq();
 		//Introducir una periodica que sea el idle
 	//00000000 1 00000000000000000010100
+	__enable_fiq();
 	__disable_irq();
 	cola_guardar_eventos(Set_Alarm,0x00800014);
+	__enable_fiq();
 	__enable_irq();
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
+		__disable_fiq();
 		__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
+		__enable_fiq();
 		__enable_irq();
 		//Se llama alplanificador
 		uart0_init();

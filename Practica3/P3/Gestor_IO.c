@@ -128,8 +128,10 @@ int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor){
 Tras una escritura correcta se marca el led durante 1 segundo */
 void gestor_IO_confirmar_escritura(){
 	GPIO_escribir(13,1,1);
+	__disable_fiq();
 	__disable_irq();
 	cola_guardar_eventos(Set_Alarm, 0x070003e8);
+	__enable_fiq();
 	__enable_irq();
 }
 

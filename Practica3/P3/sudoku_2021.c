@@ -63,9 +63,9 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 static uint32_t estado_GPIO=0;
 
 
-static char mensajeFinal2[1000];
+//static char mensajeFinal2[1000];
 static char mensajeFinal[1000];
-static char mensajeInicial[1500];
+//static char mensajeInicial[1500];
 
 //Variables para saber si estamos en jugada introducida por comandos o por GPIO
 static uint8_t iComando;
@@ -682,7 +682,11 @@ void sudoku_introducir_jugada(uint32_t aux){
 			//cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
 			//cola_guardar_eventos(Set_Alarm,0x01008BB8);
 			conteos_introducir_jugada = 0;
+			__disable_fiq();
+			__disable_irq();
 			cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
+			__enable_fiq();
+			__enable_irq();
 	}
 }
 /************************
@@ -840,7 +844,11 @@ void sudoku_confirmar_jugada(){
 			gestor_IO_quitar_led();
 		}
 		gestor_alarmas_quitar_alarma(evento_confirmar_jugada);
+		__disable_fiq();
+		__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x010001F4);	//Ponemos otra vez la alarma
+		__enable_fiq();
+		__enable_irq();
 	}else{
 		estoy_en_comando = 0;
 		gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes

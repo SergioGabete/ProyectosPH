@@ -29,8 +29,10 @@ void planificador_init(){
 		while(1){
 			if(cola_comprobar_nuevos_eventos() == 1){					//Si hay eventos nuevos sin tratar se desencola un evento
 					feed_watchdog();
+				__disable_fiq();
 					__disable_irq();
 					evento_sin_tratar = cola_evento_sin_tratar();
+				__enable_fiq();
 					__enable_irq();
 					planificador_tratar_evento(evento_sin_tratar);
 		 }else{
@@ -85,19 +87,9 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			gestor_IO_evento_idle();
 			break;
 		case evento_rst:
-//			sudoku_reset_partida(mensaje);
-//			gestor_serial_enviar_mensaje(mensaje);
-//			sudoku_tiempo_total_partida(mensaje);
-//			gestor_serial_enviar_mensaje(mensaje);
 			sudoku_evento_rst(mensaje);
-			//reset=1;
-			//parar = 1;		//Esto no se si corresponde al planificador
 			break;
 		case evento_new:
-//			sudoku_reiniciar();
-//			sudoku_nueva_partida(mensaje);
-//			gestor_serial_enviar_mensaje(mensaje);
-//			sudoku_mostrar_tablero();
 			sudoku_evento_new(mensaje);
 			break;
 		case evento_jugada:
@@ -113,10 +105,6 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			sudoku_confirmar_jugada();
 			break;
 		case evento_fin_partida:
-//			sudoku_fin_partida(mensaje);
-//			gestor_serial_enviar_mensaje(mensaje);
-//			sudoku_tiempo_total_partida(mensaje);
-//			gestor_serial_enviar_mensaje(mensaje);
 			sudoku_evento_fin_partida(mensaje);
 			break;
 		default:

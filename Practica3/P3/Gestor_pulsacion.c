@@ -94,16 +94,20 @@ unsigned int gestor_pulsacion_leer_estado_1(void){
 void gestor_pulsacion_boton1_pretado(){
 	gestor_pulsacion_nueva_pulsacion_0();		//Meter estas 2 y el setalarm en el gestor pulsacion
 	gestor_pulsacion_actualizar_estado_0();
+	__disable_fiq();
 	__disable_irq();
 	cola_guardar_eventos(Set_Alarm,0x04800064);
+	__enable_fiq();
 	__enable_irq();
 }
 
 void gestor_pulsacion_boton2_pretado(){
 	gestor_pulsacion_nueva_pulsacion_1();	//Son del gestor			//Meter estas 2 en el gestor y el evento setAlarm
 		gestor_pulsacion_actualizar_estado_1();	//Son del gestor
+	__disable_fiq();
 	__disable_irq();
 		cola_guardar_eventos(Set_Alarm,0x05800064);	//Meter con esas 2 en el gestor	
+	__enable_fiq();
 	__enable_irq();
 }
 
