@@ -20,7 +20,13 @@
 #include "Gestor_Serial.h"
 #include "RTC.h"
 
+//estado = 0 Estado esperando nueva partida
+//Solo interesan los evento powerdown, idle, restaPeriodos, evento_new,  set_Alarm, evento_continuar_mensaje
 
+//estado = 1 iniciar la partida, simplemente llamas a resetear y ya
+
+//estado = 2	corriendo el programa de forma normal
+static int sudoku_estado=0;
 static char informacionJuego[] ="Bienvenido al sudoku\nPara jugar puede introducir los siguientes comandos:\n$NEW para empezar una nueva partida\n$RST para detener la partida\n$FCVR donde F es la fila a introducir, C la columna y V el valor. R sera la suma de los 3 anteriores modulo 8\nDespues de introducir una jugada, durante 3 segundos se puede cancelar con el boton2 o confirmar con el boton1\nSi no se hace nada se confirma por defecto\nAl introducir una casilla invalida saldran errores en las que tengan el mismo valor\nSi en ese caso es una Pista saldra una X indicando que no se puede modificar" ;
 static int tiempo;
 static int tiempo_computo=0;
@@ -174,112 +180,116 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 /************************
 Esta funcion realiza las acciones necesarias cuando presionamos el boton 1.*/
 void sudoku_evento_boton1(){
-		gestor_pulsacion_boton1_pretado();	
-		if(estoy_en_comando == 0){
-			//Quitar alarma del idle
-			double t0 = timer1_temporizador_leer();
-			//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
-			uint8_t i = gestor_IO_leer_fila();
-			uint8_t j = gestor_IO_leer_columna();
-			uint8_t valor = gestor_IO_leer_valor_introducir();
-			uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-			//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
-			uint8_t pista = celda_leer_pista(celda); 
-			uint8_t valor_celda = celda_leer_valor(celda);
-			uint8_t error_celda = celda_leer_error(celda);
-			uint16_t candidatos_celda = celda_leer_candidatos(celda);
-			if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
-				celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
-				if(valor != valor_celda && error_celda == 1){		//Si voy a introducir un valor y no habia error y el valor es distinto pues propago
-					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
-				}
-				candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
-				if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-					gestor_IO_confirmar_escritura(); 
-				}else{
-					celda_modificar_bit_error(&cuadricula_C_C[i][j]);
-					//celda_introducir_error(&cuadricula_C_C[i][j],valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				}
-				//se calcula la diferencia de las variables de tiempo del procesado de la entrada
-				double t1 = timer1_temporizador_leer();
-				//tiempoProcesado = t1 - t0;
-			}
-			//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
-			if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
-				//	parar = 1;
-				//Reiniciar
-				sudoku_reiniciar();
-				tiempo=timer1_temporizador_leer();
-				candidatos_actualizar_c(cuadricula_C_C);
-				tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
-				}
-		}else{		//En este caso significa que estoy en comando
-			//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
-			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
-			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
-			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
-			//Como se ha confirmado pues se introduce y se propaga
-			uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
-			uint8_t pista = celda_leer_pista(celda);
-			uint8_t valor_celda = celda_leer_valor(celda);
-			uint16_t candidatos_celda=celda_leer_candidatos(celda);
-			uint8_t error_celda = celda_leer_error(celda);
-			
-			if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
-				celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
-				if(valorComando != valor_celda && error_celda == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
-					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
-				}
-				candidatos_actualizar_c(cuadricula_C_C);
-			}else{
-				if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
-					//candidatos_actualizar_error_c(cuadricula_C_C,);
-					celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
-					if(valorComando != valor_celda && error_celda == 1){		//Si la celda tenia un error se llama a esto
+		if(sudoku_estado != 0){
+			gestor_pulsacion_boton1_pretado();	
+			if(estoy_en_comando == 0){
+				//Quitar alarma del idle
+				double t0 = timer1_temporizador_leer();
+				//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
+				uint8_t i = gestor_IO_leer_fila();
+				uint8_t j = gestor_IO_leer_columna();
+				uint8_t valor = gestor_IO_leer_valor_introducir();
+				uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+				//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
+				uint8_t pista = celda_leer_pista(celda); 
+				uint8_t valor_celda = celda_leer_valor(celda);
+				uint8_t error_celda = celda_leer_error(celda);
+				uint16_t candidatos_celda = celda_leer_candidatos(celda);
+				if(se_puede_modificar(pista,valor) == 1){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+					celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
+					if(valor != valor_celda && error_celda == 1){		//Si voy a introducir un valor y no habia error y el valor es distinto pues propago
 						candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
 					}
-					candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	
-					if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+					candidatos_propagar_c(cuadricula_C_C,i,j);	//Tras insertar el valor, se propaga al resto de celdas
+					if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+						gestor_IO_confirmar_escritura(); 
 					}else{
-						celda_modificar_bit_error(&cuadricula_C_C[iComando][jComando]);
-						//celda_introducir_error(&cuadricula_C_C[iComando][jComando], valorComando);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+						celda_modificar_bit_error(&cuadricula_C_C[i][j]);
+						//celda_introducir_error(&cuadricula_C_C[i][j],valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+					}
+					//se calcula la diferencia de las variables de tiempo del procesado de la entrada
+					double t1 = timer1_temporizador_leer();
+					//tiempoProcesado = t1 - t0;
+				}
+				//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
+				if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
+					//	parar = 1;
+					//Reiniciar
+					sudoku_reiniciar();
+					tiempo=timer1_temporizador_leer();
+					candidatos_actualizar_c(cuadricula_C_C);
+					tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+					}
+			}else{		//En este caso significa que estoy en comando
+				//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
+				gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+				estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
+				gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
+				//Como se ha confirmado pues se introduce y se propaga
+				uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
+				uint8_t pista = celda_leer_pista(celda);
+				uint8_t valor_celda = celda_leer_valor(celda);
+				uint16_t candidatos_celda=celda_leer_candidatos(celda);
+				uint8_t error_celda = celda_leer_error(celda);
+				
+				if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
+					celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
+					if(valorComando != valor_celda && error_celda == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
+						candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+					}
+					candidatos_actualizar_c(cuadricula_C_C);
+				}else{
+					if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+						//candidatos_actualizar_error_c(cuadricula_C_C,);
+						celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
+						if(valorComando != valor_celda && error_celda == 1){		//Si la celda tenia un error se llama a esto
+							candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+						}
+						candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	
+						if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+						}else{
+							celda_modificar_bit_error(&cuadricula_C_C[iComando][jComando]);
+							//celda_introducir_error(&cuadricula_C_C[iComando][jComando], valorComando);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+						}
 					}
 				}
+				sudoku_mostrar_tablero();
 			}
-			sudoku_mostrar_tablero();
-		}
+	}
 }
 
 
 /************************
 Esta funcion sirve para visualizar las acciones en nuestra GPIO*/
 void sudoku_evento_visualizacion_GPIO(){
-		uint8_t i = gestor_IO_leer_fila();
-		uint8_t j = gestor_IO_leer_columna();
-		uint8_t valor = gestor_IO_leer_valor_introducir();
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);	//Devuelve 0
-		uint8_t pista = celda_leer_pista(celda); 
-		
-		uint8_t valor_celda = celda_leer_valor(celda);
-		uint16_t candidatos_celda =celda_leer_candidatos(celda);
-		uint8_t bitSucio = celda_leer_error(celda);
+		if(sudoku_estado != 0){
+			uint8_t i = gestor_IO_leer_fila();
+			uint8_t j = gestor_IO_leer_columna();
+			uint8_t valor = gestor_IO_leer_valor_introducir();
+			uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);	//Devuelve 0
+			uint8_t pista = celda_leer_pista(celda); 
+			
+			uint8_t valor_celda = celda_leer_valor(celda);
+			uint16_t candidatos_celda =celda_leer_candidatos(celda);
+			uint8_t bitSucio = celda_leer_error(celda);
 
-		gestor_IO_escribir_celda(valor_celda);
-		//gestor_IO_escribir(4,12,candidatos_celda);
-		gestor_IO_escribir_candidatos(candidatos_celda);
-		
-		//Si la celda es una pista inicial o un valor erroneo se activa el led 
-		if(bitSucio == 1 || pista == 1){
-			//gestor_IO_escribir(13,1,1);
-			gestor_IO_escribir_led();
+			gestor_IO_escribir_celda(valor_celda);
+			//gestor_IO_escribir(4,12,candidatos_celda);
+			gestor_IO_escribir_candidatos(candidatos_celda);
+			
+			//Si la celda es una pista inicial o un valor erroneo se activa el led 
+			if(bitSucio == 1 || pista == 1){
+				//gestor_IO_escribir(13,1,1);
+				gestor_IO_escribir_led();
+			}
+			//Se lee el estado de la GPIO para ver si ha cambiado 
+			//uint32_t estadoNuevo = gestor_IO_leer(0,32);
+			uint32_t estadoNuevo = gestor_IO_leer_estado();
+			if(estadoNuevo != estado_GPIO){	//Si el estado es distinto significa que el usuario sigue jugando y se vuelve a poner la alarma
+				gestor_alarmas_resetear_power_down();
+			}
+			estado_GPIO =gestor_IO_leer_estado(); //Se actualiza el estado
 		}
-		//Se lee el estado de la GPIO para ver si ha cambiado 
-		//uint32_t estadoNuevo = gestor_IO_leer(0,32);
-		uint32_t estadoNuevo = gestor_IO_leer_estado();
-		if(estadoNuevo != estado_GPIO){	//Si el estado es distinto significa que el usuario sigue jugando y se vuelve a poner la alarma
-			gestor_alarmas_resetear_power_down();
-		}
-		estado_GPIO =gestor_IO_leer_estado(); //Se actualiza el estado
 }
 
 
@@ -375,44 +385,46 @@ int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 /************************
 Esta funcion realiza las acciones necesarias cuando presionamos el boton 2.*/
 void sudoku_evento_boton2(){
-		gestor_pulsacion_boton2_pretado();			//ESTO estaba comentado
-		if(estoy_en_comando == 0){
-		uint8_t i = gestor_IO_leer_fila();
-		uint8_t j = gestor_IO_leer_columna();
-		uint8_t valor = gestor_IO_leer_valor_introducir();
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-		uint8_t pista = celda_leer_pista(celda); 
-		uint16_t candidatos_celda = celda_leer_candidatos(celda);
-			uint8_t valor_celda=celda_leer_valor(celda);
-			uint8_t error_celda= celda_leer_error(celda);
-		//sudoku_2021_borrar_valor(i,j);
-		if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
-			celda_borrar_celda(&cuadricula_C_C[i][j]);
-			if(error_celda == 1){		//En este caso el valor da igual porque solo borras
-				candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+		if(sudoku_estado != 0){
+			gestor_pulsacion_boton2_pretado();			//ESTO estaba comentado
+			if(estoy_en_comando == 0){
+			uint8_t i = gestor_IO_leer_fila();
+			uint8_t j = gestor_IO_leer_columna();
+			uint8_t valor = gestor_IO_leer_valor_introducir();
+			uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+			uint8_t pista = celda_leer_pista(celda); 
+			uint16_t candidatos_celda = celda_leer_candidatos(celda);
+				uint8_t valor_celda=celda_leer_valor(celda);
+				uint8_t error_celda= celda_leer_error(celda);
+			//sudoku_2021_borrar_valor(i,j);
+			if(pista != 1){	//Si la celda no es una pista inicial se borra el valor
+				celda_borrar_celda(&cuadricula_C_C[i][j]);
+				if(error_celda == 1){		//En este caso el valor da igual porque solo borras
+					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+				}
+				tiempo=timer1_temporizador_leer();
+				candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
+				tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+				
 			}
-			tiempo=timer1_temporizador_leer();
-			candidatos_actualizar_c(cuadricula_C_C);	//Para evitar valores corruptos se vuelve a actualizar todo el valor
-			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
-			
-		}
-		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
-		if(gestor_IO_reiniciar(i,j,valor) == 1){
-				sudoku_reiniciar();
-			tiempo=timer1_temporizador_leer();
-			candidatos_actualizar_c(cuadricula_C_C);	
-			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+			//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
+			if(gestor_IO_reiniciar(i,j,valor) == 1){
+					sudoku_reiniciar();
+				tiempo=timer1_temporizador_leer();
+				candidatos_actualizar_c(cuadricula_C_C);	
+				tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+				}
+			}else{
+				gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+				estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
+				gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
+				
+				tiempo=timer1_temporizador_leer();
+				candidatos_actualizar_c(cuadricula_C_C);	
+				tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+				sudoku_mostrar_tablero();
 			}
-		}else{
-			gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
-			estoy_en_comando = 0;	//He confirmado el comando pues ya no estoy en el
-			gestor_alarmas_quitar_confirmar_jugada();		//Se quita la alarma que salta a los 3 segundos
-			
-			tiempo=timer1_temporizador_leer();
-			candidatos_actualizar_c(cuadricula_C_C);	
-			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
-			sudoku_mostrar_tablero();
-		}
+	}
 }
 
 /************************
@@ -575,61 +587,63 @@ void sudoku_mostrar_tablero(){
 /************************
 Esta funcion nos permite introducir una jugada en nuestro sudoku.*/
 void sudoku_introducir_jugada(uint32_t aux){
-		estoy_en_comando = 1;
-		uint8_t i = aux >> 16;
-		uint8_t j = aux >> 8;
-		uint8_t valor = aux;
-		iComando = i;
-		jComando = j;
-		valorComando = valor;
+		if(sudoku_estado != 0){
+			estoy_en_comando = 1;
+			uint8_t i = aux >> 16;
+			uint8_t j = aux >> 8;
+			uint8_t valor = aux;
+			iComando = i;
+			jComando = j;
+			valorComando = valor;
+			
+		//Idea: guardar el estado de la celda, mostrar tablero y cuando acabe pues lo vuelves a meter
 		
-	//Idea: guardar el estado de la celda, mostrar tablero y cuando acabe pues lo vuelves a meter
-	
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-		//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
-		uint8_t pista = celda_leer_pista(celda);  
-		uint16_t candidatos_celda = celda_leer_candidatos(celda);
-		uint8_t valor_celda = celda_leer_valor(celda);
-		uint8_t error_celda = celda_leer_error(celda);
-		if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
-			celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
-			if(valorComando != valor_celda && error_celda == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
-				candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
-			}
-			candidatos_actualizar_c(cuadricula_C_C);
-		}else{
-		if(se_puede_modificar(pista,valor) == 1 && (valor != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda	
-			celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
-			//candidatos_propagar_c(cuadricula_C_C,i,j);	//Si quita el propagar porque a lo mejor luego se quita
-			if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+			uint16_t celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+			//Estas las hacemos en celda para leer ya que el gestor no debe saber nada de que bits leer 
+			uint8_t pista = celda_leer_pista(celda);  
+			uint16_t candidatos_celda = celda_leer_candidatos(celda);
+			uint8_t valor_celda = celda_leer_valor(celda);
+			uint8_t error_celda = celda_leer_error(celda);
+			if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
+				celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
+				if(valorComando != valor_celda && error_celda == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
+					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+				}
+				candidatos_actualizar_c(cuadricula_C_C);
 			}else{
-				//celda_introducir_error(&cuadricula_C_C[i][j], valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
-				celda_modificar_bit_error(&cuadricula_C_C[i][j]);
+			if(se_puede_modificar(pista,valor) == 1 && (valor != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda	
+				celda_actualizar_celda(&cuadricula_C_C[i][j],valor);
+				//candidatos_propagar_c(cuadricula_C_C,i,j);	//Si quita el propagar porque a lo mejor luego se quita
+				if(valor_en_candidatos(candidatos_celda,valor) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+				}else{
+					//celda_introducir_error(&cuadricula_C_C[i][j], valor);	//Si el valor introducido es erroneo se activa el bit de la celda que indica un valor erroneo
+					celda_modificar_bit_error(&cuadricula_C_C[i][j]);
+				}
 			}
-		}
-	}	
-		//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
-	if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
-		//	parar = 1;
-		//Reiniciar
-		sudoku_reiniciar();
-		tiempo=timer1_temporizador_leer();
-		candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo hace la funcion reiniciar
-		tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
-		}
-	
-		sudoku_mostrar_tablero();
-		//Se pone una alarma de 3 segundos para confirmar
-		//el formato del aux sera	00000001 0 00000000000101110111000
+		}	
+			//Si se introduce los valores fila=0, columna=0 y valor=0 acaba el programa
+		if(gestor_IO_reiniciar(i,j,valor) == 1){	//Esto a lo mejor hay que cambiarlo, no se si es enn el gestorIO
+			//	parar = 1;
+			//Reiniciar
+			sudoku_reiniciar();
+			tiempo=timer1_temporizador_leer();
+			candidatos_actualizar_c(cuadricula_C_C);	//Creo que esta linea hay que quitarla porque ya lo hace la funcion reiniciar
+			tiempo_computo=(timer1_temporizador_leer()-tiempo)+ tiempo_computo;
+			}
 		
-		//gestor_IO_confirmar_escritura();	//lo activa durante un segundo pero yo lo desactivare cuando llegue el evento de confirmar escritura
-		gestor_IO_escribir_led();
-		
-		celda_introducir_celda(&cuadricula_C_C[i][j],celda);	//Vuelvo a escribir la celda porque la he cambiado y no se ha confirmado
-		//cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
-		//cola_guardar_eventos(Set_Alarm,0x01008BB8);
-		conteos_introducir_jugada = 0;
-		cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
+			sudoku_mostrar_tablero();
+			//Se pone una alarma de 3 segundos para confirmar
+			//el formato del aux sera	00000001 0 00000000000101110111000
+			
+			//gestor_IO_confirmar_escritura();	//lo activa durante un segundo pero yo lo desactivare cuando llegue el evento de confirmar escritura
+			gestor_IO_escribir_led();
+			
+			celda_introducir_celda(&cuadricula_C_C[i][j],celda);	//Vuelvo a escribir la celda porque la he cambiado y no se ha confirmado
+			//cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
+			//cola_guardar_eventos(Set_Alarm,0x01008BB8);
+			conteos_introducir_jugada = 0;
+			cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
+	}
 }
 /************************
 Esta funcion nos muestra el tablero inicial.*/
@@ -928,11 +942,15 @@ candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
 /************************
 Esta funcion realiza las acciones necesarias para resetear la partida.*/
 void sudoku_evento_rst(char mensaje[]){
-	//char mensaje[1000];
-	sudoku_reset_partida(mensaje);
-	gestor_serial_enviar_mensaje(mensaje);
-	sudoku_tiempo_total_partida(mensaje);
-	gestor_serial_enviar_mensaje(mensaje);
+		if(sudoku_estado != 0){
+		//char mensaje[1000];
+		sudoku_reset_partida(mensaje);
+		gestor_serial_enviar_mensaje(mensaje);
+		sudoku_tiempo_total_partida(mensaje);
+		gestor_serial_enviar_mensaje(mensaje);
+		//Se cambia el estado al inicial
+		sudoku_cambiar_estado(0);
+	}
 }
 /************************
 Esta funcion realiza las acciones necesarias para empezar una nueva partida.*/
@@ -942,6 +960,7 @@ void sudoku_evento_new(char mensaje[]){
 		sudoku_nueva_partida(mensaje);
 		gestor_serial_enviar_mensaje(mensaje);
 		sudoku_mostrar_tablero();
+	sudoku_cambiar_estado(2);
 }
 /************************
 Esta funcion realiza las acciones necesarias para finalizar la partida.*/
@@ -951,4 +970,13 @@ void sudoku_evento_fin_partida(char mensaje[]){
 	gestor_serial_enviar_mensaje(mensaje);
 	sudoku_tiempo_total_partida(mensaje);
 	gestor_serial_enviar_mensaje(mensaje);
+}
+
+
+void sudoku_cambiar_estado(int nuevo_estado){
+	sudoku_estado = nuevo_estado;
+}
+
+int sudoku_get_estado(){
+	return sudoku_estado;
 }

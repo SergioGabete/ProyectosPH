@@ -21,13 +21,13 @@ enum IDs{
 	evento_visualizar_led,		//id7
 	Set_Alarm,			//id8
 	evento_boton1,	//id 9
-	evento_rst,
-	evento_new,
-	evento_jugada,
-	evento_continuar_mensaje,
-	evento_reset_power_down,
-	evento_fin_partida,
-	evento_boton2,
+	evento_rst,		//10
+	evento_new,		//11
+	evento_jugada,		//12
+	evento_continuar_mensaje,	//13
+	evento_reset_power_down,	//14
+	evento_fin_partida,			//15
+	evento_boton2,			//16
 };
 
 

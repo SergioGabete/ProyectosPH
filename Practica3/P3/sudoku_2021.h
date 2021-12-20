@@ -98,6 +98,10 @@ void sudoku_evento_rst(char reset_partida[]);
 void sudoku_evento_new(char reset_partida[]);
 void sudoku_evento_fin_partida(char reset_partida[]);
 
+void sudoku_cambiar_estado(int nuevo_estado);
+
+int sudoku_get_estado(void);
+
 //void sudoku_evento_idle(void);
 
 
