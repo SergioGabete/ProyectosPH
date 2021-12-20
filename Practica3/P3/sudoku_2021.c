@@ -185,7 +185,7 @@ void sudoku_tiempo_total_partida(char mensaje_tiempo[]){
 	strcat(mensaje_tiempo,"  segundos \n\0");
 	strcat(mensaje_tiempo, "El tiempo en computo de la funcion candidatos_actualizar es : \0");
 	sudoku_mostrar_tiempo(tiempo_computo,mensaje_tiempo);
-	strcat(mensaje_tiempo," segundos\0");
+	strcat(mensaje_tiempo," microsegundos\0");
 	strcat(mensaje_tiempo,"\nQuiere volver a jugar? Si es asi inicie una nueva partida con el comando #NEW!\n");
 }                                             
 	
@@ -1017,8 +1017,8 @@ Esta funcion realiza las acciones necesarias para empezar una nueva partida.*/
 void sudoku_evento_new(char mensaje[]){
 	//char mensaje[1000];
 		sudoku_reiniciar();
-		sudoku_nueva_partida(mensaje);
-		gestor_serial_enviar_mensaje(mensaje);
+		//sudoku_nueva_partida(mensaje);
+		//gestor_serial_enviar_mensaje(mensaje);
 		sudoku_mostrar_tablero();
 		sudoku_cambiar_estado(2);
 }
