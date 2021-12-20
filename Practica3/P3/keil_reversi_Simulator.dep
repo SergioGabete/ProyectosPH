@@ -149,7 +149,7 @@ I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 F (.\WT.h)(0x61BA20EF)()
 F (.\SWI.s)(0x61B8C784)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\swi.o --depend .\swi.d)
 F (.\UART0.h)(0x61B8C784)()
-F (.\UART0.c)(0x61BA0196)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
+F (.\UART0.c)(0x61C0677A)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O0 --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
 I (UART0.h)(0x61B8C784)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (cola.h)(0x61B8C784)
