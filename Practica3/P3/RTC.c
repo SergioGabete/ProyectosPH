@@ -15,7 +15,8 @@
 // (CTIME1)The Consolidate Time register 1 contains the Day of Month, Month, and Year values.
 // (CTIME2)The Consolidate Time register 2 contains just the Day of Year value.
 // Time counter group: 8 contadores de lectura/escritura para segundos, minutos, horas, d?a del mes, de la semana, del a?o, mes y a?o
-
+/************************
+Esta funcion inicializa el RTC, para ello preparamos el RTC para que cuente los segundos y luego permitimos que cuente.*/
 void RTC_init(){
 	//hay que deshabilitar alguna interrupcion?
 	// prepara el RTC para que cuente los segundo (calculado para 60 MHz)
@@ -26,7 +27,8 @@ void RTC_init(){
 
 
 }
-
+/************************
+Esta funcion devuelve los minutos transcurridos desde que el RTC esta activado.*/
 int RTC_leer_minutos(){
 	
 	//CTIME0 LOS MINUTOS VAN DE 13 A LA 8 , ES DECIR, 0011 1111 0000 0000
@@ -35,6 +37,8 @@ int RTC_leer_minutos(){
 	
 }
 
+/************************
+Esta funcion devuelve los segundos transcurridos desde que el RTC esta activado.*/
 int RTC_leer_segundos(){
 	
 	//  0:5 son los segundos entonces un AND entre CTIME0 y 0x3F (0011 1111) DAN LOS SEGUNDOS)
