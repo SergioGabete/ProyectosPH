@@ -43,6 +43,9 @@ void uart0_ISR (void) __irq {
 				if(indice != -1){
 					buffer_entrada[indice] = ultimo;
 					indice = indice+1;
+					if(indice == 10){	//Se ha llegado al final
+						indice = -1;
+					}
 					if(ultimo == '!'){	//Si el caracter es ultimo se resetea el indice
 						if((buffer_entrada[0] == '#')&&(buffer_entrada[1] == 'R')&&(buffer_entrada[2] == 'S')&&(buffer_entrada[3] == 'T') && (buffer_entrada[4] == '!')){	//RST
 							cola_guardar_eventos(evento_rst,0);

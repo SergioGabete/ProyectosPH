@@ -116,3 +116,42 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 	//Llega una alarma de tipo latido que la vaya quitando
 		
 }
+
+
+/*
+
+@ __enable_isr
+@ 				MSR cpsr_c, r8
+@ 				BIC r8, r8, #I_Bit
+@ 				MSR cpsr_c, r8				   ; Enable IRQ ;MRS cambiao
+@                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+@                 MSR     SPSR_cxsf, R12         ; Set SPSR
+@                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+
+@ __disable_isr
+
+@ 				MSR cpsr_c, r8
+@ 				ORR r8, r8, #I_Bit
+@ 				MSR cpsr_c, r8				   ; Disable IRQ
+@                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+@                 MSR     SPSR_cxsf, R12         ; Set SPSR
+@                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+				
+@ __enable_isr_fiq
+@ 				MSR cpsr_c, r8
+@ 				BIC r8, r8, #F_Bit
+@ 				MSR cpsr_c, r8				   ; Enable FIQ
+@                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+@                 MSR     SPSR_cxsf, R12         ; Set SPSR
+@                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+
+@ __disable_isr_fiq
+@ 				MSR cpsr_c, r8
+@ 				ORR r8, r8, #F_Bit
+@ 				MSR cpsr_c, r8				   ; Disable FIQ
+@                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+@                 MSR     SPSR_cxsf, R12         ; Set SPSR
+@                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+
+*/
+

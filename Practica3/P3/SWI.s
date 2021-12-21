@@ -18,9 +18,9 @@ F_Bit			EQU		0x40
                 ARM
 
 
-;Esta función se encarga de determinar  el número de
-;interrupciones que ha ocurrido y según este se dirige a una de las llamadas al sistema, tras
-;esto volverá a modo usuario donde se produjo la interrupcion
+;Esta funciï¿½n se encarga de determinar  el nï¿½mero de
+;interrupciones que ha ocurrido y segï¿½n este se dirige a una de las llamadas al sistema, tras
+;esto volverï¿½ a modo usuario donde se produjo la interrupcion
                 EXPORT  SWI_Handler
 SWI_Handler
 
@@ -86,38 +86,43 @@ SWI_End
 
 
 ;                END
-__enable_isr
-				MSR cpsr_c, r8
-				BIC r8, r8, #I_Bit
-				MSR cpsr_c, r8				   ; Enable IRQ ;MRS cambiao
-                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+
+
+__enable_isr				
+				MRS r1,CPSR
+				BIC r1, r1, #I_Bit
+				MSR CPSR_c,r1
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
 __disable_isr
 
-				MSR cpsr_c, r8
-				ORR r8, r8, #I_Bit
-				MSR cpsr_c, r8				   ; Disable IRQ
-                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+				MRS r12, cpsr
+				ORR r12, r12, #I_Bit ;disable IRQs
+				MSR cpsr_c, r12
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 				
 __enable_isr_fiq
-				MSR cpsr_c, r8
-				BIC r8, r8, #F_Bit
-				MSR cpsr_c, r8				   ; Enable FIQ
-                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
-                MSR     SPSR_cxsf, R12         ; Set SPSR
-                LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
-__disable_isr_fiq
-				MSR cpsr_c, r8
-				ORR r8, r8, #F_Bit
-				MSR cpsr_c, r8				   ; Disable FIQ
-                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR, Pop from a Full Descending Stack.
+				MRS r8,CPSR
+				BIC r8, r8, #0xc0
+				MSR CPSR_c,r8
+				
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+				
+__disable_isr_fiq
+
+				MRS r8, cpsr
+				ORR r8, r8, #0xc0
+				MSR cpsr_c, r8
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
+                MSR     SPSR_cxsf, R12         ; Set SPSR
+                LDMFD   SP!, {R12, PC}^        ; Restore R12 a
 
 ;disable_IRQ
 ;                LDMFD   SP!, {R8, R12}    ; Load R8, SPSR
