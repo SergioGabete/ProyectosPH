@@ -18,3 +18,4 @@
 .\planificador.o: GPIO.h
 .\planificador.o: Gestor_Serial.h
 .\planificador.o: WT.h
+.\planificador.o: SWI.h

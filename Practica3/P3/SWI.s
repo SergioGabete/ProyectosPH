@@ -21,8 +21,8 @@ F_Bit			EQU		0x40
 ;Esta funci�n se encarga de determinar  el n�mero de
 ;interrupciones que ha ocurrido y seg�n este se dirige a una de las llamadas al sistema, tras
 ;esto volver� a modo usuario donde se produjo la interrupcion
-                EXPORT  SWI_Handler
-SWI_Handler
+                EXPORT  SWI_Handler2
+SWI_Handler2
 
                 STMFD   SP!, {R12, LR}         ; Store R12, LR
                 MRS     R12, SPSR              ; Get SPSR

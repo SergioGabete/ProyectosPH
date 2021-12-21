@@ -6,6 +6,7 @@
 #include "evento.h"
 #include "Gestor_Alarmas.h"
 #include <LPC210x.H> 
+#include "SWI.h"
 
 uint8_t estado_idle_Global=0;
 
@@ -128,11 +129,11 @@ int gestor_IO_reiniciar(uint8_t i, uint8_t j, uint8_t valor){
 Tras una escritura correcta se marca el led durante 1 segundo */
 void gestor_IO_confirmar_escritura(){
 	GPIO_escribir(13,1,1);
-	__disable_fiq();
-	__disable_irq();
+	disable_isr();
+	disable_isr_fiq();
 	cola_guardar_eventos(Set_Alarm, 0x070003e8);
-	__enable_fiq();
-	__enable_irq();
+	enable_isr();
+	enable_isr_fiq();
 }
 
 /************************

@@ -13,6 +13,7 @@
 #include "pw_id_control.h"
 #include "Gestor_Serial.h"
 #include "WT.h"
+#include "SWI.h"
 //#include "cuadricula.h"
 
 //static int parar =0;
@@ -29,11 +30,11 @@ void planificador_init(){
 		while(1){
 			if(cola_comprobar_nuevos_eventos() == 1){					//Si hay eventos nuevos sin tratar se desencola un evento
 					feed_watchdog();
-				__disable_fiq();
-					__disable_irq();
+				disable_isr();
+				disable_isr_fiq();
 					evento_sin_tratar = cola_evento_sin_tratar();
-				__enable_fiq();
-					__enable_irq();
+				enable_isr();
+				enable_isr_fiq();
 					planificador_tratar_evento(evento_sin_tratar);
 		 }else{
 				//Si no hay eventos a tratar se pasa a modo idle

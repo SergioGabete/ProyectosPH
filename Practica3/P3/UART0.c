@@ -28,22 +28,21 @@ void uart0_init(){
 }
 /************************
 Esta funcion es la rutina de tratamiento de la interrupción de UART0.
-Vamos a detectar que evento escribe el usuario por pantalla por medio de un buffer, 
+Se va a detectar que evento escribe el usuario por pantalla por medio de un buffer, 
 dependiendo el tipo de evento que se escribe se guardará en cola el evento descrito.*/
 void uart0_ISR (void) __irq {
-	
-		if ((U0IIR&0x4)&&(U0LSR & 0x01)){		//((U0IIR & 0x4) == 0x4)&&((U0LSR & 0x01) == 0x1)
+		if ((U0IIR&0x4)&&(U0LSR & 0x01)){
 				cola_guardar_eventos(evento_reset_power_down,0);
 				int ultimo = U0RBR;
-				U0THR = ultimo; //mostrar lo escrito	
+				U0THR = ultimo; //mostrar los caracteres del comando que se esta escribiendo	
 				//Se trata el caracter recibido y se encola el tipo de accion
 				if(ultimo == '#'){
 						indice =0;
-				}					//Si es el comando que indica empiece de comando se empieza a leer comando
+				}	//Si es el comando que indica empiece de comando se empieza a leer comando
 				if(indice != -1){
 					buffer_entrada[indice] = ultimo;
 					indice = indice+1;
-					if(indice == 10){	//Se ha llegado al final
+					if(indice == 10){	//Se ha llegado al final del tamaño del buffer entonces se vacía porque el comando seria erroneo
 						indice = -1;
 					}
 					if(ultimo == '!'){	//Si el caracter es ultimo se resetea el indice
@@ -73,6 +72,12 @@ void uart0_ISR (void) __irq {
 									auxiliar = auxiliar | (fila << 16);
 									cola_guardar_eventos(evento_jugada,auxiliar);
 						}
+//								else{
+//							uart0_sendchar('C');uart0_sendchar('o');uart0_sendchar('m');uart0_sendchar('a');uart0_sendchar('n');uart0_sendchar('d');
+//							uart0_sendchar('0');uart0_sendchar(' ');uart0_sendchar('E');uart0_sendchar('r');uart0_sendchar('r');uart0_sendchar('o');
+//							uart0_sendchar('n');uart0_sendchar('e');uart0_sendchar('o');uart0_sendchar('\n');
+//						}
+					
 						indice = -1;
 					}
 				}
@@ -82,13 +87,9 @@ void uart0_ISR (void) __irq {
 		//evento_continuar_mensaje, avisando al planificador que el THR ya está libre y puede
 		//utilizar sendchar(int ch) para enviar otro carácter.
 		if ((U0IIR&0x1)){	//	(U0IIR & 0x1) == 0x1	//
-				cola_guardar_eventos(evento_continuar_mensaje,0);	//En el planificador se llama a sudoku enviar mensaje
-				
+				cola_guardar_eventos(evento_continuar_mensaje,0);	//En el planificador se llama a sudoku enviar mensaje	
 		}
-		
 		VICVectAddr = 0;
-		
-		//APUNTE: cuando se entra en power down y vuelves a normal no se puede volver a escribir en la UART
 }
 
 /************************

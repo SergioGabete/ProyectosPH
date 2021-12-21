@@ -10,3 +10,4 @@
 .\gestor_io.o: timer.h
 .\gestor_io.o: Gestor_Alarmas.h
 .\gestor_io.o: C:\Keil_v5\ARM\INC\Philips\LPC210x.H
+.\gestor_io.o: SWI.h

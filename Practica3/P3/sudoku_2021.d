@@ -21,3 +21,4 @@
 .\sudoku_2021.o: Gestor_Serial.h
 .\sudoku_2021.o: UART0.h
 .\sudoku_2021.o: RTC.h
+.\sudoku_2021.o: SWI.h

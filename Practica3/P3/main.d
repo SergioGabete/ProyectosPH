@@ -19,3 +19,4 @@
 .\main.o: UART0.h
 .\main.o: WT.h
 .\main.o: RTC.h
+.\main.o: SWI.h

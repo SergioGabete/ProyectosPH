@@ -19,13 +19,8 @@
 #include "UART0.h"
 #include "Gestor_Serial.h"
 #include "RTC.h"
+#include "SWI.h"
 
-//estado = 0 Estado esperando nueva partida
-//Solo interesan los evento powerdown, idle, restaPeriodos, evento_new,  set_Alarm, evento_continuar_mensaje
-
-//estado = 1 iniciar la partida, simplemente llamas a resetear y ya
-
-//estado = 2	corriendo el programa de forma normal
 static int sudoku_estado=0;
 static char informacionJuego[] ="Bienvenido al sudoku\nPara jugar puede introducir los siguientes comandos:\n$NEW para empezar una nueva partida\n$RST para detener la partida\n$FCVR donde F es la fila a introducir, C la columna y V el valor. R sera la suma de los 3 anteriores modulo 8\nDespues de introducir una jugada, durante 3 segundos se puede cancelar con el boton2 o confirmar con el boton1\nSi no se hace nada se confirma por defecto\nAl introducir una casilla invalida saldran errores en las que tengan el mismo valor\nSi en ese caso es una Pista saldra una X indicando que no se puede modificar\nPara iniciar una nueva partida introduzaca el comando #NEW!\n" ;
 static int tiempo;
@@ -237,11 +232,11 @@ void sudoku_evento_boton1(){
 					}
 				
 					if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
-						__disable_fiq();
-						__disable_irq();
+						disable_isr();
+						disable_isr_fiq();
 						cola_guardar_eventos(evento_rst,0);
-						__enable_fiq();
-						__enable_irq();
+						enable_isr();
+						enable_isr_fiq();
 					}
 			}else{		//En este caso significa que estoy en comando
 				//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
@@ -281,11 +276,11 @@ void sudoku_evento_boton1(){
 				}
 				sudoku_mostrar_tablero();
 				if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
-					__disable_fiq();
-					__disable_irq();
+					disable_isr();
+					disable_isr_fiq();
 					cola_guardar_eventos(evento_rst,0);
-					__enable_fiq();
-					__enable_irq();
+					enable_isr();
+					enable_isr_fiq();
 				}
 			}
 	}
@@ -563,6 +558,7 @@ void sudoku_mostrar_tablero(){
 	//Ahora hay que poner los candidatos
 	int indiceFinal = numFilas*numColumnas;
 	uint8_t error_celda;
+	uint8_t pista_celda;
 	//int c1,c2,c3,c4,c5,c6,c7,c8,c9;	
 	for(int i=0;i<NUM_FILAS;i++){		//Recorrer la matriz sacando los candidatos
 		for(int j=0;j<NUM_FILAS;j++){
@@ -570,7 +566,8 @@ void sudoku_mostrar_tablero(){
 			candidatos= celda_leer_candidatos(celda);
 			valor = celda_leer_valor(celda);
 			error_celda = celda_leer_error(celda);
-			if(valor == 0x0 || error_celda == 1){		//Significa que no hay valor y por tanto candidatos
+			pista_celda=celda_leer_pista(celda);
+			if((valor == 0x0 || error_celda == 1) && pista_celda!=1){		//Significa que no hay valor y por tanto candidatos
 				mensajeFinal[indiceFinal]=i+'0';
 				indiceFinal = indiceFinal +1;
 				mensajeFinal[indiceFinal]=j+'0';
@@ -581,27 +578,27 @@ void sudoku_mostrar_tablero(){
 					mensajeFinal[indiceFinal]='1';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 1) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 1) & 0x1) == 0){	
 					mensajeFinal[indiceFinal]='2';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 2) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 2) & 0x1) == 0){	
 					mensajeFinal[indiceFinal]='3';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 3) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 3) & 0x1) == 0){	
 					mensajeFinal[indiceFinal]='4';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 4) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 4) & 0x1) == 0){	
 					mensajeFinal[indiceFinal]='5';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 5) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 5) & 0x1) == 0){	
 					mensajeFinal[indiceFinal]='6';
 					indiceFinal = indiceFinal +1;
 				}
-				if(((candidatos >> 6) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
+				if(((candidatos >> 6) & 0x1) == 0){	
 					mensajeFinal[indiceFinal]='7';
 					indiceFinal = indiceFinal +1;
 				}
@@ -682,16 +679,246 @@ void sudoku_introducir_jugada(uint32_t aux){
 			//cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
 			//cola_guardar_eventos(Set_Alarm,0x01008BB8);
 			conteos_introducir_jugada = 0;
-			__disable_fiq();
-			__disable_irq();
+			disable_isr();
+			disable_isr_fiq();
 			cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
-			__enable_fiq();
-			__enable_irq();
+			enable_isr();
+			enable_isr_fiq();
 	}
 }
 /************************
-Esta funcion nos muestra el tablero inicial.*/
+Esta funcion nos muestra la informacion inicial al empezar una partida.*/
 void sudoku_mostrar_tablero_inicial(){
+gestor_serial_enviar_mensaje(informacionJuego);
+}
+
+/************************
+Esta funcion nos confirma que nuestra jugada ha sido correcta .*/
+//Significa que ha llegado la alarma de 3 segundos tras introducir la jugada
+//Se muestra el tablero y se quita el led de confirmar escritura
+void sudoku_confirmar_jugada(){
+	if(conteos_introducir_jugada != 6){
+		conteos_introducir_jugada = conteos_introducir_jugada +1;
+		if(conteos_introducir_jugada%2==0){
+			gestor_IO_escribir_led();
+		}else{
+			gestor_IO_quitar_led();
+		}
+		gestor_alarmas_quitar_alarma(evento_confirmar_jugada);
+		disable_isr();
+		disable_isr_fiq();
+		cola_guardar_eventos(Set_Alarm,0x010001F4);	//Ponemos otra vez la alarma
+		enable_isr();
+		enable_isr_fiq();
+	}else{
+		estoy_en_comando = 0;
+		gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
+		uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
+				uint8_t pista = celda_leer_pista(celda);
+				uint8_t valor_celda = celda_leer_valor(celda);
+				uint16_t candidatos_celda=celda_leer_candidatos(celda);
+				uint16_t error = celda_leer_error(celda);
+		if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
+			celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
+			if(valorComando != valor_celda && error == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
+				candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+			}
+			candidatos_actualizar_c(cuadricula_C_C);
+		}else{
+			if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
+				celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
+				if(valorComando != valor_celda && error == 1){		//Significa que no he vuelto a introducir el mismo valor y habia un error
+					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
+				}
+				if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
+				}else{
+					celda_modificar_bit_error(&cuadricula_C_C[iComando][jComando]);
+					//En caso de introducir un error se deben mantener los candidatos para facilitar la resolucion al usuario
+					candidatos_actualizar_c(cuadricula_C_C);
+				}
+				candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	//Si quita el propagar porque a lo mejor luego se quita
+			}
+		}
+				sudoku_mostrar_tablero();
+		
+				//Mirar si se han llenado todas las celdas para acabar
+			if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
+				disable_isr();
+				disable_isr_fiq();
+				cola_guardar_eventos(evento_rst,0);
+				enable_isr();
+				enable_isr_fiq();
+			}
+	}
+}
+
+/************************
+La funcion recorre todas las celdas para propagar aquellas celdas que ya no tienen error*/
+void candidatos_actualizar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],uint8_t valor_introducido){
+	 //int celdas_vacias = 0;
+  uint8_t i;
+	uint8_t j;
+	//recalcular candidatos de las celdas vacias calculando cuantas hay vacias
+	for ( i=0; i<NUM_FILAS;i++){
+		for (j=0; j <NUM_FILAS;j++){
+			candidatos_propagar_error_c(valor_introducido,i,j);
+		}	
+	}
+}
+
+/********************************************
+La funcion recorre la fila, columna y región y dtecta si debe quitar error de las celdas con valor igual al parametro valor.*/
+void
+candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
+		uint16_t celda;
+		uint8_t valor_celda;
+		
+    uint8_t j, i , init_i, init_j, end_i, end_j;
+    /* puede ayudar esta "look up table" a mejorar el rendimiento */
+    const uint8_t init_region[NUM_FILAS] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+
+		int varios_detectados =0;
+    
+    for (j=0;j<NUM_FILAS;j++){
+			celda = celda_leer_contenido(cuadricula_C_C[fila][j]);
+			//Extraer el valor y ver si es el mismo
+			valor_celda=celda_leer_valor(celda);
+			if(valor_celda == valor){
+				varios_detectados = varios_detectados +1;
+			}	
+		}
+		
+		for (i=0;i<NUM_FILAS;i++){
+			celda = celda_leer_contenido(cuadricula_C_C[i][columna]);
+			//Extraer el valor y ver si es el mismo
+			valor_celda=celda_leer_valor(celda);
+			if(valor_celda == valor && i!=fila){		//Para que no lea otra vez la celda desde la que se mira (ya se ha tenido en cuenta al recorrer la fila)
+				varios_detectados = varios_detectados +1;
+			}	
+		}
+		
+		
+		init_i = init_region[fila];
+    init_j = init_region[columna];
+    end_i = init_i + 3;
+    end_j = init_j + 3;
+
+    /* recorrer region descartando valor de listas candidatos */
+    for (i=init_i; i<end_i; i++) {
+      for(j=init_j; j<end_j; j++) {
+				celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+				if(i != fila && j!=columna){
+			//Extraer el valor y ver si es el mismo
+			valor_celda=celda_leer_valor(celda);
+			if(valor_celda == valor){
+				varios_detectados = varios_detectados +1;
+			
+			}
+		}
+			}
+    }
+		//En el caso de dtectar solo a 1 se debe eliminar el error
+		if(varios_detectados == 1){
+			for (j=0;j<NUM_FILAS;j++){
+				celda = celda_leer_contenido(cuadricula_C_C[fila][j]);
+				//Extraer el valor y ver si es el mismo
+				valor_celda=celda_leer_valor(celda);
+				if(valor_celda == valor){				//Vuelves a recorrer y si el valor es el mismo lo quitas
+					celda_quitar_bit_error(&cuadricula_C_C[fila][j]);
+				}	
+			}
+		}
+
+		if(varios_detectados == 1){
+			for (i=0;i<NUM_FILAS;i++){
+				celda = celda_leer_contenido(cuadricula_C_C[i][columna]);
+				//Extraer el valor y ver si es el mismo
+				valor_celda=celda_leer_valor(celda);
+				if(valor_celda == valor){
+					celda_quitar_bit_error(&cuadricula_C_C[i][columna]);
+				}	
+			}
+		}
+	
+		if(varios_detectados == 1){
+			for (i=init_i; i<end_i; i++) {
+				for(j=init_j; j<end_j; j++) {
+					celda = celda_leer_contenido(cuadricula_C_C[i][j]);
+				//Extraer el valor y ver si es el mismo
+					valor_celda=celda_leer_valor(celda);
+					if(valor_celda == valor){
+						celda_quitar_bit_error(&cuadricula_C_C[i][j]);
+					}
+				}
+			}
+		}
+}
+/************************
+Esta funcion realiza las acciones necesarias para resetear la partida.*/
+void sudoku_evento_rst(char mensaje[]){
+		if(sudoku_estado != 0){
+		sudoku_reset_partida(mensaje);
+		gestor_serial_enviar_mensaje(mensaje);
+		sudoku_tiempo_total_partida(mensaje);
+		gestor_serial_enviar_mensaje(mensaje);
+		//Se cambia el estado al inicial
+		sudoku_cambiar_estado(0);
+	}
+}
+/************************
+Esta funcion realiza las acciones necesarias para empezar una nueva partida.*/
+void sudoku_evento_new(char mensaje[]){
+		sudoku_reiniciar();
+		//sudoku_nueva_partida(mensaje);
+		//gestor_serial_enviar_mensaje(mensaje);
+		sudoku_mostrar_tablero();
+		sudoku_cambiar_estado(2);
+}
+/************************
+Esta funcion realiza las acciones necesarias para finalizar la partida.*/
+void sudoku_evento_fin_partida(char mensaje[]){
+	sudoku_fin_partida(mensaje);
+	gestor_serial_enviar_mensaje(mensaje);
+	sudoku_tiempo_total_partida(mensaje);
+	gestor_serial_enviar_mensaje(mensaje);
+}
+
+/************************
+La funcion actualiza el estado del sudoku*/
+void sudoku_cambiar_estado(int nuevo_estado){
+	sudoku_estado = nuevo_estado;
+}
+
+int sudoku_get_estado(){
+	return sudoku_estado;
+}
+
+
+//0x0015, 0x0003, 0x0004, 0x0006, 0x0007, 0x0008, 0x0009, 0x0001, 0x0002, 0, 0, 0, 0, 0, 0, 0,
+//0x0006, 0x0007, 0x0002, 0x0001, 0x0019, 0x0005, 0x0003, 0x0004, 0x0018, 0, 0, 0, 0, 0, 0, 0,
+//0x0001, 0x0019, 0x0018, 0x0013, 0x0004, 0x0012, 0x0005, 0x0016, 0x0007, 0, 0, 0, 0, 0, 0, 0,
+//0x0008, 0x0015, 0x0009, 0x0017, 0x0006, 0x0001, 0x0014, 0x0002, 0x0003, 0, 0, 0, 0, 0, 0, 0,
+//0x0004, 0x0002, 0x0016, 0x0018, 0x0015, 0x0013, 0x0017, 0x0009, 0x0001, 0, 0, 0, 0, 0, 0, 0,
+//0x0007, 0x0001, 0x0013, 0x0019, 0x0002, 0x0014, 0x0008, 0x0015, 0x0006, 0, 0, 0, 0, 0, 0, 0,
+//0x0009, 0x0016, 0x0001, 0x0015, 0x0003, 0x0017, 0x0012, 0x0018, 0x0004, 0, 0, 0, 0, 0, 0, 0,
+//0x0012, 0x0008, 0x0007, 0x0004, 0x0011, 0x0009, 0x0006, 0x0003, 0x0005, 0, 0, 0, 0, 0, 0, 0,
+//0x0003, 0x0004, 0x0005, 0x0002, 0x0008, 0x0016, 0x0001, 0x0007, 0x0019, 0, 0, 0, 0, 0, 0, 0
+
+
+//{
+//0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+//0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
+//};
+
+
+
 	//La idea es coger el array mensajeInicial y mensajeFinal y juntarlos
 //	const int numFilas = 19;
 //	const int numColumnas=29;
@@ -828,239 +1055,5 @@ void sudoku_mostrar_tablero_inicial(){
 //	strcpy(mensajeInicial, informacionJuego); /* copy name into the new var */
 //	strcat(mensajeInicial, mensajeFinal2); /* add the extension */
 //	gestor_serial_enviar_mensaje(mensajeInicial);
-gestor_serial_enviar_mensaje(informacionJuego);
-}
-
-/************************
-Esta funcion nos confirma que nuestra jugada ha sido correcta .*/
-//Significa que ha llegado la alarma de 3 segundos tras introducir la jugada
-//Se muestra el tablero y se quita el led de confirmar escritura
-void sudoku_confirmar_jugada(){
-	if(conteos_introducir_jugada != 6){
-		conteos_introducir_jugada = conteos_introducir_jugada +1;
-		if(conteos_introducir_jugada%2==0){
-			gestor_IO_escribir_led();
-		}else{
-			gestor_IO_quitar_led();
-		}
-		gestor_alarmas_quitar_alarma(evento_confirmar_jugada);
-		__disable_fiq();
-		__disable_irq();
-		cola_guardar_eventos(Set_Alarm,0x010001F4);	//Ponemos otra vez la alarma
-		__enable_fiq();
-		__enable_irq();
-	}else{
-		estoy_en_comando = 0;
-		gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
-		uint16_t celda = celda_leer_contenido(cuadricula_C_C[iComando][jComando]);
-				uint8_t pista = celda_leer_pista(celda);
-				uint8_t valor_celda = celda_leer_valor(celda);
-				uint16_t candidatos_celda=celda_leer_candidatos(celda);
-				uint16_t error = celda_leer_error(celda);
-		if(valorComando == 0){		//Se ha introducido un 0 entonces se borra el valor de la celda
-			celda_introducir_celda(&cuadricula_C_C[iComando][jComando],0);	//Pones un 0 y se llama a actualizar
-			if(valorComando != valor_celda && error == 1){		//Si habia un error e introduzco un 0 pues quito el error de las demas
-				candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
-			}
-			candidatos_actualizar_c(cuadricula_C_C);
-		}else{
-			if(se_puede_modificar(pista,valorComando) == 1 && (valorComando != valor_celda)){	//Si la celda no es una pista inicial y el valor a introducir esta entre 0 y 9 se modifica la celda
-				celda_actualizar_celda(&cuadricula_C_C[iComando][jComando],valorComando);
-				if(valorComando != valor_celda && error == 1){		//Significa que no he vuelto a introducir el mismo valor y habia un error
-					candidatos_actualizar_error_c(cuadricula_C_C,valor_celda);
-				}
-				if(valor_en_candidatos(candidatos_celda,valorComando) == 1){		//Si el valor introducido es correcto se activa el led de validacion
-				}else{
-					celda_modificar_bit_error(&cuadricula_C_C[iComando][jComando]);
-					//No llamar a actualizar simplemente como es error pues dejas los candidatos ahi
-					///////////////////////////////////////////////////////////////////////////////
-					candidatos_actualizar_c(cuadricula_C_C);		//CAMBIADO//////////////////////////////////////////////////////////////////////////
-					///////////////////////////////////////////////////////////////
-				}
-				candidatos_propagar_c(cuadricula_C_C,iComando,jComando);	//Si quita el propagar porque a lo mejor luego se quita
-			}
-		}
-				sudoku_mostrar_tablero();
-		
-				//Mirar si se han llenado todas las celdas para acabar
-			if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
-				__disable_fiq();
-				__disable_irq();
-				cola_guardar_eventos(evento_rst,0);
-				__enable_fiq();
-				__enable_irq();
-			}
-	}
-	//estoy_en_comando = 0;
-}
 
 
-
-/************************
-Esta funcion detecta los errores cuando actualizamos la cuadricula.*/
-void candidatos_actualizar_error_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],uint8_t valor_introducido){
-	 //int celdas_vacias = 0;
-  uint8_t i;
-	uint8_t j;
-	//recalcular candidatos de las celdas vacias calculando cuantas hay vacias
-	for ( i=0; i<NUM_FILAS;i++){
-		for (j=0; j <NUM_FILAS;j++){
-			candidatos_propagar_error_c(valor_introducido,i,j);
-		}	
-	}
-}
-
-//El fallo es que detecta los de fila, columna y la region puede detectar el mismo
-void
-candidatos_propagar_error_c(uint8_t valor,uint8_t fila, uint8_t columna){
-		uint16_t celda;
-		uint8_t valor_celda;
-		
-    uint8_t j, i , init_i, init_j, end_i, end_j;
-    /* puede ayudar esta "look up table" a mejorar el rendimiento */
-    const uint8_t init_region[NUM_FILAS] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
-
-		int varios_detectados =0;
-    
-    for (j=0;j<NUM_FILAS;j++){
-			celda = celda_leer_contenido(cuadricula_C_C[fila][j]);
-			//Extraer el valor y ver si es el mismo
-			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor){
-				varios_detectados = varios_detectados +1;
-			}	
-		}
-		
-		for (i=0;i<NUM_FILAS;i++){
-			celda = celda_leer_contenido(cuadricula_C_C[i][columna]);
-			//Extraer el valor y ver si es el mismo
-			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor && i!=fila){		//Para que no lea otra vez la celda desde la que se mira (ya se ha tenido en cuenta al recorrer la fila)
-				varios_detectados = varios_detectados +1;
-			}	
-		}
-		
-		
-		init_i = init_region[fila];
-    init_j = init_region[columna];
-    end_i = init_i + 3;
-    end_j = init_j + 3;
-
-    /* recorrer region descartando valor de listas candidatos */
-    for (i=init_i; i<end_i; i++) {
-      for(j=init_j; j<end_j; j++) {
-				celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-				if(i != fila && j!=columna){
-			//Extraer el valor y ver si es el mismo
-			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor){
-				varios_detectados = varios_detectados +1;
-			
-			}
-		}
-			}
-    }
-		
-		
-		
-		//En el caso de dtectar solo a 1 se debe eliminar el error
-		if(varios_detectados == 1){
-			for (j=0;j<NUM_FILAS;j++){
-			celda = celda_leer_contenido(cuadricula_C_C[fila][j]);
-			//Extraer el valor y ver si es el mismo
-			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor){				//Vuelves a recorrer y si el valor es el mismo lo quitas
-				celda_quitar_bit_error(&cuadricula_C_C[fila][j]);
-			}	
-		}
-		}
-
-		if(varios_detectados == 1){
-			for (i=0;i<NUM_FILAS;i++){
-			celda = celda_leer_contenido(cuadricula_C_C[i][columna]);
-			//Extraer el valor y ver si es el mismo
-			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor){
-				celda_quitar_bit_error(&cuadricula_C_C[i][columna]);
-			}	
-		}
-		}
-	
-		if(varios_detectados == 1){
-			for (i=init_i; i<end_i; i++) {
-      for(j=init_j; j<end_j; j++) {
-				celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-			//Extraer el valor y ver si es el mismo
-			valor_celda=celda_leer_valor(celda);
-			if(valor_celda == valor){
-				celda_quitar_bit_error(&cuadricula_C_C[i][j]);
-			}
-			}
-    }
-		}
-}
-/************************
-Esta funcion realiza las acciones necesarias para resetear la partida.*/
-void sudoku_evento_rst(char mensaje[]){
-		if(sudoku_estado != 0){
-		//char mensaje[1000];
-		sudoku_reset_partida(mensaje);
-		gestor_serial_enviar_mensaje(mensaje);
-		sudoku_tiempo_total_partida(mensaje);
-		gestor_serial_enviar_mensaje(mensaje);
-		//Se cambia el estado al inicial
-		sudoku_cambiar_estado(0);
-	}
-}
-/************************
-Esta funcion realiza las acciones necesarias para empezar una nueva partida.*/
-void sudoku_evento_new(char mensaje[]){
-	//char mensaje[1000];
-		sudoku_reiniciar();
-		//sudoku_nueva_partida(mensaje);
-		//gestor_serial_enviar_mensaje(mensaje);
-		sudoku_mostrar_tablero();
-		sudoku_cambiar_estado(2);
-}
-/************************
-Esta funcion realiza las acciones necesarias para finalizar la partida.*/
-void sudoku_evento_fin_partida(char mensaje[]){
-	//char mensaje[1000];
-	sudoku_fin_partida(mensaje);
-	gestor_serial_enviar_mensaje(mensaje);
-	sudoku_tiempo_total_partida(mensaje);
-	gestor_serial_enviar_mensaje(mensaje);
-}
-
-
-void sudoku_cambiar_estado(int nuevo_estado){
-	sudoku_estado = nuevo_estado;
-}
-
-int sudoku_get_estado(){
-	return sudoku_estado;
-}
-
-
-//0x0015, 0x0003, 0x0004, 0x0006, 0x0007, 0x0008, 0x0009, 0x0001, 0x0002, 0, 0, 0, 0, 0, 0, 0,
-//0x0006, 0x0007, 0x0002, 0x0001, 0x0019, 0x0005, 0x0003, 0x0004, 0x0018, 0, 0, 0, 0, 0, 0, 0,
-//0x0001, 0x0019, 0x0018, 0x0013, 0x0004, 0x0012, 0x0005, 0x0016, 0x0007, 0, 0, 0, 0, 0, 0, 0,
-//0x0008, 0x0015, 0x0009, 0x0017, 0x0006, 0x0001, 0x0014, 0x0002, 0x0003, 0, 0, 0, 0, 0, 0, 0,
-//0x0004, 0x0002, 0x0016, 0x0018, 0x0015, 0x0013, 0x0017, 0x0009, 0x0001, 0, 0, 0, 0, 0, 0, 0,
-//0x0007, 0x0001, 0x0013, 0x0019, 0x0002, 0x0014, 0x0008, 0x0015, 0x0006, 0, 0, 0, 0, 0, 0, 0,
-//0x0009, 0x0016, 0x0001, 0x0015, 0x0003, 0x0017, 0x0012, 0x0018, 0x0004, 0, 0, 0, 0, 0, 0, 0,
-//0x0012, 0x0008, 0x0007, 0x0004, 0x0011, 0x0009, 0x0006, 0x0003, 0x0005, 0, 0, 0, 0, 0, 0, 0,
-//0x0003, 0x0004, 0x0005, 0x0002, 0x0008, 0x0016, 0x0001, 0x0007, 0x0019, 0, 0, 0, 0, 0, 0, 0
-
-
-//{
-//0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-//0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
-//};

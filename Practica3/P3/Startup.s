@@ -165,11 +165,11 @@ Vectors         LDR     PC, Reset_Addr
 				LDR 	PC,=timer0_ISR
 
 ; Dario	//Esto se supone que invoca el vector este
-                IMPORT SWI_Handler
+                IMPORT SWI_Handler2
 
 Reset_Addr      DCD     Reset_Handler
 Undef_Addr      DCD     Undef_Handler
-SWI_Addr        DCD     SWI_Handler	;Esto redirige algo
+SWI_Addr        DCD     SWI_Handler2	;Esto redirige algo
 PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
                 DCD     0                      ; Reserved Address 

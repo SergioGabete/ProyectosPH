@@ -6,3 +6,4 @@
 .\gestor_alarmas.o: timer.h
 .\gestor_alarmas.o: evento.h
 .\gestor_alarmas.o: Gestor_Alarmas.h
+.\gestor_alarmas.o: SWI.h

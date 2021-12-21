@@ -15,7 +15,7 @@
 #include "UART0.h"
 #include "WT.h"
 #include "RTC.h"
-//#include "SWI.h"
+#include "SWI.h"
 //#include "cuadricula.h"
 
 //void PAbt_Handler_function(void) {}
@@ -35,27 +35,27 @@ int main (void) {
 		gestor_IO_iniciar();
 		sudoku_inicializar();
 		RTC_init();
-		WT_init(20);
+		WT_init(50);
 		feed_watchdog();
 		//Poner alarma para la visualizacion constante de la GPIO
-	__disable_fiq();
-	__disable_irq();
+		disable_isr();
+		disable_isr_fiq();
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
-	__enable_fiq();
-	__enable_irq();
+		enable_isr();
+		enable_isr_fiq();
 		//Introducir una periodica que sea el idle
 	//00000000 1 00000000000000000010100
-	__enable_fiq();
-	__disable_irq();
-	cola_guardar_eventos(Set_Alarm,0x00800014);
-	__enable_fiq();
-	__enable_irq();
+		disable_isr_fiq();
+		disable_isr();
+		cola_guardar_eventos(Set_Alarm,0x00800014);
+		enable_isr_fiq();
+		enable_isr();
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
-		__disable_fiq();
-		__disable_irq();
+		disable_isr_fiq();
+		disable_isr();
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
-		__enable_fiq();
-		__enable_irq();
+		enable_isr_fiq();
+		enable_isr();
 		//Se llama alplanificador
 		uart0_init();
 		//sudoku_mensajeinicial();
