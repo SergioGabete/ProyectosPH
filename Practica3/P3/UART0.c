@@ -52,9 +52,6 @@ void uart0_ISR (void) __irq {
 						if((buffer_entrada[0] == '#')&&(buffer_entrada[1] == 'N')&&(buffer_entrada[2] == 'E')&&(buffer_entrada[3] == 'W') && (buffer_entrada[4] == '!')){	//NEW
 							cola_guardar_eventos(evento_new,0);
 						}
-//						else{
-//							uart0_sendchar('E');uart0_sendchar('R');uart0_sendchar('R');
-//						}
 						if((buffer_entrada[0] == '#')&&
 							(buffer_entrada[1] - '0' >=0 && buffer_entrada[1] - '0' <= 8)&&	//Si son numeros validos pues se introduce
 							(buffer_entrada[2] - '0' >=0 && buffer_entrada[2] - '0' <= 8)&&
@@ -62,7 +59,6 @@ void uart0_ISR (void) __irq {
 							(buffer_entrada[5] == '!') &&
 								((buffer_entrada[1] - '0' + buffer_entrada[2] - '0' + buffer_entrada[3] - '0') % 8 ==  buffer_entrada[4] - '0')){ //Jugada correcta
 								//Como guardar informacion en el auxiliar
-								//00000000 fila columna valor
 									uint32_t auxiliar = 0;
 									uint32_t fila =buffer_entrada[1] - '0';
 									uint32_t columna =buffer_entrada[2] - '0';
@@ -72,12 +68,6 @@ void uart0_ISR (void) __irq {
 									auxiliar = auxiliar | (fila << 16);
 									cola_guardar_eventos(evento_jugada,auxiliar);
 						}
-//								else{
-//							uart0_sendchar('C');uart0_sendchar('o');uart0_sendchar('m');uart0_sendchar('a');uart0_sendchar('n');uart0_sendchar('d');
-//							uart0_sendchar('0');uart0_sendchar(' ');uart0_sendchar('E');uart0_sendchar('r');uart0_sendchar('r');uart0_sendchar('o');
-//							uart0_sendchar('n');uart0_sendchar('e');uart0_sendchar('o');uart0_sendchar('\n');
-//						}
-					
 						indice = -1;
 					}
 				}

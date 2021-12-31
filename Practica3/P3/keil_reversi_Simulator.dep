@@ -13,7 +13,7 @@ I (timer.h)(0x61A65B8E)
 I (evento.h)(0x61C08061)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (GPIO.h)(0x619F59B9)
-F (.\sudoku_2021.c)(0x61C1BD68)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
+F (.\sudoku_2021.c)(0x61C1D046)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F2F9C)
@@ -122,7 +122,7 @@ I (UART0.h)(0x61A9D3A2)
 I (WT.h)(0x61BAF2A7)
 I (RTC.h)(0x61A7B161)
 I (SWI.h)(0x61B21F78)
-F (.\planificador.c)(0x61C19E46)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\planificador.o --omf_browse .\planificador.crf --depend .\planificador.d)
+F (.\planificador.c)(0x61C1DAB0)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\planificador.o --omf_browse .\planificador.crf --depend .\planificador.d)
 I (planificador.h)(0x61AB84B9)
 I (evento.h)(0x61C08061)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
@@ -155,7 +155,7 @@ I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 F (.\WT.h)(0x61BAF2A7)()
 F (.\SWI.s)(0x61C19A0C)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\swi.o --depend .\swi.d)
 F (.\UART0.h)(0x61A9D3A2)()
-F (.\UART0.c)(0x61C1BD5C)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
+F (.\UART0.c)(0x61C1CF1D)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\uart0.o --omf_browse .\uart0.crf --depend .\uart0.d)
 I (UART0.h)(0x61A9D3A2)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (cola.h)(0x61A8FD45)

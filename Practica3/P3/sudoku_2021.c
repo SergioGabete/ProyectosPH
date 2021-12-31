@@ -56,19 +56,13 @@ cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
 
 
 static uint32_t estado_GPIO=0;
-
-
-//static char mensajeFinal2[1000];
 static char mensajeFinal[1000];
-//static char mensajeInicial[1500];
-
 //Variables para saber si estamos en jugada introducida por comandos o por GPIO
 static uint8_t iComando;
 static uint8_t jComando;
 static uint8_t valorComando;
-static int estoy_en_comando =0;		//Si es 0 significa que no esta en comando
+static int estoy_en_comando =0;		//Si es 0 significa que no esta en el tiempo de confirmacion de comando
 static int conteos_introducir_jugada =0;
-
 int sudoku_comprobar_tablero_lleno(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]){
 	//Se recorren filas y columnas y se ve si esta lleno
 	int celdas_vacias=0;
@@ -621,6 +615,7 @@ void sudoku_mostrar_tablero(){
 	gestor_serial_enviar_mensaje(mensajeFinal);
 	
 }
+
 /************************
 Esta funcion nos permite introducir una jugada en nuestro sudoku.*/
 void sudoku_introducir_jugada(uint32_t aux){
