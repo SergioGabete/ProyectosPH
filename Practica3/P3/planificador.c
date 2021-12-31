@@ -23,18 +23,18 @@ static char mensaje[100];
 void planificador_init(){
 	struct evento evento_sin_tratar;
 		//Prueba del watchdog
-//	while(1){
-//		cola_guardar_eventos(0,0);
-//		feed_watchdog();
-//	}
+	while(1){
+		cola_guardar_eventos(0,0);
+		feed_watchdog();
+	}
 		while(1){
 			if(cola_comprobar_nuevos_eventos() == 1){					//Si hay eventos nuevos sin tratar se desencola un evento
 					feed_watchdog();
-				disable_isr();
-				disable_isr_fiq();
+				//disable_isr();
+				//disable_isr_fiq();
 					evento_sin_tratar = cola_evento_sin_tratar();
-				enable_isr();
-				enable_isr_fiq();
+				//enable_isr();
+				//enable_isr_fiq();
 					planificador_tratar_evento(evento_sin_tratar);
 		 }else{
 				//Si no hay eventos a tratar se pasa a modo idle
@@ -107,6 +107,9 @@ void planificador_tratar_evento(struct evento evento_sin_tratar){
 			break;
 		case evento_fin_partida:
 			sudoku_evento_fin_partida(mensaje);
+			break;
+		case evento_letra_introducida:
+			sudoku_evento_letra_introducida(evento_sin_tratar.auxData);
 			break;
 		default:
 			;

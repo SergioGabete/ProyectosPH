@@ -82,7 +82,7 @@ void timer0_ISR (void) __irq {
 				cola_guardar_eventos(alarma_timer0,0);
 			}*/
 			if(periodo_global != 0){	//Se encola el evento que resta 1 a los temporizadores de las alarmas
-				cola_guardar_eventos(resta_Periodos,0);
+				cola_guardar_eventos_interrupciones(resta_Periodos,0);
 			}
 			//timer0_temporizador_periodico(1);
 			T0IR = 1;                            // Acknowledge Interrupt

@@ -38,24 +38,24 @@ int main (void) {
 		WT_init(50);
 		feed_watchdog();
 		//Poner alarma para la visualizacion constante de la GPIO
-		disable_isr();
-		disable_isr_fiq();
+		///disable_isr();
+		//disable_isr_fiq();
 		cola_guardar_eventos(Set_Alarm,0x068000C8);
-		enable_isr();
-		enable_isr_fiq();
+		//enable_isr();
+		//enable_isr_fiq();
 		//Introducir una periodica que sea el idle
 	//00000000 1 00000000000000000010100
-		disable_isr_fiq();
-		disable_isr();
+		//disable_isr_fiq();
+		//disable_isr();
 		cola_guardar_eventos(Set_Alarm,0x00800014);
-		enable_isr_fiq();
-		enable_isr();
+		//enable_isr_fiq();
+		//enable_isr();
 		///candidatos_actualizar_c(cuadricula_C_C);	//Esta funcion estara en el sudoku y habra que llamar a eso 　　　　　　　　　
-		disable_isr_fiq();
-		disable_isr();
+		//disable_isr_fiq();
+		//disable_isr();
 		cola_guardar_eventos(Set_Alarm,0x02003A98);
-		enable_isr_fiq();
-		enable_isr();
+		//enable_isr_fiq();
+		//enable_isr();
 		//Se llama alplanificador
 		uart0_init();
 		//sudoku_mensajeinicial();

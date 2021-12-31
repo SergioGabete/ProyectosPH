@@ -23,7 +23,7 @@ void eint1_ISR (void) __irq{
 	EXTINT |= 0x2;			//Resetea la interrupcion
 	eint1_pulsacion = 1;
 	VICIntEnClr = 0x00008000;		//Deshabilitar la interrupcion de eint1
-	cola_guardar_eventos(evento_boton1,0);//Guarda un evento de boton 1 en la cola de eventos
+	cola_guardar_eventos_interrupciones(evento_boton1,0);//Guarda un evento de boton 1 en la cola de eventos
 }
 
 /************************
@@ -35,7 +35,7 @@ void eint2_ISR (void) __irq{
 	EXTINT |= 0x4;			//Resetea la interrupcion
 	eint2_pulsacion = 1;
 	VICIntEnClr = 0x00010000;		//Deshabilitar la interrupcion de eint2
-	cola_guardar_eventos(evento_boton2,0);//Guarda un evento de boton 2 en la cola de eventos
+	cola_guardar_eventos_interrupciones(evento_boton2,0);//Guarda un evento de boton 2 en la cola de eventos
 }
 
 /************************

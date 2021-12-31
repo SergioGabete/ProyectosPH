@@ -28,6 +28,7 @@ enum IDs{
 	evento_reset_power_down,	//14
 	evento_fin_partida,			//15
 	evento_boton2,			//16
+	evento_letra_introducida,	//17
 };
 
 

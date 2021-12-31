@@ -53,11 +53,11 @@ void gestor_alarmas_restar_periodo(void){
 			//Si el retardo es 0 pues lo encolas porque ha acabado la alarma
 			if(retardos[i] == 0){
 				//Nos daria igual el valor de AuxData ????
-				disable_isr();
-				disable_isr_fiq();
+				//disable_isr();
+				//disable_isr_fiq();
 				cola_guardar_eventos(ID[i], 0);
-				enable_isr();
-				enable_isr_fiq();
+				//enable_isr();
+				//enable_isr_fiq();
 				//Ahora al haber acabado se comprueba si es periodica para eliminarlo o no
 				if(periodicas[i] == 0){ //Al no ser periodica se elimina
 					activada[i] = 0;
@@ -81,11 +81,11 @@ void gestor_alarmas_activar_alarma(uint8_t id){
 
 void gestor_alarmas_resetear_power_down(){
 	gestor_alarmas_quitar_alarma(2);							//Cambiar y poner en vez de dos el evento_power_down
-	disable_isr();
-	disable_isr_fiq();
+	//disable_isr();
+	//disable_isr_fiq();
 	cola_guardar_eventos(Set_Alarm,0x02003A98);
-	enable_isr();
-	enable_isr_fiq();
+	//enable_isr();
+	//enable_isr_fiq();
 }
 
 

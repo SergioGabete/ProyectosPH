@@ -102,6 +102,8 @@ void sudoku_cambiar_estado(int nuevo_estado);
 
 int sudoku_get_estado(void);
 
+void sudoku_evento_letra_introducida(int letra);
+
 //void sudoku_evento_idle(void);
 
 

@@ -1,4 +1,6 @@
-#include <LPC210x.H>                       /* LPC210x definitions */
+#include <LPC210x.H>   
+#include "SWI.h"
+/* LPC210x definitions */
 //#include "Serial_port.h" 
 
 void wt_rsi(void) __irq;
@@ -28,11 +30,11 @@ deshabilita las interrupciones para garantizar escrituras consecutivas.*/
 void feed_watchdog (void) {				   /* Reload the watchdog timer       */
 	
 	//Aqui hay que proteger que se desactiven interrupciones y luego se vuelvan a activar
-	__disable_fiq();
-	__disable_irq();
+	
+	disable_isr_fiq();		//Mirarlo a ver
   WDFEED = 0xAA;						   
-  WDFEED = 0x55;  
-	__enable_fiq();
-	__enable_irq();
+  WDFEED = 0x55;
+	enable_isr_fiq();
+	
 }
 

@@ -32,52 +32,17 @@ Se va a detectar que evento escribe el usuario por pantalla por medio de un buff
 dependiendo el tipo de evento que se escribe se guardará en cola el evento descrito.*/
 void uart0_ISR (void) __irq {
 		if ((U0IIR&0x4)&&(U0LSR & 0x01)){
-				cola_guardar_eventos(evento_reset_power_down,0);
 				int ultimo = U0RBR;
 				U0THR = ultimo; //mostrar los caracteres del comando que se esta escribiendo	
 				//Se trata el caracter recibido y se encola el tipo de accion
-				if(ultimo == '#'){
-						indice =0;
-				}	//Si es el comando que indica empiece de comando se empieza a leer comando
-				if(indice != -1){
-					buffer_entrada[indice] = ultimo;
-					indice = indice+1;
-					if(indice == 10){	//Se ha llegado al final del tamaño del buffer entonces se vacía porque el comando seria erroneo
-						indice = -1;
-					}
-					if(ultimo == '!'){	//Si el caracter es ultimo se resetea el indice
-						if((buffer_entrada[0] == '#')&&(buffer_entrada[1] == 'R')&&(buffer_entrada[2] == 'S')&&(buffer_entrada[3] == 'T') && (buffer_entrada[4] == '!')){	//RST
-							cola_guardar_eventos(evento_rst,0);
-						}
-						if((buffer_entrada[0] == '#')&&(buffer_entrada[1] == 'N')&&(buffer_entrada[2] == 'E')&&(buffer_entrada[3] == 'W') && (buffer_entrada[4] == '!')){	//NEW
-							cola_guardar_eventos(evento_new,0);
-						}
-						if((buffer_entrada[0] == '#')&&
-							(buffer_entrada[1] - '0' >=0 && buffer_entrada[1] - '0' <= 8)&&	//Si son numeros validos pues se introduce
-							(buffer_entrada[2] - '0' >=0 && buffer_entrada[2] - '0' <= 8)&&
-							(buffer_entrada[3] - '0' >=0 && buffer_entrada[3] - '0' <= 9)&&
-							(buffer_entrada[5] == '!') &&
-								((buffer_entrada[1] - '0' + buffer_entrada[2] - '0' + buffer_entrada[3] - '0') % 8 ==  buffer_entrada[4] - '0')){ //Jugada correcta
-								//Como guardar informacion en el auxiliar
-									uint32_t auxiliar = 0;
-									uint32_t fila =buffer_entrada[1] - '0';
-									uint32_t columna =buffer_entrada[2] - '0';
-									uint32_t valor =buffer_entrada[3] - '0';
-									auxiliar = auxiliar | valor;
-									auxiliar = auxiliar | (columna << 8);
-									auxiliar = auxiliar | (fila << 16);
-									cola_guardar_eventos(evento_jugada,auxiliar);
-						}
-						indice = -1;
-					}
-				}
+				cola_guardar_eventos_interrupciones(evento_letra_introducida,ultimo);
 				
 		}
 		//Cuando ha terminado de enviar el carácter anterior, genera un evento
 		//evento_continuar_mensaje, avisando al planificador que el THR ya está libre y puede
 		//utilizar sendchar(int ch) para enviar otro carácter.
 		if ((U0IIR&0x1)){	//	(U0IIR & 0x1) == 0x1	//
-				cola_guardar_eventos(evento_continuar_mensaje,0);	//En el planificador se llama a sudoku enviar mensaje	
+				cola_guardar_eventos_interrupciones(evento_continuar_mensaje,0);	//En el planificador se llama a sudoku enviar mensaje	
 		}
 		VICVectAddr = 0;
 }

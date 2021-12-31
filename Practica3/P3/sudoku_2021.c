@@ -226,11 +226,11 @@ void sudoku_evento_boton1(){
 					}
 				
 					if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
-						disable_isr();
-						disable_isr_fiq();
+						//disable_isr();
+						//disable_isr_fiq();
 						cola_guardar_eventos(evento_rst,0);
-						enable_isr();
-						enable_isr_fiq();
+						//enable_isr();
+						//enable_isr_fiq();
 					}
 			}else{		//En este caso significa que estoy en comando
 				//gestor_pulsacion_boton1_pretado();			//ESTO estaba comentado
@@ -270,11 +270,11 @@ void sudoku_evento_boton1(){
 				}
 				sudoku_mostrar_tablero();
 				if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
-					disable_isr();
-					disable_isr_fiq();
+					//disable_isr();
+					//disable_isr_fiq();
 					cola_guardar_eventos(evento_rst,0);
-					enable_isr();
-					enable_isr_fiq();
+					//enable_isr();
+					//enable_isr_fiq();
 				}
 			}
 	}
@@ -674,11 +674,11 @@ void sudoku_introducir_jugada(uint32_t aux){
 			//cola_guardar_eventos(Set_Alarm,0x01000BB8);		//le meto un poco a la alarma para probarlo bien
 			//cola_guardar_eventos(Set_Alarm,0x01008BB8);
 			conteos_introducir_jugada = 0;
-			disable_isr();
-			disable_isr_fiq();
+			//disable_isr();
+			//disable_isr_fiq();
 			cola_guardar_eventos(Set_Alarm,0x010001F4);				//Se pone a 500 para que parpadee
-			enable_isr();
-			enable_isr_fiq();
+			//enable_isr();
+			//enable_isr_fiq();
 	}
 }
 /************************
@@ -700,11 +700,11 @@ void sudoku_confirmar_jugada(){
 			gestor_IO_quitar_led();
 		}
 		gestor_alarmas_quitar_alarma(evento_confirmar_jugada);
-		disable_isr();
-		disable_isr_fiq();
+		//disable_isr();
+		//disable_isr_fiq();
 		cola_guardar_eventos(Set_Alarm,0x010001F4);	//Ponemos otra vez la alarma
-		enable_isr();
-		enable_isr_fiq();
+		//enable_isr();
+		//enable_isr_fiq();
 	}else{
 		estoy_en_comando = 0;
 		gestor_IO_quitar_led();		//Se quita el led que hemos puesto antes
@@ -738,11 +738,11 @@ void sudoku_confirmar_jugada(){
 		
 				//Mirar si se han llenado todas las celdas para acabar
 			if(sudoku_comprobar_tablero_lleno(cuadricula_C_C) == 0){	//Si es 0 es que estan todas llenas
-				disable_isr();
-				disable_isr_fiq();
+				//disable_isr();
+				//disable_isr_fiq();
 				cola_guardar_eventos(evento_rst,0);
-				enable_isr();
-				enable_isr_fiq();
+				//enable_isr();
+				//enable_isr_fiq();
 			}
 	}
 }
@@ -889,6 +889,49 @@ int sudoku_get_estado(){
 }
 
 
+
+static volatile int buffer_entrada[10];//buffer de entrada que sirve para guardar lo que el usuario escribe en la Uart
+static volatile int indiceUart=-1;
+
+void sudoku_evento_letra_introducida(int ultimo){
+	cola_guardar_eventos(evento_reset_power_down,0);
+				if(ultimo == '#'){
+						indiceUart =0;
+				}	//Si es el comando que indica empiece de comando se empieza a leer comando
+				if(indiceUart != -1){
+					buffer_entrada[indiceUart] = ultimo;
+					indiceUart = indiceUart+1;
+					if(indiceUart == 10){	//Se ha llegado al final del tamaño del buffer entonces se vacía porque el comando seria erroneo
+						indiceUart = -1;
+					}
+					if(ultimo == '!'){	//Si el caracter es ultimo se resetea el indice
+						if((buffer_entrada[0] == '#')&&(buffer_entrada[1] == 'R')&&(buffer_entrada[2] == 'S')&&(buffer_entrada[3] == 'T') && (buffer_entrada[4] == '!')){	//RST
+							cola_guardar_eventos(evento_rst,0);
+						}
+						if((buffer_entrada[0] == '#')&&(buffer_entrada[1] == 'N')&&(buffer_entrada[2] == 'E')&&(buffer_entrada[3] == 'W') && (buffer_entrada[4] == '!')){	//NEW
+							cola_guardar_eventos(evento_new,0);
+						}
+						if((buffer_entrada[0] == '#')&&
+							(buffer_entrada[1] - '0' >=0 && buffer_entrada[1] - '0' <= 8)&&	//Si son numeros validos pues se introduce
+							(buffer_entrada[2] - '0' >=0 && buffer_entrada[2] - '0' <= 8)&&
+							(buffer_entrada[3] - '0' >=0 && buffer_entrada[3] - '0' <= 9)&&
+							(buffer_entrada[5] == '!') &&
+								((buffer_entrada[1] - '0' + buffer_entrada[2] - '0' + buffer_entrada[3] - '0') % 8 ==  buffer_entrada[4] - '0')){ //Jugada correcta
+								//Como guardar informacion en el auxiliar
+									uint32_t auxiliar = 0;
+									uint32_t fila =buffer_entrada[1] - '0';
+									uint32_t columna =buffer_entrada[2] - '0';
+									uint32_t valor =buffer_entrada[3] - '0';
+									auxiliar = auxiliar | valor;
+									auxiliar = auxiliar | (columna << 8);
+									auxiliar = auxiliar | (fila << 16);
+									cola_guardar_eventos(evento_jugada,auxiliar);
+						}
+						indiceUart = -1;
+					}
+				}
+}
+
 //0x0015, 0x0003, 0x0004, 0x0006, 0x0007, 0x0008, 0x0009, 0x0001, 0x0002, 0, 0, 0, 0, 0, 0, 0,
 //0x0006, 0x0007, 0x0002, 0x0001, 0x0019, 0x0005, 0x0003, 0x0004, 0x0018, 0, 0, 0, 0, 0, 0, 0,
 //0x0001, 0x0019, 0x0018, 0x0013, 0x0004, 0x0012, 0x0005, 0x0016, 0x0007, 0, 0, 0, 0, 0, 0, 0,
@@ -911,144 +954,5 @@ int sudoku_get_estado(){
 //0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
 //0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
 //};
-
-
-
-	//La idea es coger el array mensajeInicial y mensajeFinal y juntarlos
-//	const int numFilas = 19;
-//	const int numColumnas=29;
-//	char tablero[numFilas][numColumnas];
-//	for(int i=0;i<numFilas;i=i+2){
-//		for(int j=0;j<numColumnas-1;j++){
-//			if(j%3==0){
-//				tablero[i][j] = '+';
-//			}else{
-//				tablero[i][j] = '-';
-//			}
-//		}
-//	}
-//	
-//	int iCuadricula=0;
-//	int jCuadricula=0;
-//	uint16_t celda;
-//	uint8_t pista;
-//	uint8_t error;
-//	uint8_t valor;
-//	uint16_t candidatos;
-//	for(int i=1;i<numFilas;i=i+2){
-//		for(int j=0;j<numColumnas-1;j++){
-//			if(j%3==0){
-//				tablero[i][j] = '|';
-//				if(j != numColumnas-2){		//parar que no tenga en cuenta el ultimo |
-//					celda = celda_leer_contenido(cuadricula_C_C[iCuadricula][jCuadricula]);
-//					pista = celda_leer_pista(celda); 
-//					error = celda_leer_error(celda);
-//					valor = celda_leer_valor(celda);
-//					jCuadricula=jCuadricula+1;
-//					if(jCuadricula==NUM_FILAS){		//j llega al final pues se pasa a la siguiente fila
-//						iCuadricula=iCuadricula+1;
-//						jCuadricula =0;
-//					}
-//				}
-//				
-//			}else{
-//				if(j%3==1){		//es la |. ahi pones el valor
-//					if(valor != 0){		//Si el valor no es 0 significa que se ha introducido algo
-//						tablero[i][j] = valor + '0';
-//					}else{
-//						tablero[i][j] =' ';
-//					}
-//				}else{
-//					if(j%3 == 2){		//es el caso |..
-//						if((pista&0x1) == 0x1){		//es pista
-//							tablero[i][j] ='P';
-//						}else{
-//							if((error&0x1)==1){//es error
-//								tablero[i][j] ='E';
-//							}else{
-//									if(tablero[i][j-1] != ' '){
-//											tablero[i][j]=' ';
-//									}else{
-//											tablero[i][j]=' ';
-//									}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//	
-//	for(int i=0;i<numFilas;i++){					//Poner fin de linea
-//		tablero[i][numColumnas-1] = '\n';
-//	}
-//	
-//	for(int i=0;i<numFilas;i++){
-//		for(int j=0;j<numColumnas;j++){
-//			mensajeFinal2[i*numColumnas + j] = tablero[i][j];
-//		}
-//	}
-//	//Ahora hay que poner los candidatos
-//	int indiceFinal = numFilas*numColumnas;
-//	//int c1,c2,c3,c4,c5,c6,c7,c8,c9;	
-//	for(int i=0;i<NUM_FILAS;i++){		//Recorrer la matriz sacando los candidatos
-//		for(int j=0;j<NUM_FILAS;j++){
-//			celda = celda_leer_contenido(cuadricula_C_C[i][j]);
-//			candidatos= celda_leer_candidatos(celda);
-//			valor = celda_leer_valor(celda);
-//			if(valor == 0x0){		//Significa que no hay valor y por tanto candidatos
-//				mensajeFinal2[indiceFinal]=i+'0';
-//				indiceFinal = indiceFinal +1;
-//				mensajeFinal2[indiceFinal]=j+'0';
-//				indiceFinal = indiceFinal +1;
-//				mensajeFinal2[indiceFinal]=' ';
-//				indiceFinal = indiceFinal +1;
-//				if((candidatos&0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='1';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 1) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='2';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 2) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='3';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 3) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='4';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 4) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='5';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 5) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='6';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 6) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='7';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 7) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='8';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				if(((candidatos >> 8) & 0x1) == 0){	//Si el c1 es 1 significa que ahi hay un candidato
-//					mensajeFinal2[indiceFinal]='9';
-//					indiceFinal = indiceFinal +1;
-//				}
-//				mensajeFinal2[indiceFinal] = '\n';
-//				
-//				indiceFinal = indiceFinal +1;		
-//			}
-//		}
-//	}
-	
-	//mensajeFinal2[indiceFinal]='\0';
-//	strcpy(mensajeInicial, informacionJuego); /* copy name into the new var */
-//	strcat(mensajeInicial, mensajeFinal2); /* add the extension */
-//	gestor_serial_enviar_mensaje(mensajeInicial);
 
 
